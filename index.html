@@ -3,22 +3,44 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
 <title>REA Lab - Login</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#f0f0f0;color:#333;font-size:14px}
 
-#loginOverlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:9999}
-#loginBox{background:#fff;border-radius:10px;padding:40px 36px;width:340px;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+#loginOverlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity .4s}
+#loginBox{background:#fff;border-radius:10px;padding:40px 36px 3px;width:340px;box-shadow:0 8px 30px rgba(0,0,0,.25);transition:transform .4s,opacity .4s;display:flex;flex-direction:column}
+#loginBox.loading-active{justify-content:flex-start;align-items:stretch;padding-top:50px}
 #loginBox h2{text-align:center;margin-bottom:24px;font-size:20px;color:#444}
 #loginBox input{width:100%;padding:10px 12px;margin-bottom:14px;border:1px solid #ccc;border-radius:6px;font-size:14px}
-#loginBox button{width:100%;padding:11px;background:#4a7dff;color:#fff;border:none;border-radius:6px;font-size:15px;cursor:pointer;font-weight:600}
+#loginBox #loginPw{margin-bottom:38px}
+#loginBox button{width:100%;padding:11px;background:#4a7dff;color:#fff;border:none;border-radius:6px;font-size:15px;cursor:pointer;font-weight:600;transition:background .15s}
 #loginBox button:hover{background:#3a65d4}
+#loginBox button:disabled{background:#a0b4e0;cursor:not-allowed}
+#loginBtn.spinning{display:flex;align-items:center;justify-content:center;gap:10px}
+#loginBtn.spinning .btn-spinner{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:btnSpin .7s linear infinite;flex-shrink:0}
+@keyframes btnSpin{to{transform:rotate(360deg)}}
 #loginError{color:#d32;font-size:13px;text-align:center;margin-top:8px;min-height:18px}
 
-#loadingOverlay{position:fixed;inset:0;background:rgba(255,255,255,.7);display:flex;align-items:center;justify-content:center;z-index:9998;font-size:18px;color:#555}
-.spinner{width:36px;height:36px;border:4px solid #ddd;border-top-color:#4a7dff;border-radius:50%;animation:spin .7s linear infinite;margin-right:12px}
-@keyframes spin{to{transform:rotate(360deg)}}
+/* Loading steps (below login box) */
+#loginLoadingArea{display:none;margin-top:10px;padding-top:0}
+.loading-active h2{margin-bottom:16px!important}
+.ll-bar-track{width:100%;height:5px;background:#e2e8f0;border-radius:5px;overflow:hidden;margin-bottom:14px;position:relative}
+.ll-bar-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#667eea 0%,#764ba2 25%,#4a7dff 50%,#38b2ac 75%,#667eea 100%);background-size:300% 100%;animation:loadSlide 1.8s ease-in-out infinite;width:0%;transition:width .5s ease}
+.ll-bar-track::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.35) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 1.2s ease-in-out infinite}
+@keyframes loadSlide{0%{background-position:100% 0}50%{background-position:0% 0}100%{background-position:-100% 0}}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.ll-steps{display:flex;flex-direction:column;gap:10px}
+.ll-step{font-size:13.5px;color:#a0aec0;display:flex;align-items:center;gap:8px;transition:color .3s}
+.ll-step.active{color:#4a7dff;font-weight:600}
+.ll-step.done{color:#38a169}
+.ll-step .s-icon{width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:11px}
+.ll-step.active .s-icon{animation:pulse .8s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.login-fade-out #loginBox{transform:translateY(-20px);opacity:0}
+.login-fade-out{opacity:0}
 </style>
 </head>
 <body>
@@ -29,54 +51,143 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#f0f0f0;color:
     <h2>REA Lab Login</h2>
     <input type="email" id="loginEmail" placeholder="E-mail" autocomplete="email">
     <input type="password" id="loginPw" placeholder="Password" autocomplete="current-password">
-    <button onclick="doLogin()">Login</button>
+    <button id="loginBtn" onclick="doLogin()">Login</button>
     <div id="loginError"></div>
+
+    <!-- Loading steps area (shown after login success) -->
+    <div id="loginLoadingArea">
+      <div class="ll-bar-track"><div class="ll-bar-fill"></div></div>
+      <div class="ll-steps">
+        <div class="ll-step" id="ls1"><span class="s-icon">○</span> 서버 연결 중</div>
+        <div class="ll-step" id="ls2"><span class="s-icon">○</span> 카테고리 불러오는 중</div>
+        <div class="ll-step" id="ls3"><span class="s-icon">○</span> 카드 데이터 로딩 중</div>
+        <div class="ll-step" id="ls4"><span class="s-icon">○</span> 화면 준비 완료</div>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- ===== LOADING ===== -->
-<div id="loadingOverlay" style="display:none">
-  <div class="spinner"></div> 로그인 중...
-</div>
-
 <script>
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbyFttmvAlMFaRWGUaq-PFQb4e7gHZohOr4TkolFTs9Rny9lxIyyegXnL-LCtecQlLW50Q/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwqh02HRq4fG7XsAYQtHNBqsTxHeEkfDSJ0teBgv8Qqhg3gM8qRrO9Wfdvz4btMBQuygQ/exec';
 
-// Check if already logged in
+// Already logged in → skip
 (function() {
   try {
     const user = sessionStorage.getItem('realab_user');
-    if (user) {
-      window.location.replace('realab.html');
-    }
+    if (user) window.location.replace('realab.html');
   } catch(e) {}
 })();
 
-function showLoading() { document.getElementById('loadingOverlay').style.display = 'flex'; }
-function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
+function setStep(n) {
+  const barFill = document.querySelector('.ll-bar-fill');
+  if (barFill) barFill.style.width = (n * 25) + '%';
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('ls' + i);
+    if (i < n) {
+      el.className = 'll-step done';
+      el.querySelector('.s-icon').textContent = '✓';
+    } else if (i === n) {
+      el.className = 'll-step active';
+      el.querySelector('.s-icon').textContent = '●';
+    } else {
+      el.className = 'll-step';
+      el.querySelector('.s-icon').textContent = '○';
+    }
+  }
+}
+
+async function gasFetch(url, retries) {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const r = await fetch(url);
+      const text = await r.text();
+      try { return JSON.parse(text); }
+      catch(_) { throw new Error('서버 응답 파싱 오류'); }
+    } catch(e) {
+      if (attempt < retries) { await new Promise(r => setTimeout(r, 800)); continue; }
+      throw e;
+    }
+  }
+}
 
 async function doLogin() {
   const email = document.getElementById('loginEmail').value.trim();
   const pw    = document.getElementById('loginPw').value.trim();
   const errEl = document.getElementById('loginError');
+  const btn   = document.getElementById('loginBtn');
+
   if (!email || !pw) { errEl.textContent = '이메일과 비밀번호를 입력하세요.'; return; }
   errEl.textContent = '';
-  showLoading();
+  btn.disabled = true;
+  btn.classList.add('spinning');
+  btn.innerHTML = '<span class="btn-spinner"></span>';
+
   try {
-    const url = GAS_URL + '?' + new URLSearchParams({ action: 'login', email, password: pw }).toString();
-    const r = await fetch(url);
-    const res = await r.json();
-    if (res.ok) {
-      // Save user info to sessionStorage and redirect
-      sessionStorage.setItem('realab_user', JSON.stringify(res.user));
-      window.location.href = 'realab.html';
-    } else {
+    // === Step 1: Login ===
+    const loginUrl = GAS_URL + '?' + new URLSearchParams({ action: 'login', email, password: pw }).toString();
+    const res = await gasFetch(loginUrl, 1);
+
+    if (!res.ok) {
       errEl.textContent = res.error || '로그인 실패';
+      btn.disabled = false;
+      btn.classList.remove('spinning');
+      btn.textContent = 'Login';
+      return;
+    }
+
+    // Login success — save user, show loading steps
+    sessionStorage.setItem('realab_user', JSON.stringify(res.user));
+    const box = document.getElementById('loginBox');
+    // Lock current size before hiding inputs
+    const boxRect = box.getBoundingClientRect();
+    box.style.minHeight = boxRect.height + 'px';
+    box.style.width = boxRect.width + 'px';
+    btn.style.display = 'none';
+    document.getElementById('loginEmail').style.display = 'none';
+    document.getElementById('loginPw').style.display = 'none';
+    document.getElementById('loginError').style.display = 'none';
+    box.classList.add('loading-active');
+    document.querySelector('#loginBox h2').textContent = 'REA LAB. Preparing';
+    document.getElementById('loginLoadingArea').style.display = 'block';
+
+    // === Step 2~3: Fetch all data ===
+    setStep(1);
+    await new Promise(r => setTimeout(r, 150));
+    setStep(2);
+    const dataUrl = GAS_URL + '?' + new URLSearchParams({ action: 'getAll' }).toString();
+    const data = await gasFetch(dataUrl, 2);
+    setStep(3);
+
+    if (data.ok) {
+      // Save pre-loaded data for realab.html
+      sessionStorage.setItem('realab_preload', JSON.stringify(data));
+      await new Promise(r => setTimeout(r, 200));
+      setStep(4);
+      await new Promise(r => setTimeout(r, 400));
+
+      // Fade out and redirect
+      document.getElementById('loginOverlay').classList.add('login-fade-out');
+      setTimeout(() => { window.location.href = 'realab.html'; }, 400);
+    } else {
+      errEl.textContent = '데이터 로드 실패: ' + (data.error || '');
+      btn.style.display = '';
+      document.getElementById('loginEmail').style.display = '';
+      document.getElementById('loginPw').style.display = '';
+      document.getElementById('loginLoadingArea').style.display = 'none';
+      btn.disabled = false;
+      btn.classList.remove('spinning');
+      btn.textContent = 'Login';
     }
   } catch (e) {
     errEl.textContent = '서버 연결 오류: ' + e.message;
+    btn.style.display = '';
+    document.getElementById('loginEmail').style.display = '';
+    document.getElementById('loginPw').style.display = '';
+    document.getElementById('loginLoadingArea').style.display = 'none';
+    btn.disabled = false;
+    btn.classList.remove('spinning');
+    btn.textContent = 'Login';
   }
-  hideLoading();
 }
 
 // Enter key support

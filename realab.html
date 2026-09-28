@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
 <title>REA Lab</title>
 <style>
 /* ===== RESET & BASE ===== */
@@ -44,8 +45,8 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .main{flex:1;overflow-y:auto;padding:20px 28px;background:#fff}
 
 /* ===== NEW CARD BUTTON ===== */
-.btn-new-card{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px 18px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:16px;transition:transform .1s,box-shadow .2s;box-shadow:0 2px 8px rgba(102,126,234,.3)}
-.btn-new-card:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(102,126,234,.4)}
+.btn-new-card{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px 18px;background:linear-gradient(135deg,#8e9aaf 0%,#6b7b8d 100%);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:16px;transition:transform .1s,box-shadow .2s;box-shadow:0 2px 8px rgba(107,123,141,.3)}
+.btn-new-card:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(107,123,141,.4)}
 .btn-new-card:active{transform:translateY(0)}
 
 /* ===== CARD (collapsed) ===== */
@@ -54,7 +55,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .card.expanded{box-shadow:0 4px 20px rgba(0,0,0,.12);border-color:#b0bac5}
 .card-header{display:flex;align-items:flex-start;padding:16px 20px;gap:14px;cursor:default}
 .card-left{display:flex;align-items:baseline;gap:18px;flex:1;min-width:0;flex-wrap:wrap}
-.card-id{font-weight:800;font-size:18px;color:#2c3e50;flex-shrink:0;letter-spacing:-.3px}
+.card-id{font-weight:400;font-size:15px;color:#2c3e50;flex-shrink:0;letter-spacing:-.3px}
 .card-breadcrumb{font-size:15px;color:#5a6a7a;word-break:break-word;line-height:1.5}
 .card-breadcrumb span{font-weight:700;color:#34495e}
 .card-apa{width:100%;color:#4a7dff;font-size:14px;margin-top:5px;line-height:1.6;word-break:break-word;font-style:italic;padding-left:2em;text-indent:-2em}
@@ -66,7 +67,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 /* ===== CARD (expanded detail) ===== */
 .card-detail{display:none;border-top:1px solid #e8ecf0;background:#f8f9fb;padding:0}
 .card.expanded .card-detail{display:block}
-.detail-body{display:flex;flex:1;min-height:520px}
+.detail-body{display:flex;flex:1;min-height:520px;align-items:stretch}
 
 /* detail center */
 .detail-center{flex:1;padding:18px 22px;display:flex;flex-direction:column;gap:14px;overflow-y:auto}
@@ -78,14 +79,15 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .field-group textarea.tall{min-height:220px}
 .field-group textarea.apa-short{min-height:52px;max-height:80px}
 .field-group textarea.medium{min-height:90px}
-.field-group textarea.comment-tall{min-height:150px}
+.field-group.comment-group{flex:1;display:flex;flex-direction:column}
+.field-group.comment-group textarea{flex:1;min-height:150px}
 
 /* detail right panel */
 .detail-right{width:280px;min-width:280px;padding:16px;overflow-y:auto;background:#f8f9fb;display:flex;flex-direction:column}
 .detail-right h4{font-size:11px;color:#a0aec0;margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px;font-weight:700}
 
 /* category / element selector */
-.cat-tree{margin-bottom:14px;overflow-y:scroll;border:1px solid #d2d8e0;border-radius:8px;padding:8px;background:#fff;flex:1;min-height:180px}
+.cat-tree{margin-bottom:14px;overflow-y:scroll;border:1px solid #d2d8e0;border-radius:8px;padding:8px;background:#fff;min-height:180px;max-height:392px}
 .cat-tree .ct-cat{font-weight:700;font-size:13px;cursor:pointer;padding:4px 6px;display:flex;align-items:center;gap:4px;border-radius:4px;transition:background .12s}
 .cat-tree .ct-cat:hover{background:#f0f4f8}
 .cat-tree .ct-cat .plus-btn{margin-left:auto;width:22px;height:22px;border:1px solid #c0c8d0;border-radius:4px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;line-height:1;color:#555;transition:all .12s}
@@ -162,12 +164,18 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .toast.show{opacity:1}
 
 /* ===== PRINT ===== */
+@page{size:letter;margin:25mm 15mm 15mm 15mm}
 @media print{
   .sidebar,.btn-open,.btn-cancel-new,.detail-right-actions,.btn-new-card,.toast,.card-top-bar{display:none!important}
   .layout{display:block!important}
-  .main{padding:0!important}
+  .main{padding:20px 0 0 0!important}
   .card{break-inside:avoid;border:1px solid #aaa}
   .card-detail{display:block!important}
+  .detail-right{display:none!important}
+  .field-group textarea.apa-short{display:none!important}
+  .detail-center{width:100%!important;max-width:100%!important}
+  .detail-center .field-group textarea{width:100%!important;min-width:100%!important}
+  .detail-body{display:block!important}
 }
 </style>
 </head>
@@ -213,7 +221,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 </div>
 
 <script>
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbyFttmvAlMFaRWGUaq-PFQb4e7gHZohOr4TkolFTs9Rny9lxIyyegXnL-LCtecQlLW50Q/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwqh02HRq4fG7XsAYQtHNBqsTxHeEkfDSJ0teBgv8Qqhg3gM8qRrO9Wfdvz4btMBQuygQ/exec';
 
 // ===== Session check =====
 let currentUser = null;
@@ -234,8 +242,10 @@ let currentView = 'cards';
 
 // ===== Logout =====
 function doLogout() {
-  sessionStorage.removeItem('realab_user');
-  window.location.href = 'index.html';
+  showConfirmModal('로그아웃', '로그아웃 하시겠습니까?', '로그아웃', () => {
+    sessionStorage.removeItem('realab_user');
+    window.location.href = 'index.html';
+  });
 }
 
 // ===== Toast =====
@@ -283,38 +293,66 @@ function setLoadStep(n) {
   }
 }
 
-// ===== GAS fetch helpers =====
+// ===== GAS fetch helpers (with retry) =====
+async function gasFetch(url, options, retries = 2) {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const r = await fetch(url, options);
+      const text = await r.text();
+      try { return JSON.parse(text); }
+      catch(_) { throw new Error('서버 응답 파싱 오류'); }
+    } catch(e) {
+      if (attempt < retries) { await new Promise(r => setTimeout(r, 800)); continue; }
+      throw e;
+    }
+  }
+}
 async function gasGet(params) {
   const url = GAS_URL + '?' + new URLSearchParams(params).toString();
-  const r = await fetch(url);
-  return r.json();
+  return gasFetch(url, {});
 }
 async function gasPost(body) {
-  const r = await fetch(GAS_URL, {
+  return gasFetch(GAS_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain' },
     body: JSON.stringify(body)
   });
-  return r.json();
 }
 
 // ===== Load all data =====
 async function loadAll() {
   showLoading();
   try {
-    setLoadStep(1);
-    await new Promise(r => setTimeout(r, 200));
-    setLoadStep(2);
-    const res = await gasGet({ action: 'getAll' });
+    let res = null;
+
+    // Check for pre-loaded data from login page
+    try {
+      const preload = sessionStorage.getItem('realab_preload');
+      if (preload) {
+        sessionStorage.removeItem('realab_preload');
+        res = JSON.parse(preload);
+      }
+    } catch(_) {}
+
+    // If no pre-loaded data, fetch from server
+    if (!res) {
+      setLoadStep(1);
+      setLoadStep(2);
+      res = await gasGet({ action: 'getAll' });
+    }
+
     setLoadStep(3);
     if (res.ok) {
       DB = res;
       if (!DB.links) DB.links = [];
-      await new Promise(r => setTimeout(r, 150));
+      // Normalize "no." header to "no" (sheet header has period)
+      DB.links = DB.links.map(l => {
+        if (l['no.'] !== undefined && l.no === undefined) { l.no = l['no.']; }
+        return l;
+      });
       setLoadStep(4);
       buildSidebar();
       renderCards();
-      await new Promise(r => setTimeout(r, 200));
       document.getElementById('appLayout').style.display = 'flex';
     } else {
       toast('데이터 로드 실패: ' + (res.error || ''), 3000);
@@ -483,8 +521,14 @@ async function doAddCategory() {
   closeModal(); showLoading();
   try {
     const res = await gasPost({ action: 'addCategory', category_id: catId, category_name: catName });
-    if (res.ok) { toast('카테고리 추가 완료!'); await loadAll(); }
-    else { toast('추가 실패: ' + (res.error || ''), 3000); }
+    if (res.ok) {
+      // Insert before category_99
+      const idx = DB.categories.findIndex(c => c.category_id === 'category_99');
+      const newCat = { category_id: catId, category_name: catName };
+      if (idx >= 0) DB.categories.splice(idx, 0, newCat); else DB.categories.push(newCat);
+      buildSidebar(); renderCards();
+      toast('카테고리 추가 완료!');
+    } else { toast('추가 실패: ' + (res.error || ''), 3000); }
   } catch(e) { toast('오류: ' + e.message, 3000); }
   hideLoading();
 }
@@ -528,8 +572,12 @@ async function doEditCategory() {
   closeModal(); showLoading();
   try {
     const res = await gasPost({ action: 'updateCategory', category_id: catId, category_name: newName });
-    if (res.ok) { toast('카테고리 수정 완료!'); await loadAll(); }
-    else { toast('수정 실패: ' + (res.error || ''), 3000); }
+    if (res.ok) {
+      const cat = DB.categories.find(c => c.category_id === catId);
+      if (cat) cat.category_name = newName;
+      buildSidebar(); renderCards();
+      toast('카테고리 수정 완료!');
+    } else { toast('수정 실패: ' + (res.error || ''), 3000); }
   } catch(e) { toast('오류: ' + e.message, 3000); }
   hideLoading();
 }
@@ -569,8 +617,12 @@ async function doDeleteCategory() {
     showLoading();
     try {
       const res = await gasPost({ action: 'deleteCategory', category_id: catId });
-      if (res.ok) { toast('카테고리 삭제 완료!'); await loadAll(); }
-      else { toast('삭제 실패: ' + (res.error || ''), 3000); }
+      if (res.ok) {
+        DB.categories = DB.categories.filter(c => c.category_id !== catId);
+        if (currentFilter && currentFilter.id === catId) currentFilter = null;
+        buildSidebar(); renderCards();
+        toast('카테고리 삭제 완료!');
+      } else { toast('삭제 실패: ' + (res.error || ''), 3000); }
     } catch(e) { toast('오류: ' + e.message, 3000); }
     hideLoading();
   }, 'btn-danger');
@@ -622,8 +674,11 @@ async function doAddElement() {
   closeModal(); showLoading();
   try {
     const res = await gasPost({ action: 'addElement', element_id: elemId, element_name: elemName, category: catId });
-    if (res.ok) { toast('Element 추가 완료!'); await loadAll(); }
-    else { toast('추가 실패: ' + (res.error || ''), 3000); }
+    if (res.ok) {
+      DB.elements.push({ element_id: elemId, element_name: elemName, category: catId });
+      buildSidebar(); renderCards();
+      toast('Element 추가 완료!');
+    } else { toast('추가 실패: ' + (res.error || ''), 3000); }
   } catch(e) { toast('오류: ' + e.message, 3000); }
   hideLoading();
 }
@@ -631,7 +686,7 @@ async function doAddElement() {
 // ===== Edit Element Modal =====
 function openEditElementModal() {
   let optionsHtml = '';
-  DB.elements.forEach(e => {
+  [...DB.elements].sort((a, b) => a.element_id.localeCompare(b.element_id)).forEach(e => {
     const code = e.element_id.replace('element_', '');
     optionsHtml += `<option value="${escHtml(e.element_id)}">${code}_${escHtml(e.element_name)}</option>`;
   });
@@ -666,8 +721,12 @@ async function doEditElement() {
   closeModal(); showLoading();
   try {
     const res = await gasPost({ action: 'updateElement', element_id: elemId, element_name: newName });
-    if (res.ok) { toast('Element 수정 완료!'); await loadAll(); }
-    else { toast('수정 실패: ' + (res.error || ''), 3000); }
+    if (res.ok) {
+      const elem = DB.elements.find(e => e.element_id === elemId);
+      if (elem) elem.element_name = newName;
+      buildSidebar(); renderCards();
+      toast('Element 수정 완료!');
+    } else { toast('수정 실패: ' + (res.error || ''), 3000); }
   } catch(e) { toast('오류: ' + e.message, 3000); }
   hideLoading();
 }
@@ -675,7 +734,7 @@ async function doEditElement() {
 // ===== Delete Element Modal =====
 function openDeleteElementModal() {
   let optionsHtml = '';
-  DB.elements.forEach(e => {
+  [...DB.elements].sort((a, b) => a.element_id.localeCompare(b.element_id)).forEach(e => {
     const code = e.element_id.replace('element_', '');
     optionsHtml += `<option value="${escHtml(e.element_id)}">${code}_${escHtml(e.element_name)}</option>`;
   });
@@ -706,8 +765,12 @@ async function doDeleteElement() {
     showLoading();
     try {
       const res = await gasPost({ action: 'deleteElement', element_id: elemId });
-      if (res.ok) { toast('Element 삭제 완료!'); await loadAll(); }
-      else { toast('삭제 실패: ' + (res.error || ''), 3000); }
+      if (res.ok) {
+        DB.elements = DB.elements.filter(e => e.element_id !== elemId);
+        if (currentFilter && currentFilter.id === elemId) currentFilter = null;
+        buildSidebar(); renderCards();
+        toast('Element 삭제 완료!');
+      } else { toast('삭제 실패: ' + (res.error || ''), 3000); }
     } catch(e) { toast('오류: ' + e.message, 3000); }
     hideLoading();
   }, 'btn-danger');
@@ -718,84 +781,134 @@ function openAddElementForCategory(srgId, catId) {
   openAddElementModal(catId);
 }
 
+// ===== Link Icon Options =====
+const LINK_ICONS = [
+  { value: '🌐', label: '인터넷 사이트' },
+  { value: '📊', label: '구글 시트' },
+  { value: '📝', label: '구글 독스' },
+  { value: '📁', label: '구글 드라이브' },
+  { value: '📰', label: '뉴스/블로그' },
+  { value: '🎓', label: '교육/학습' },
+  { value: '📚', label: '도서관/자료' },
+  { value: '🔬', label: '연구/논문' },
+  { value: '💻', label: '개발/코딩' },
+  { value: '📧', label: '이메일' },
+  { value: '🗂️', label: '데이터베이스' },
+  { value: '📹', label: '영상/미디어' },
+];
+function renderIconSelector(containerId, selectedIcon) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;margin-bottom:8px';
+  LINK_ICONS.forEach(ic => {
+    const div = document.createElement('div');
+    div.textContent = ic.value;
+    div.title = ic.label;
+    div.dataset.icon = ic.value;
+    const isSel = selectedIcon === ic.value;
+    div.style.cssText = 'width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:2px solid ' + (isSel ? '#4a7dff' : '#e2e6ea') + ';border-radius:8px;cursor:pointer;font-size:20px;background:' + (isSel ? '#eef3ff' : '#fff') + ';transition:all .12s';
+    div.addEventListener('click', function() {
+      document.getElementById('modalLinkIcon').value = ic.value;
+      wrap.querySelectorAll('div').forEach(function(d) { d.style.borderColor = '#e2e6ea'; d.style.background = '#fff'; });
+      div.style.borderColor = '#4a7dff';
+      div.style.background = '#eef3ff';
+    });
+    wrap.appendChild(div);
+  });
+  container.appendChild(wrap);
+}
+
 // ===== Link Modals =====
 function openAddLinkModal() {
   const nextNo = generateNextLinkNo();
-  const html = `
-    <div class="modal-overlay">
-      <div class="modal-box">
-        <h3>🔗 새 Link 추가</h3>
-        <label>No.</label>
-        <input type="text" id="modalLinkNo" value="${nextNo}" readonly>
-        <label>Site Name</label>
-        <input type="text" id="modalLinkName" placeholder="사이트 이름">
-        <label>URL</label>
-        <input type="text" id="modalLinkUrl" placeholder="https://...">
-        <div class="modal-btns">
-          <button class="btn-cancel" onclick="closeModal()">취소</button>
-          <button class="btn-confirm" onclick="doAddLink()">추가</button>
-        </div>
-      </div>
-    </div>`;
+  const html = '<div class="modal-overlay"><div class="modal-box">' +
+    '<h3>🔗 새 Link 추가</h3>' +
+    '<label>No.</label>' +
+    '<input type="text" id="modalLinkNo" value="' + nextNo + '" readonly>' +
+    '<label>Site Name</label>' +
+    '<input type="text" id="modalLinkName" placeholder="사이트 이름">' +
+    '<label>URL</label>' +
+    '<input type="text" id="modalLinkUrl" placeholder="https://...">' +
+    '<label>Icon</label>' +
+    '<input type="hidden" id="modalLinkIcon" value="🌐">' +
+    '<div id="addLinkIconGrid"></div>' +
+    '<div class="modal-btns">' +
+    '<button class="btn-cancel" onclick="closeModal()">취소</button>' +
+    '<button class="btn-confirm" onclick="doAddLink()">추가</button>' +
+    '</div></div></div>';
   showModal(html);
+  renderIconSelector('addLinkIconGrid', '🌐');
   setTimeout(() => document.getElementById('modalLinkName').focus(), 100);
 }
 async function doAddLink() {
   const no = document.getElementById('modalLinkNo').value.trim();
   const name = document.getElementById('modalLinkName').value.trim();
   const url = document.getElementById('modalLinkUrl').value.trim();
+  const icon = document.getElementById('modalLinkIcon').value || '🌐';
   if (!name) { toast('사이트 이름을 입력하세요.'); return; }
   if (!url) { toast('URL을 입력하세요.'); return; }
   closeModal(); showLoading();
   try {
-    const res = await gasPost({ action: 'addLink', no, site_name: name, url });
-    if (res.ok) { toast('링크 추가 완료!'); await loadAll(); }
-    else { toast('추가 실패: ' + (res.error || ''), 3000); }
+    const res = await gasPost({ action: 'addLink', no, site_name: name, url, icon });
+    if (res.ok) {
+      DB.links.push({ no: String(res.no || no), site_name: name, url, icon });
+      buildSidebar();
+      toast('링크 추가 완료!');
+    } else { toast('추가 실패: ' + (res.error || ''), 3000); }
   } catch(e) { toast('오류: ' + e.message, 3000); }
   hideLoading();
 }
 function openEditLinkModal() {
   const links = DB.links || [];
   let optionsHtml = '';
-  links.forEach(l => { optionsHtml += `<option value="${escHtml(l.no)}">${escHtml(l.no)} - ${escHtml(l.site_name)}</option>`; });
-  const html = `
-    <div class="modal-overlay">
-      <div class="modal-box">
-        <h3>🔗 Link 수정</h3>
-        <label>수정할 Link 선택</label>
-        <select id="modalEditLinkSelect" onchange="onEditLinkSelect()">
-          <option value="">-- 선택 --</option>${optionsHtml}
-        </select>
-        <label>Site Name</label>
-        <input type="text" id="modalEditLinkName" placeholder="사이트 이름">
-        <label>URL</label>
-        <input type="text" id="modalEditLinkUrl" placeholder="https://...">
-        <div class="modal-btns">
-          <button class="btn-cancel" onclick="closeModal()">취소</button>
-          <button class="btn-confirm" onclick="doEditLink()">수정</button>
-        </div>
-      </div>
-    </div>`;
+  links.forEach(l => { optionsHtml += '<option value="' + escHtml(String(l.no)) + '">' + escHtml(l.no) + ' - ' + escHtml(l.site_name) + '</option>'; });
+  const html = '<div class="modal-overlay"><div class="modal-box">' +
+    '<h3>🔗 Link 수정</h3>' +
+    '<label>수정할 Link 선택</label>' +
+    '<select id="modalEditLinkSelect"><option value="">-- 선택 --</option>' + optionsHtml + '</select>' +
+    '<label>Site Name</label>' +
+    '<input type="text" id="modalEditLinkName" placeholder="사이트 이름">' +
+    '<label>URL</label>' +
+    '<input type="text" id="modalEditLinkUrl" placeholder="https://...">' +
+    '<label>Icon</label>' +
+    '<input type="hidden" id="modalLinkIcon" value="🌐">' +
+    '<div id="editLinkIconGrid"></div>' +
+    '<div class="modal-btns">' +
+    '<button class="btn-cancel" onclick="closeModal()">취소</button>' +
+    '<button class="btn-confirm" onclick="doEditLink()">수정</button>' +
+    '</div></div></div>';
   showModal(html);
+  renderIconSelector('editLinkIconGrid', '🌐');
+  document.getElementById('modalEditLinkSelect').addEventListener('change', onEditLinkSelect);
 }
 function onEditLinkSelect() {
   const no = document.getElementById('modalEditLinkSelect').value;
-  const link = (DB.links || []).find(l => l.no === no);
-  document.getElementById('modalEditLinkName').value = link ? link.site_name : '';
-  document.getElementById('modalEditLinkUrl').value = link ? link.url : '';
+  const link = (DB.links || []).find(l => String(l.no) === String(no));
+  document.getElementById('modalEditLinkName').value = link ? (link.site_name || '') : '';
+  document.getElementById('modalEditLinkUrl').value = link ? (link.url || '') : '';
+  const icon = link ? (link.icon || '🌐') : '🌐';
+  document.getElementById('modalLinkIcon').value = icon;
+  renderIconSelector('editLinkIconGrid', icon);
 }
 async function doEditLink() {
   const no = document.getElementById('modalEditLinkSelect').value;
   const name = document.getElementById('modalEditLinkName').value.trim();
   const url = document.getElementById('modalEditLinkUrl').value.trim();
+  const icon = document.getElementById('modalLinkIcon').value || '🌐';
   if (!no) { toast('링크를 선택하세요.'); return; }
   if (!name) { toast('사이트 이름을 입력하세요.'); return; }
   if (!url) { toast('URL을 입력하세요.'); return; }
   closeModal(); showLoading();
   try {
-    const res = await gasPost({ action: 'updateLink', no, site_name: name, url });
-    if (res.ok) { toast('링크 수정 완료!'); await loadAll(); }
-    else { toast('수정 실패: ' + (res.error || ''), 3000); }
+    const res = await gasPost({ action: 'updateLink', no, site_name: name, url, icon });
+    if (res.ok) {
+      const link = DB.links.find(l => String(l.no) === String(no));
+      if (link) { link.site_name = name; link.url = url; link.icon = icon; }
+      buildSidebar();
+      toast('링크 수정 완료!');
+    } else { toast('수정 실패: ' + (res.error || ''), 3000); }
   } catch(e) { toast('오류: ' + e.message, 3000); }
   hideLoading();
 }
@@ -823,18 +936,74 @@ function openDeleteLinkModal() {
 async function doDeleteLink() {
   const no = document.getElementById('modalDelLinkSelect').value;
   if (!no) { toast('링크를 선택하세요.'); return; }
-  const link = (DB.links || []).find(l => l.no === no);
+  const link = (DB.links || []).find(l => String(l.no) === String(no));
   const linkName = link ? link.site_name : no;
   closeModal();
   showConfirmModal('최종 확인', `"${linkName}" 링크를 정말 삭제하시겠습니까?`, '삭제', async () => {
     showLoading();
     try {
       const res = await gasPost({ action: 'deleteLink', no });
-      if (res.ok) { toast('링크 삭제 완료!'); await loadAll(); }
-      else { toast('삭제 실패: ' + (res.error || ''), 3000); }
+      if (res.ok) {
+        DB.links = DB.links.filter(l => String(l.no) !== String(no));
+        buildSidebar();
+        toast('링크 삭제 완료!');
+      } else { toast('삭제 실패: ' + (res.error || ''), 3000); }
     } catch(e) { toast('오류: ' + e.message, 3000); }
     hideLoading();
   }, 'btn-danger');
+}
+
+// ===== Reorder Links Modal =====
+function openReorderLinksModal() {
+  const links = DB.links || [];
+  if (links.length === 0) { showAlertModal('알림', '등록된 Link가 없습니다.'); return; }
+  // Clone links for reorder
+  window._reorderLinks = links.map(l => ({ no: l.no, site_name: l.site_name, url: l.url, icon: l.icon || '' }));
+  renderReorderModal();
+}
+function renderReorderModal() {
+  const items = window._reorderLinks;
+  let listHtml = '';
+  items.forEach((item, idx) => {
+    listHtml += `<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:${idx % 2 === 0 ? '#f7f8fa' : '#fff'};border-radius:6px;margin-bottom:4px">`;
+    listHtml += `<span style="font-weight:700;color:#4a7dff;min-width:28px">${idx + 1}</span>`;
+    listHtml += `<span style="flex:1;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(item.site_name)}</span>`;
+    listHtml += `<button onclick="reorderLinkMove(${idx},-1)" style="width:28px;height:28px;border:1px solid #d2d8e0;border-radius:5px;background:#fff;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center"${idx === 0 ? ' disabled style="opacity:.3;cursor:not-allowed"' : ''}>▲</button>`;
+    listHtml += `<button onclick="reorderLinkMove(${idx},1)" style="width:28px;height:28px;border:1px solid #d2d8e0;border-radius:5px;background:#fff;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center"${idx === items.length - 1 ? ' disabled style="opacity:.3;cursor:not-allowed"' : ''}>▼</button>`;
+    listHtml += `</div>`;
+  });
+  const html = `
+    <div class="modal-overlay">
+      <div class="modal-box wide">
+        <h3>🔗 Link 순서 관리</h3>
+        <div style="max-height:400px;overflow-y:auto;margin-bottom:8px">${listHtml}</div>
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">취소</button>
+          <button class="btn-confirm" onclick="doReorderLinks()">저장</button>
+        </div>
+      </div>
+    </div>`;
+  showModal(html);
+}
+function reorderLinkMove(idx, dir) {
+  const items = window._reorderLinks;
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= items.length) return;
+  [items[idx], items[newIdx]] = [items[newIdx], items[idx]];
+  renderReorderModal();
+}
+async function doReorderLinks() {
+  const items = window._reorderLinks;
+  closeModal(); showLoading();
+  try {
+    const res = await gasPost({ action: 'reorderLinks', links: items });
+    if (res.ok) {
+      DB.links = items.map((l, i) => ({ no: String(i + 1), site_name: l.site_name, url: l.url, icon: l.icon || '' }));
+      buildSidebar();
+      toast('순서 변경 완료!');
+    } else { toast('순서 변경 실패: ' + (res.error || ''), 3000); }
+  } catch(e) { toast('오류: ' + e.message, 3000); }
+  hideLoading();
 }
 
 // ===== Add Cat-0x item Modal =====
@@ -867,8 +1036,16 @@ async function doAddCatItem(srgId, catKey, catId, elemId) {
   closeModal(); showLoading();
   try {
     const res = await gasPost({ action: 'addCatItem', catKey, value: val, category_id: catId, element_id: elemId });
-    if (res.ok) { toast('항목 추가 완료!'); await loadAll(); }
-    else { toast('추가 실패: ' + (res.error || ''), 3000); }
+    if (res.ok) {
+      // Update local: find matching card or add value to current card
+      const card = DB.srgData.find(d => d.srg_id === srgId);
+      if (card) {
+        const existing = (card[catKey] || '').trim();
+        card[catKey] = existing ? existing + ', ' + val : val;
+      }
+      renderCards();
+      toast('항목 추가 완료!');
+    } else { toast('추가 실패: ' + (res.error || ''), 3000); }
   } catch(e) { toast('오류: ' + e.message, 3000); }
   hideLoading();
 }
@@ -880,12 +1057,12 @@ function buildSidebar() {
   const sb = document.getElementById('sidebar');
   let html = '';
 
-  // User email
-  const userEmail = currentUser ? (currentUser['e-mail'] || currentUser.email || '') : '';
-  if (userEmail) {
-    html += `<div style="padding:10px 14px 6px;font-size:15px;color:#718096;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;font-weight:600" title="${escHtml(userEmail)}">👤 ${escHtml(userEmail)}</div>`;
-    html += `<div style="border-top:1px solid #e2e6ea;margin:6px 12px 4px"></div>`;
-  }
+  // REA LAB. title (clickable for reload)
+  html += `<div style="padding:16px 14px 2px;font-size:22px;color:#2c3e50;text-align:center;font-weight:800;letter-spacing:-0.5px;cursor:pointer" onclick="location.reload(true)" title="새로고침">REA LAB.</div>`;
+  // Email under REA LAB.
+  const emailAddr = currentUser ? currentUser.email : '';
+  html += `<div style="font-size:12.5px;color:#999;text-align:center;padding:0 14px 4px;word-break:break-all">${escHtml(emailAddr)}</div>`;
+  html += `<div style="border-top:1px solid #e2e6ea;margin:4px 12px 4px"></div>`;
 
   // See All Cards
   const allActive = currentView === 'cards' && !currentFilter ? ' active' : '';
@@ -893,7 +1070,7 @@ function buildSidebar() {
   html += `<div class="tree-row${allActive}" onclick="filterAll()">`;
   html += `<span class="tree-toggle"></span>`;
   html += `<span class="tree-icon">📋</span>`;
-  html += `<span class="tree-label" style="font-weight:700">See All Cards</span>`;
+  html += `<span class="tree-label" style="font-weight:700">All Notes <span style="font-size:11px;color:#888;font-weight:400">(${DB.srgData.length})</span></span>`;
   html += `</div></div>`;
 
   // Regular categories
@@ -915,7 +1092,8 @@ function buildSidebar() {
     html += `<div class="tree-row${catActive ? ' active' : ''}" onclick="onCatClick(event,'${cat.category_id}',${hasChildren})">`;
     html += `<span class="tree-toggle${hasChildren ? ' has-children' : ''}" onclick="event.stopPropagation();toggleCatTree(event,'${cat.category_id}')"></span>`;
     html += `<span class="tree-icon">${hasChildren ? (isOpen ? '📂' : '📁') : '📁'}</span>`;
-    html += `<span class="tree-label" style="font-weight:600">${escHtml(displayName)}</span>`;
+    const catCount = DB.srgData.filter(d => d.category_id === cat.category_id).length;
+    html += `<span class="tree-label" style="font-weight:600">${escHtml(displayName)} <span style="font-size:11px;color:#888;font-weight:400">(${catCount})</span></span>`;
     html += `</div>`;
 
     if (hasChildren) {
@@ -927,7 +1105,8 @@ function buildSidebar() {
         html += `<div class="tree-row${eActive ? ' active' : ''}" onclick="filterElement('${elem.element_id}')">`;
         html += `<span class="tree-toggle"></span>`;
         html += `<span class="tree-icon">📄</span>`;
-        html += `<span class="tree-label">${elemCode}_${escHtml(elem.element_name)}</span>`;
+        const elemCount = DB.srgData.filter(d => d.element_id === elem.element_id).length;
+        html += `<span class="tree-label">${elemCode}_${escHtml(elem.element_name)} <span style="font-size:11px;color:#888">(${elemCount})</span></span>`;
         html += `</div></div>`;
       });
       html += `</div>`;
@@ -956,7 +1135,7 @@ function buildSidebar() {
       html += `<div class="tree-child-row">`;
       html += `<div class="tree-row" onclick="window.open('${escHtml(href)}','_blank')" title="${escHtml(url)}">`;
       html += `<span class="tree-toggle"></span>`;
-      html += `<span class="tree-icon">🌐</span>`;
+      html += `<span class="tree-icon">${link.icon || '🌐'}</span>`;
       html += `<span class="tree-label">${escHtml(link.site_name)}</span>`;
       html += `</div></div>`;
     });
@@ -1011,6 +1190,7 @@ function buildSidebar() {
   html += `<span class="tree-icon">🔗</span>`;
   html += `<span class="tree-label" style="font-weight:600">Links Management</span>`;
   html += `</div><div class="tree-children">`;
+  html += `<div class="tree-child-row"><div class="tree-menu-item" onclick="openReorderLinksModal()"><span style="margin-right:4px">↕️</span> Link 순서 관리</div></div>`;
   html += `<div class="tree-child-row"><div class="tree-menu-item" onclick="openAddLinkModal()"><span style="margin-right:4px">➕</span> Link 추가</div></div>`;
   html += `<div class="tree-child-row"><div class="tree-menu-item" onclick="openEditLinkModal()"><span style="margin-right:4px">✏️</span> Link 수정</div></div>`;
   html += `<div class="tree-child-row"><div class="tree-menu-item" onclick="openDeleteLinkModal()" style="color:#e53e3e"><span style="margin-right:4px">🗑️</span> Link 삭제</div></div>`;
@@ -1032,7 +1212,13 @@ function onCatClick(event, catId, hasChildren) {
     buildSidebar();
     return;
   }
-  if (hasChildren && !openCategories[catId]) openCategories[catId] = true;
+  // If already filtered to this category and it's open, toggle closed
+  if (hasChildren && currentFilter && currentFilter.type === 'category' && currentFilter.id === catId && openCategories[catId]) {
+    openCategories[catId] = false;
+    buildSidebar();
+    return;
+  }
+  if (hasChildren) openCategories[catId] = !openCategories[catId];
   filterCategory(catId); // guard is inside filterCategory
 }
 
@@ -1108,6 +1294,12 @@ function makeBreadcrumb(d) {
 
 function escHtml(s) { const d = document.createElement('div'); d.textContent = String(s || ''); return d.innerHTML; }
 
+function formatNoteId(srgId) {
+  const m = String(srgId).match(/srg_(\d+)/);
+  if (m) return 'Note ID: ' + m[1];
+  return srgId;
+}
+
 function getCatDropValues(catKey, catId, elemId) {
   return [...new Set(
     DB.srgData
@@ -1119,6 +1311,7 @@ function getCatDropValues(catKey, catId, elemId) {
 
 // ===== Render Cards =====
 function renderCards() {
+  snapshotEditingCards();
   const list = document.getElementById('cardList');
   const filtered = getFilteredData();
 
@@ -1139,7 +1332,7 @@ function renderCards() {
     // Header
     html += `<div class="card-header">`;
     html += `<div class="card-left">`;
-    html += `<span class="card-id">${escHtml(isNew ? d._displayId || id : id)}</span>`;
+    html += `<span class="card-id">${escHtml(formatNoteId(isNew ? d._displayId || id : id))}</span>`;
     const bc = makeBreadcrumb(d);
     if (bc) html += `<span class="card-breadcrumb">${bc}</span>`;
     if (d.apa) html += `<div class="card-apa">${escHtml(d.apa)}</div>`;
@@ -1163,7 +1356,7 @@ function renderCards() {
     html += `<div class="field-group"><textarea class="apa-short" data-field="apa" placeholder="APA"${ro}>${escHtml(d.apa)}</textarea></div>`;
     html += `<div class="field-group"><textarea class="medium" data-field="context" placeholder="Context"${ro}>${escHtml(d.context)}</textarea></div>`;
     html += `<div class="field-group"><textarea class="tall" data-field="text" placeholder="Text"${ro}>${escHtml(d.text)}</textarea></div>`;
-    html += `<div class="field-group"><textarea class="comment-tall" data-field="comment" placeholder="Comment"${ro}>${escHtml(d.comment)}</textarea></div>`;
+    html += `<div class="field-group comment-group"><textarea class="comment-tall" data-field="comment" placeholder="Comment"${ro}>${escHtml(d.comment)}</textarea></div>`;
     html += `</div>`;
 
     // Right panel
@@ -1178,7 +1371,7 @@ function renderCards() {
       ? `confirmSave('${escHtml(id)}')`
       : (isModifyMode ? `confirmSave('${escHtml(id)}')` : `modifyCard('${escHtml(id)}')`);
     html += `<div class="detail-right-actions">`;
-    html += `<button class="btn-del" onclick="confirmDelete('${escHtml(id)}')"${isNew ? ' disabled style="opacity:.4;cursor:not-allowed;pointer-events:none"' : ''}>Del.</button>`;
+    html += `<button class="btn-del" onclick="confirmDelete('${escHtml(id)}')"${isNew ? ' disabled style="opacity:.4;cursor:not-allowed;pointer-events:none"' : ''}>Delete</button>`;
     html += `<button class="btn-save" id="btnSave-${escHtml(id)}" onclick="${btnAction}">${btnLabel}</button>`;
     html += `<button onclick="confirmPrint('${escHtml(id)}')">Print</button>`;
     html += `</div>`;
@@ -1275,6 +1468,32 @@ function gatherCardData(srgId) {
   };
 }
 
+// Save unsaved form input into DB before re-rendering
+function snapshotEditingCards() {
+  const editingIds = Object.keys(modifyModeCards);
+  // Also include NEW_ cards
+  DB.srgData.forEach(d => {
+    if (String(d.srg_id).startsWith('NEW_') && !editingIds.includes(d.srg_id)) {
+      editingIds.push(d.srg_id);
+    }
+  });
+  editingIds.forEach(srgId => {
+    const cardEl = document.getElementById('card-' + srgId);
+    if (!cardEl) return;
+    const d = DB.srgData.find(x => x.srg_id === srgId);
+    if (!d) return;
+    const get = (sel) => { const el = cardEl.querySelector(sel); return el ? el.value : ''; };
+    d.apa = get('[data-field="apa"]');
+    d.context = get('[data-field="context"]');
+    d.text = get('[data-field="text"]');
+    d.comment = get('[data-field="comment"]');
+    const cat01 = get('[data-catdrop="cat-01"]'); if (cat01) d['cat-01'] = cat01;
+    const cat02 = get('[data-catdrop="cat-02"]'); if (cat02) d['cat-02'] = cat02;
+    const cat03 = get('[data-catdrop="cat-03"]'); if (cat03) d['cat-03'] = cat03;
+    const cat04 = get('[data-catdrop="cat-04"]'); if (cat04) d['cat-04'] = cat04;
+  });
+}
+
 function validateCard(srgId) {
   const row = gatherCardData(srgId);
   if (!row) return null;
@@ -1305,17 +1524,30 @@ async function doSaveCard(srgId) {
     }
     const res = await gasPost({ action, row });
     if (res.ok) {
-      toast('저장 완료!');
-      expandedCardId = res.srg_id || row.srg_id;
+      const finalId = res.srg_id || row.srg_id;
+      if (isNew) {
+        // Replace temp entry with real one
+        const idx = DB.srgData.findIndex(x => x.srg_id === srgId);
+        if (idx >= 0) {
+          DB.srgData[idx] = { ...row, srg_id: finalId };
+          delete DB.srgData[idx]._displayId;
+        }
+      } else {
+        // Update existing entry
+        const idx = DB.srgData.findIndex(x => x.srg_id === srgId);
+        if (idx >= 0) DB.srgData[idx] = { ...row };
+      }
+      expandedCardId = finalId;
       delete modifyModeCards[srgId];
-      await loadAll();
+      buildSidebar(); renderCards();
+      toast('저장 완료!');
     } else { toast('저장 실패: ' + (res.error || ''), 3000); }
   } catch (e) { toast('오류: ' + e.message, 3000); }
   hideLoading();
 }
 
 function confirmDelete(srgId) {
-  showConfirmModal('삭제 확인', '이 카드를 삭제하시겠습니까?\nsrg_ID: ' + srgId, '삭제', () => doDeleteCard(srgId), 'btn-danger');
+  showConfirmModal('삭제 확인', '이 카드를 삭제하시겠습니까?\n' + formatNoteId(srgId), '삭제', () => doDeleteCard(srgId), 'btn-danger');
 }
 async function doDeleteCard(srgId) {
   if (srgId.startsWith('NEW_')) {
@@ -1325,19 +1557,25 @@ async function doDeleteCard(srgId) {
   showLoading();
   try {
     const res = await gasPost({ action: 'delete', srg_id: srgId });
-    if (res.ok) { toast('삭제 완료!'); expandedCardId = null; await loadAll(); }
-    else { toast('삭제 실패: ' + (res.error || ''), 3000); }
+    if (res.ok) {
+      DB.srgData = DB.srgData.filter(d => d.srg_id !== srgId);
+      expandedCardId = null;
+      buildSidebar(); renderCards();
+      toast('삭제 완료!');
+    } else { toast('삭제 실패: ' + (res.error || ''), 3000); }
   } catch (e) { toast('오류: ' + e.message, 3000); }
   hideLoading();
 }
 
-function modifyCard(srgId) { modifyModeCards[srgId] = true; renderCards(); }
+function modifyCard(srgId) {
+  showConfirmModal('수정 확인', '이 카드를 수정하시겠습니까?', '수정', () => {
+    modifyModeCards[srgId] = true;
+    renderCards();
+  });
+}
 function cancelModify(srgId) { delete modifyModeCards[srgId]; renderCards(); }
 
 function confirmPrint(srgId) {
-  showConfirmModal('인쇄 확인', '이 카드를 인쇄하시겠습니까?', '인쇄', () => doPrintCard(srgId));
-}
-function doPrintCard(srgId) {
   expandedCardId = srgId; renderCards();
   setTimeout(() => window.print(), 300);
 }
