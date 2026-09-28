@@ -3,33 +3,85 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Ethics</title>
+<title>REA Lab - Login</title>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  display: flex; 
-  flex-direction: column; /* 가로에서 세로 정렬로 변경 */
-  justify-content: center; 
-  align-items: center;
-  min-height: 100vh; 
-  background: #f5f5f5;
-  font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
-  gap: 10px; /* 링크 사이의 간격을 주기 위해 추가 (선택 사항) */
-}
-a {
-  font-size: 28px; 
-  font-weight: bold; 
-  color: #222;
-  text-decoration: none; 
-  letter-spacing: 1px;
-  padding: 16px 32px; 
-  border-bottom: 2px solid transparent;
-  transition: color 0.2s, border-color 0.2s;
-}
-a:hover { color: #d00; border-bottom-color: #d00; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#f0f0f0;color:#333;font-size:14px}
+
+#loginOverlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:9999}
+#loginBox{background:#fff;border-radius:10px;padding:40px 36px;width:340px;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+#loginBox h2{text-align:center;margin-bottom:24px;font-size:20px;color:#444}
+#loginBox input{width:100%;padding:10px 12px;margin-bottom:14px;border:1px solid #ccc;border-radius:6px;font-size:14px}
+#loginBox button{width:100%;padding:11px;background:#4a7dff;color:#fff;border:none;border-radius:6px;font-size:15px;cursor:pointer;font-weight:600}
+#loginBox button:hover{background:#3a65d4}
+#loginError{color:#d32;font-size:13px;text-align:center;margin-top:8px;min-height:18px}
+
+#loadingOverlay{position:fixed;inset:0;background:rgba(255,255,255,.7);display:flex;align-items:center;justify-content:center;z-index:9998;font-size:18px;color:#555}
+.spinner{width:36px;height:36px;border:4px solid #ddd;border-top-color:#4a7dff;border-radius:50%;animation:spin .7s linear infinite;margin-right:12px}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
-Site for Research of Educational Activities
+
+<!-- ===== LOGIN ===== -->
+<div id="loginOverlay">
+  <div id="loginBox">
+    <h2>REA Lab Login</h2>
+    <input type="email" id="loginEmail" placeholder="E-mail" autocomplete="email">
+    <input type="password" id="loginPw" placeholder="Password" autocomplete="current-password">
+    <button onclick="doLogin()">Login</button>
+    <div id="loginError"></div>
+  </div>
+</div>
+
+<!-- ===== LOADING ===== -->
+<div id="loadingOverlay" style="display:none">
+  <div class="spinner"></div> 로그인 중...
+</div>
+
+<script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyFttmvAlMFaRWGUaq-PFQb4e7gHZohOr4TkolFTs9Rny9lxIyyegXnL-LCtecQlLW50Q/exec';
+
+// Check if already logged in
+(function() {
+  try {
+    const user = sessionStorage.getItem('realab_user');
+    if (user) {
+      window.location.replace('realab.html');
+    }
+  } catch(e) {}
+})();
+
+function showLoading() { document.getElementById('loadingOverlay').style.display = 'flex'; }
+function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
+
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pw    = document.getElementById('loginPw').value.trim();
+  const errEl = document.getElementById('loginError');
+  if (!email || !pw) { errEl.textContent = '이메일과 비밀번호를 입력하세요.'; return; }
+  errEl.textContent = '';
+  showLoading();
+  try {
+    const url = GAS_URL + '?' + new URLSearchParams({ action: 'login', email, password: pw }).toString();
+    const r = await fetch(url);
+    const res = await r.json();
+    if (res.ok) {
+      // Save user info to sessionStorage and redirect
+      sessionStorage.setItem('realab_user', JSON.stringify(res.user));
+      window.location.href = 'realab.html';
+    } else {
+      errEl.textContent = res.error || '로그인 실패';
+    }
+  } catch (e) {
+    errEl.textContent = '서버 연결 오류: ' + e.message;
+  }
+  hideLoading();
+}
+
+// Enter key support
+document.getElementById('loginPw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+document.getElementById('loginEmail').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('loginPw').focus(); });
+</script>
 </body>
 </html>

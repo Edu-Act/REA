@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REA Lab</title>
+<style>
+/* ===== RESET & BASE ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#333;font-size:14px}
+
+/* ===== LAYOUT ===== */
+.layout{display:flex;height:100vh;overflow:hidden}
+
+/* ===== SIDEBAR ===== */
+.sidebar{width:260px;min-width:260px;background:#fafbfc;border-right:1px solid #e2e6ea;overflow-y:auto;padding:8px 0;font-size:13px;user-select:none;display:flex;flex-direction:column}
+.sidebar-top{flex:1;overflow-y:auto;padding-bottom:8px;scrollbar-width:none;-ms-overflow-style:none}
+.sidebar-top::-webkit-scrollbar{display:none}
+.sidebar-bottom{padding:10px 12px;border-top:1px solid #e2e6ea}
+.sidebar-bottom .btn-logout{width:100%;padding:9px 16px;border:1px solid #ccc;background:#fff;border-radius:6px;cursor:pointer;font-size:13px;color:#555;font-weight:600;transition:all .15s}
+.sidebar-bottom .btn-logout:hover{background:#f0f0f0;border-color:#aaa}
+
+.tree-node{position:relative;cursor:pointer}
+.tree-row{display:flex;align-items:center;padding:4px 10px 4px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:5px;margin:1px 6px;transition:background .12s}
+.tree-row:hover{background:#e4ecf7}
+.tree-row.active{background:#d0e0f5;font-weight:600}
+.tree-toggle{width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;color:#555;margin-right:1px}
+.tree-toggle.has-children{cursor:pointer}
+.tree-toggle.has-children::before{content:'▶';display:block;transition:transform .15s}
+.tree-node.open>.tree-row .tree-toggle.has-children::before{transform:rotate(90deg)}
+.tree-icon{width:18px;height:18px;flex-shrink:0;margin-right:5px;display:inline-flex;align-items:center;justify-content:center;font-size:15px}
+.tree-label{flex:1;overflow:hidden;text-overflow:ellipsis;font-size:13px;color:#333}
+.tree-children{display:none;padding-left:12px;position:relative}
+.tree-children::before{content:'';position:absolute;left:17px;top:0;bottom:8px;width:1px;background:#d8dce0}
+.tree-node.open>.tree-children{display:block}
+.tree-child-row{position:relative;padding-left:10px}
+.tree-child-row::before{content:'';position:absolute;left:5px;top:12px;width:10px;height:1px;background:#d8dce0}
+.tree-spacer{height:28px}
+.tree-divider{height:16px}
+.tree-menu-item{display:flex;align-items:center;padding:4px 8px 4px 12px;margin:2px 4px;border-radius:5px;cursor:pointer;color:#4a7dff;font-size:12px;font-weight:600;transition:background .12s}
+.tree-menu-item:hover{background:#e4ecf7}
+
+/* ===== MAIN AREA ===== */
+.main{flex:1;overflow-y:auto;padding:20px 28px;background:#fff}
+
+/* ===== NEW CARD BUTTON ===== */
+.btn-new-card{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px 18px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:16px;transition:transform .1s,box-shadow .2s;box-shadow:0 2px 8px rgba(102,126,234,.3)}
+.btn-new-card:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(102,126,234,.4)}
+.btn-new-card:active{transform:translateY(0)}
+
+/* ===== CARD (collapsed) ===== */
+.card{background:#fff;border:1px solid #e2e6ea;border-radius:10px;margin-bottom:12px;overflow:hidden;transition:all .25s ease;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.card:hover{box-shadow:0 3px 12px rgba(0,0,0,.1);border-color:#cdd3da}
+.card.expanded{box-shadow:0 4px 20px rgba(0,0,0,.12);border-color:#b0bac5}
+.card-header{display:flex;align-items:flex-start;padding:16px 20px;gap:14px;cursor:default}
+.card-left{display:flex;align-items:baseline;gap:18px;flex:1;min-width:0;flex-wrap:wrap}
+.card-id{font-weight:800;font-size:18px;color:#2c3e50;flex-shrink:0;letter-spacing:-.3px}
+.card-breadcrumb{font-size:15px;color:#5a6a7a;word-break:break-word;line-height:1.5}
+.card-breadcrumb span{font-weight:700;color:#34495e}
+.card-apa{width:100%;color:#4a7dff;font-size:14px;margin-top:5px;line-height:1.6;word-break:break-word;font-style:italic;padding-left:2em;text-indent:-2em}
+.btn-open{flex:0 0 auto;align-self:flex-start;padding:8px 24px;border:1px solid #c0c8d0;background:#fff;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;white-space:nowrap;transition:all .15s;color:#4a5568}
+.btn-open:hover{background:#f0f4f8;border-color:#a0aab5;color:#2d3748}
+.btn-cancel-new{flex:0 0 auto;align-self:flex-start;padding:8px 24px;border:1px solid #e53e3e;background:#fff;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;white-space:nowrap;color:#e53e3e;transition:all .15s}
+.btn-cancel-new:hover{background:#fff5f5;border-color:#c53030}
+
+/* ===== CARD (expanded detail) ===== */
+.card-detail{display:none;border-top:1px solid #e8ecf0;background:#f8f9fb;padding:0}
+.card.expanded .card-detail{display:block}
+.detail-body{display:flex;flex:1;min-height:520px}
+
+/* detail center */
+.detail-center{flex:1;padding:18px 22px;display:flex;flex-direction:column;gap:14px;overflow-y:auto}
+.field-group label{display:block;font-weight:700;font-size:12px;color:#718096;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.field-group input,.field-group textarea{width:100%;border:1px solid #d2d8e0;border-radius:8px;padding:10px 14px;font-size:15px;font-family:inherit;resize:vertical;background:#fff;line-height:1.6;transition:border-color .15s,box-shadow .15s}
+.field-group input:focus,.field-group textarea:focus{outline:none;border-color:#4a7dff;box-shadow:0 0 0 3px rgba(74,125,255,.12)}
+.field-group input:read-only,.field-group textarea:read-only{background:#f1f3f5;color:#6c757d;border-color:#e2e6ea}
+.field-group textarea.tall{min-height:220px}
+.field-group textarea.apa-short{min-height:52px;max-height:80px}
+.field-group textarea.medium{min-height:90px}
+.field-group textarea.comment-tall{min-height:150px}
+
+/* detail right panel */
+.detail-right{width:280px;min-width:280px;padding:16px;overflow-y:auto;background:#f8f9fb;display:flex;flex-direction:column}
+.detail-right h4{font-size:11px;color:#a0aec0;margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px;font-weight:700}
+
+/* category / element selector */
+.cat-tree{margin-bottom:14px;overflow-y:scroll;border:1px solid #d2d8e0;border-radius:8px;padding:8px;background:#fff;flex:1;min-height:180px}
+.cat-tree .ct-cat{font-weight:700;font-size:13px;cursor:pointer;padding:4px 6px;display:flex;align-items:center;gap:4px;border-radius:4px;transition:background .12s}
+.cat-tree .ct-cat:hover{background:#f0f4f8}
+.cat-tree .ct-cat .plus-btn{margin-left:auto;width:22px;height:22px;border:1px solid #c0c8d0;border-radius:4px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;line-height:1;color:#555;transition:all .12s}
+.cat-tree .ct-cat .plus-btn:hover{background:#e8eef6;border-color:#4a7dff;color:#4a7dff}
+.cat-tree .ct-elem{padding:3px 6px 3px 22px;font-size:12px;color:#555;cursor:pointer;border-radius:4px;transition:background .12s}
+.cat-tree .ct-elem:hover{background:#e8eef6}
+.cat-tree .ct-elem.selected{background:#d0ddf0;font-weight:600;color:#2d3748}
+.cat-tree.locked{pointer-events:none;opacity:.55}
+.cat-tree.locked .ct-cat,.cat-tree.locked .ct-elem{cursor:default}
+
+/* cat dropdowns */
+.cat-drop-row{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.cat-drop-row select{flex:1;padding:6px 10px;border:1px solid #d2d8e0;border-radius:6px;font-size:12px;background:#fff;transition:border-color .15s}
+.cat-drop-row select:focus{border-color:#4a7dff;outline:none}
+.cat-drop-row select:disabled{background:#f1f3f5;color:#999;cursor:not-allowed}
+.cat-drop-row .plus-btn{width:24px;height:24px;border:1px solid #c0c8d0;border-radius:5px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:#555;flex-shrink:0;transition:all .12s}
+.cat-drop-row .plus-btn:hover{background:#e8eef6;border-color:#4a7dff;color:#4a7dff}
+.cat-drop-row .plus-btn.locked{pointer-events:none;opacity:.4}
+
+/* action buttons */
+.detail-right-actions{display:flex;gap:0;margin-top:16px;padding-top:14px;border-top:1px solid #e2e6ea;justify-content:space-between}
+.detail-right-actions button{flex:1;padding:9px 0;border:1px solid #c0c8d0;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;background:#fff;text-align:center;transition:all .15s}
+.detail-right-actions button:not(:last-child){margin-right:6px}
+.detail-right-actions button:hover{background:#f0f4f8}
+.detail-right-actions .btn-del{color:#e53e3e;border-color:#e53e3e}
+.detail-right-actions .btn-del:hover{background:#fff5f5}
+.detail-right-actions .btn-save{color:#fff;background:linear-gradient(135deg,#667eea,#5a67d8);border-color:transparent}
+.detail-right-actions .btn-save:hover{background:linear-gradient(135deg,#5a67d8,#4c51bf)}
+
+/* ===== CARD TOP CLOSE ===== */
+.card-top-bar{display:flex;justify-content:flex-end;padding:8px 14px 0 14px}
+.btn-close-top{background:none;border:none;font-size:18px;cursor:pointer;color:#a0aec0;padding:2px 8px;border-radius:5px;transition:all .12s}
+.btn-close-top:hover{background:#e2e8f0;color:#4a5568}
+
+/* ===== MODAL ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(2px)}
+.modal-box{background:#fff;border-radius:14px;padding:28px 32px;width:400px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal-box.wide{width:680px}
+.modal-box h3{margin-bottom:16px;font-size:18px;color:#2d3748;font-weight:700;cursor:grab;user-select:none}
+.modal-box h3:active{cursor:grabbing}
+.modal-box p{font-size:14px;color:#4a5568;margin-bottom:8px;line-height:1.6}
+.modal-box label{display:block;font-size:13px;font-weight:600;color:#555;margin-bottom:4px;margin-top:12px}
+.modal-box input,.modal-box select{width:100%;padding:9px 12px;border:1px solid #d2d8e0;border-radius:8px;font-size:14px;margin-bottom:4px;transition:border-color .15s}
+.modal-box input:focus,.modal-box select:focus{outline:none;border-color:#4a7dff;box-shadow:0 0 0 3px rgba(74,125,255,.12)}
+.modal-breadcrumb{font-size:13px;color:#4a5568;margin-bottom:12px;line-height:1.5;padding:10px 14px;background:#f7f8fa;border-radius:8px;border:1px solid #e2e6ea}
+.modal-breadcrumb span{font-weight:700}
+.modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:22px}
+.modal-btns button{padding:9px 24px;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s}
+.modal-btns .btn-cancel{background:#edf2f7;color:#4a5568}
+.modal-btns .btn-cancel:hover{background:#e2e8f0}
+.modal-btns .btn-confirm{background:#4a7dff;color:#fff}
+.modal-btns .btn-confirm:hover{background:#3a65d4}
+.modal-btns .btn-danger{background:#e53e3e;color:#fff}
+.modal-btns .btn-danger:hover{background:#c53030}
+
+
+/* ===== LOADING OVERLAY ===== */
+#loadingOverlay{position:fixed;inset:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9998}
+.loading-content{text-align:center}
+.loading-logo{font-size:32px;font-weight:800;color:#4a7dff;margin-bottom:24px;letter-spacing:-1px}
+.loading-bar-track{width:280px;height:4px;background:#e2e8f0;border-radius:4px;overflow:hidden;margin-bottom:16px}
+.loading-bar-fill{height:100%;background:linear-gradient(90deg,#667eea,#764ba2,#667eea);background-size:200% 100%;border-radius:4px;animation:loadSlide 1.5s ease-in-out infinite;width:60%}
+@keyframes loadSlide{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.loading-steps{display:flex;flex-direction:column;gap:8px;align-items:center}
+.loading-step{font-size:13px;color:#a0aec0;display:flex;align-items:center;gap:8px;transition:color .3s}
+.loading-step.active{color:#4a7dff;font-weight:600}
+.loading-step.done{color:#38a169}
+.loading-step .step-icon{width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:12px}
+.loading-step.active .step-icon{animation:pulse .8s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ===== TOAST ===== */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:12px 30px;background:#2d3748;color:#fff;border-radius:10px;font-size:14px;font-weight:500;z-index:9999;opacity:0;transition:opacity .3s;box-shadow:0 4px 14px rgba(0,0,0,.2)}
+.toast.show{opacity:1}
+
+/* ===== PRINT ===== */
+@media print{
+  .sidebar,.btn-open,.btn-cancel-new,.detail-right-actions,.btn-new-card,.toast,.card-top-bar{display:none!important}
+  .layout{display:block!important}
+  .main{padding:0!important}
+  .card{break-inside:avoid;border:1px solid #aaa}
+  .card-detail{display:block!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== LOADING ===== -->
+<div id="loadingOverlay" style="display:none">
+  <div class="loading-content">
+    <div class="loading-logo">REA Lab</div>
+    <div class="loading-bar-track"><div class="loading-bar-fill"></div></div>
+    <div class="loading-steps">
+      <div class="loading-step" id="ls1"><span class="step-icon">○</span> 서버 연결 중</div>
+      <div class="loading-step" id="ls2"><span class="step-icon">○</span> 카테고리 불러오는 중</div>
+      <div class="loading-step" id="ls3"><span class="step-icon">○</span> 카드 데이터 로딩 중</div>
+      <div class="loading-step" id="ls4"><span class="step-icon">○</span> 화면 구성 중</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"></div>
+
+<!-- ===== MODAL CONTAINER ===== -->
+<div id="modalContainer"></div>
+
+<!-- ===== APP ===== -->
+<div class="layout" id="appLayout" style="display:none">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-top" id="sidebar"></div>
+    <div class="sidebar-bottom">
+      <button class="btn-logout" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main" id="main">
+    <button class="btn-new-card" id="btnNewCard" onclick="openNewCard()">+ 새 카드 추가</button>
+    <div id="cardList"></div>
+  </div>
+
+</div>
+
+<script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyFttmvAlMFaRWGUaq-PFQb4e7gHZohOr4TkolFTs9Rny9lxIyyegXnL-LCtecQlLW50Q/exec';
+
+// ===== Session check =====
+let currentUser = null;
+(function() {
+  try {
+    const stored = sessionStorage.getItem('realab_user');
+    if (!stored) { window.location.replace('index.html'); return; }
+    currentUser = JSON.parse(stored);
+  } catch(e) { window.location.replace('index.html'); }
+})();
+
+// ===== State =====
+let DB = { categories: [], elements: [], srgData: [], users: [], links: [] };
+let currentFilter = null;
+let expandedCardId = null;
+let modifyModeCards = {};
+let currentView = 'cards';
+
+// ===== Logout =====
+function doLogout() {
+  sessionStorage.removeItem('realab_user');
+  window.location.href = 'index.html';
+}
+
+// ===== Toast =====
+function toast(msg, ms = 2000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), ms);
+}
+
+// ===== Loading with steps =====
+function showLoading() {
+  const ov = document.getElementById('loadingOverlay');
+  if (isInitialLoad) {
+    ov.style.background = '#fff';
+  } else {
+    ov.style.background = 'rgba(255,255,255,.7)';
+  }
+  ov.style.display = 'flex';
+  setLoadStep(1);
+}
+function hideLoading() {
+  document.getElementById('loadingOverlay').style.display = 'none';
+  isInitialLoad = false;
+  // reset steps
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('ls' + i);
+    el.className = 'loading-step';
+    el.querySelector('.step-icon').textContent = '○';
+  }
+}
+function setLoadStep(n) {
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('ls' + i);
+    if (i < n) {
+      el.className = 'loading-step done';
+      el.querySelector('.step-icon').textContent = '✓';
+    } else if (i === n) {
+      el.className = 'loading-step active';
+      el.querySelector('.step-icon').textContent = '●';
+    } else {
+      el.className = 'loading-step';
+      el.querySelector('.step-icon').textContent = '○';
+    }
+  }
+}
+
+// ===== GAS fetch helpers =====
+async function gasGet(params) {
+  const url = GAS_URL + '?' + new URLSearchParams(params).toString();
+  const r = await fetch(url);
+  return r.json();
+}
+async function gasPost(body) {
+  const r = await fetch(GAS_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify(body)
+  });
+  return r.json();
+}
+
+// ===== Load all data =====
+async function loadAll() {
+  showLoading();
+  try {
+    setLoadStep(1);
+    await new Promise(r => setTimeout(r, 200));
+    setLoadStep(2);
+    const res = await gasGet({ action: 'getAll' });
+    setLoadStep(3);
+    if (res.ok) {
+      DB = res;
+      if (!DB.links) DB.links = [];
+      await new Promise(r => setTimeout(r, 150));
+      setLoadStep(4);
+      buildSidebar();
+      renderCards();
+      await new Promise(r => setTimeout(r, 200));
+      document.getElementById('appLayout').style.display = 'flex';
+    } else {
+      toast('데이터 로드 실패: ' + (res.error || ''), 3000);
+    }
+  } catch (e) {
+    toast('서버 오류: ' + e.message, 3000);
+  }
+  hideLoading();
+}
+
+// ===== Switch view =====
+function showCardsView() {
+  currentView = 'cards';
+  document.getElementById('btnNewCard').style.display = '';
+  document.getElementById('cardList').style.display = '';
+  renderCards();
+}
+// showLinksView removed — links are now shown as sidebar sub-menu items
+
+// ===== Helpers =====
+function getCategoryName(catId) {
+  const c = DB.categories.find(c => c.category_id === catId);
+  return c ? c.category_name : catId;
+}
+function getElementName(elemId) {
+  const e = DB.elements.find(e => e.element_id === elemId);
+  return e ? e.element_name : elemId;
+}
+function getElementsForCategory(catId) {
+  return DB.elements.filter(e => e.category === catId);
+}
+
+function generateNextSrgId() {
+  let maxNum = 0;
+  DB.srgData.forEach(d => {
+    const m = String(d.srg_id).match(/srg_(\d+)/);
+    if (m) { const n = parseInt(m[1], 10); if (n > maxNum) maxNum = n; }
+  });
+  return 'srg_' + String(maxNum + 1).padStart(5, '0');
+}
+function generateNextCategoryId() {
+  let maxNum = 0;
+  DB.categories.forEach(c => {
+    if (c.category_id === 'category_99') return;
+    const m = String(c.category_id).match(/category_(\d+)/);
+    if (m) { const n = parseInt(m[1], 10); if (n > maxNum) maxNum = n; }
+  });
+  return 'category_' + String(maxNum + 1).padStart(2, '0');
+}
+function generateNextElementId(catId) {
+  const catCode = catId.replace('category_', '');
+  const prefix = 'element_' + catCode + '-';
+  const existing = DB.elements.filter(e => e.category === catId);
+  if (existing.length === 0) return prefix + '00';
+  let maxSub = -1;
+  existing.forEach(e => {
+    const m = String(e.element_id).match(/element_\d+-(\d+)/);
+    if (m) { const n = parseInt(m[1], 10); if (n > maxSub) maxSub = n; }
+  });
+  return prefix + String(maxSub + 1).padStart(2, '0');
+}
+function generateNextLinkNo() {
+  let maxNum = 0;
+  (DB.links || []).forEach(l => {
+    const n = parseInt(l.no, 10);
+    if (!isNaN(n) && n > maxNum) maxNum = n;
+  });
+  return String(maxNum + 1);
+}
+
+// ===== Modal helpers =====
+function showModal(html) {
+  document.getElementById('modalContainer').innerHTML = html;
+  // Setup drag-safe overlay dismiss (click only, not drag)
+  const overlay = document.querySelector('#modalContainer .modal-overlay');
+  if (overlay) {
+    let overlayMouseDownTarget = null;
+    overlay.addEventListener('mousedown', e => { overlayMouseDownTarget = e.target; });
+    overlay.addEventListener('mouseup', e => {
+      if (e.target === overlay && overlayMouseDownTarget === overlay) closeModal();
+      overlayMouseDownTarget = null;
+    });
+  }
+  // Setup draggable modal from h3
+  const box = document.querySelector('#modalContainer .modal-box');
+  const h3 = box ? box.querySelector('h3') : null;
+  if (box && h3) {
+    let isDragging = false, startX = 0, startY = 0, origLeft = 0, origTop = 0;
+    box.style.position = 'relative';
+    box.style.left = '0px';
+    box.style.top = '0px';
+    h3.addEventListener('mousedown', e => {
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      origLeft = parseInt(box.style.left) || 0;
+      origTop = parseInt(box.style.top) || 0;
+      e.preventDefault();
+    });
+    document.addEventListener('mousemove', function modalDrag(e) {
+      if (!isDragging) return;
+      box.style.left = (origLeft + e.clientX - startX) + 'px';
+      box.style.top = (origTop + e.clientY - startY) + 'px';
+    });
+    document.addEventListener('mouseup', function modalDragEnd() {
+      isDragging = false;
+    });
+  }
+}
+function closeModal() { document.getElementById('modalContainer').innerHTML = ''; }
+
+function showConfirmModal(title, message, confirmText, onConfirm, btnClass = 'btn-confirm') {
+  const html = `
+    <div class="modal-overlay">
+      <div class="modal-box">
+        <h3>${escHtml(title)}</h3>
+        <p>${escHtml(message)}</p>
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">취소</button>
+          <button class="${btnClass}" id="modalConfirmBtn">${escHtml(confirmText)}</button>
+        </div>
+      </div>
+    </div>`;
+  showModal(html);
+  document.getElementById('modalConfirmBtn').addEventListener('click', () => { closeModal(); onConfirm(); });
+}
+
+function showAlertModal(title, message) {
+  const html = `
+    <div class="modal-overlay">
+      <div class="modal-box">
+        <h3>${escHtml(title)}</h3>
+        <p>${escHtml(message)}</p>
+        <div class="modal-btns">
+          <button class="btn-confirm" onclick="closeModal()">확인</button>
+        </div>
+      </div>
+    </div>`;
+  showModal(html);
+}
+
+// ===== Add Category Modal =====
+function openAddCategoryModal() {
+  const nextId = generateNextCategoryId();
+  const html = `
+    <div class="modal-overlay">
+      <div class="modal-box">
+        <h3>새 Category 추가</h3>
+        <label>Category ID</label>
+        <input type="text" id="modalCatId" value="${nextId}" readonly>
+        <label>Category Name</label>
+        <input type="text" id="modalCatName" placeholder="카테고리 이름 입력">
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">취소</button>
+          <button class="btn-confirm" onclick="doAddCategory()">추가</button>
+        </div>
+      </div>
+    </div>`;
+  showModal(html);
+  setTimeout(() => document.getElementById('modalCatName').focus(), 100);
+}
+async function doAddCategory() {
+  const catId = document.getElementById('modalCatId').value;
+  const catName = document.getElementById('modalCatName').value.trim();
+  if (!catName) { toast('카테고리 이름을 입력하세요.'); return; }
+  closeModal(); showLoading();
+  try {
+    const res = await gasPost({ action: 'addCategory', category_id: catId, category_name: catName });
+    if (res.ok) { toast('카테고리 추가 완료!'); await loadAll(); }
+    else { toast('추가 실패: ' + (res.error || ''), 3000); }
+  } catch(e) { toast('오류: ' + e.message, 3000); }
+  hideLoading();
+}
+
+// ===== Edit Category Modal =====
+function openEditCategoryModal() {
+  let optionsHtml = '';
+  DB.categories.forEach(c => {
+    if (c.category_id === 'category_99') return;
+    const code = c.category_id.replace('category_', '');
+    optionsHtml += `<option value="${escHtml(c.category_id)}">${code}_${escHtml(c.category_name)}</option>`;
+  });
+  const html = `
+    <div class="modal-overlay">
+      <div class="modal-box">
+        <h3>Category 수정</h3>
+        <label>수정할 Category 선택</label>
+        <select id="modalEditCatSelect" onchange="onEditCatSelect()">
+          <option value="">-- 선택 --</option>${optionsHtml}
+        </select>
+        <label>새 Category Name</label>
+        <input type="text" id="modalEditCatName" placeholder="새 이름 입력">
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">취소</button>
+          <button class="btn-confirm" onclick="doEditCategory()">수정</button>
+        </div>
+      </div>
+    </div>`;
+  showModal(html);
+}
+function onEditCatSelect() {
+  const catId = document.getElementById('modalEditCatSelect').value;
+  const cat = DB.categories.find(c => c.category_id === catId);
+  document.getElementById('modalEditCatName').value = cat ? cat.category_name : '';
+}
+async function doEditCategory() {
+  const catId = document.getElementById('modalEditCatSelect').value;
+  const newName = document.getElementById('modalEditCatName').value.trim();
+  if (!catId) { toast('카테고리를 선택하세요.'); return; }
+  if (!newName) { toast('새 이름을 입력하세요.'); return; }
+  closeModal(); showLoading();
+  try {
+    const res = await gasPost({ action: 'updateCategory', category_id: catId, category_name: newName });
+    if (res.ok) { toast('카테고리 수정 완료!'); await loadAll(); }
+    else { toast('수정 실패: ' + (res.error || ''), 3000); }
+  } catch(e) { toast('오류: ' + e.message, 3000); }
+  hideLoading();
+}
+
+// ===== Delete Category Modal =====
+function openDeleteCategoryModal() {
+  let optionsHtml = '';
+  DB.categories.forEach(c => {
+    if (c.category_id === 'category_99') return;
+    const code = c.category_id.replace('category_', '');
+    optionsHtml += `<option value="${escHtml(c.category_id)}">${code}_${escHtml(c.category_name)}</option>`;
+  });
+  const html = `
+    <div class="modal-overlay">
+      <div class="modal-box">
+        <h3>Category 삭제</h3>
+        <label>삭제할 Category 선택</label>
+        <select id="modalDelCatSelect">
+          <option value="">-- 선택 --</option>${optionsHtml}
+        </select>
+        <p style="color:#e53e3e;margin-top:12px;font-size:13px">⚠ 삭제하면 해당 카테고리의 모든 element 데이터가 영향을 받을 수 있습니다.</p>
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">취소</button>
+          <button class="btn-danger" onclick="doDeleteCategory()">삭제</button>
+        </div>
+      </div>
+    </div>`;
+  showModal(html);
+}
+async function doDeleteCategory() {
+  const catId = document.getElementById('modalDelCatSelect').value;
+  if (!catId) { toast('카테고리를 선택하세요.'); return; }
+  const cat = DB.categories.find(c => c.category_id === catId);
+  const catName = cat ? cat.category_name : catId;
+  closeModal();
+  showConfirmModal('최종 확인', `"${catName}" 카테고리를 정말 삭제하시겠습니까?`, '삭제', async () => {
+    showLoading();
+    try {
+      const res = await gasPost({ action: 'deleteCategory', category_id: catId });
+      if (res.ok) { toast('카테고리 삭제 완료!'); await loadAll(); }
+      else { toast('삭제 실패: ' + (res.error || ''), 3000); }
+    } catch(e) { toast('오류: ' + e.message, 3000); }
+    hideLoading();
+  }, 'btn-danger');
+}
+
+// ===== Add Element Modal (from sidebar or cat-tree + button) =====
+function openAddElementModal(preselectedCatId) {
+  let catOptions = '';
+  DB.categories.forEach(c => {
+    if (c.category_id === 'category_99') return;
+    const code = c.category_id.replace('category_', '');
+    const sel = preselectedCatId === c.category_id ? ' selected' : '';
+    catOptions += `<option value="${escHtml(c.category_id)}"${sel}>${code}_${escHtml(c.category_name)}</option>`;
+  });
+  const html = `
+    <div class="modal-overlay">
+      <div class="modal-box">
+        <h3>새 Element 추가</h3>
+        <label>소속 Category</label>
+        <select id="modalElemCatSelect" onchange="onElemCatChange()">
+          <option value="">-- 선택 --</option>${catOptions}
+        </select>
+        <label>Element ID</label>
+        <input type="text" id="modalElemId" value="" readonly>
+        <label>Element Name</label>
+        <input type="text" id="modalElemName" placeholder="Element 이름 입력">
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">취소</button>
+          <button class="btn-confirm" onclick="doAddElement()">추가</button>
+        </div>
+      </div>
+    </div>`;
+  showModal(html);
+  if (preselectedCatId) {
+    document.getElementById('modalElemId').value = generateNextElementId(preselectedCatId);
+  }
+  setTimeout(() => document.getElementById('modalElemName').focus(), 100);
+}
+function onElemCatChange() {
+  const catId = document.getElementById('modalElemCatSelect').value;
+  document.getElementById('modalElemId').value = catId ? generateNextElementId(catId) : '';
+}
+async function doAddElement() {
+  const catId = document.getElementById('modalElemCatSelect').value;
+  const elemId = document.getElementById('modalElemId').value;
+  const elemName = document.getElementById('modalElemName').value.trim();
+  if (!catId) { toast('카테고리를 선택하세요.'); return; }
+  if (!elemName) { toast('Element 이름을 입력하세요.'); return; }
+  closeModal(); showLoading();
+  try {
+    const res = await gasPost({ action: 'addElement', element_id: elemId, element_name: elemName, category: catId });
+    if (res.ok) { toast('Element 추가 완료!'); await loadAll(); }
+    else { toast('추가 실패: ' + (res.error || ''), 3000); }
+  } catch(e) { toast('오류: ' + e.message, 3000); }
+  hideLoading();
+}
+
+// ===== Edit Element Modal =====
+function openEditElementModal() {
+  let optionsHtml = '';
+  DB.elements.forEach(e => {
+    const code = e.element_id.replace('element_', '');
+    optionsHtml += `<option value="${escHtml(e.element_id)}">${code}_${escHtml(e.element_name)}</option>`;
+  });
+  const html = `
+    <div class="modal-overlay">
+      <div class="modal-box">
+        <h3>Element 수정</h3>
+        <label>수정할 Element 선택</label>
+        <select id="modalEditElemSelect" onchange="onEditElemSelect()">
+          <option value="">-- 선택 --</option>${optionsHtml}
+        </select>
+        <label>새 Element Name</label>
+        <input type="text" id="modalEditElemName" placeholder="새 이름 입력">
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">취소</button>
+          <button class="btn-confirm" onclick="doEditElement()">수정</button>
+        </div>
+      </div>
+    </div>`;
+  showModal(html);
+}
+function onEditElemSelect() {
+  const elemId = document.getElementById('modalEditElemSelect').value;
+  const elem = DB.elements.find(e => e.element_id === elemId);
+  document.getElementById('modalEditElemName').value = elem ? elem.element_name : '';
+}
+async function doEditElement() {
+  const elemId = document.getElementById('modalEditElemSelect').value;
+  const newName = document.getElementById('modalEditElemName').value.trim();
+  if (!elemId) { toast('Element를 선택하세요.'); return; }
+  if (!newName) { toast('새 이름을 입력하세요.'); return; }
+  closeModal(); showLoading();
+  try {
+    const res = await gasPost({ action: 'updateElement', element_id: elemId, element_name: newName });
+    if (res.ok) { toast('Element 수정 완료!'); await loadAll(); }
+    else { toast('수정 실패: ' + (res.error || ''), 3000); }
+  } catch(e) { toast('오류: ' + e.message, 3000); }
+  hideLoading();
+}
+
+// ===== Delete Element Modal =====
+function openDeleteElementModal() {
+  let optionsHtml = '';
+  DB.elements.forEach(e => {
+    const code = e.element_id.replace('element_', '');
+    optionsHtml += `<option value="${escHtml(e.element_id)}">${code}_${escHtml(e.element_name)}</option>`;
+  });
+  const html = `
+    <div class="modal-overlay">
+      <div class="modal-box">
+        <h3>Element 삭제</h3>
+        <label>삭제할 Element 선택</label>
+        <select id="modalDelElemSelect">
+          <option value="">-- 선택 --</option>${optionsHtml}
+        </select>
+        <p style="color:#e53e3e;margin-top:12px;font-size:13px">⚠ 삭제하면 해당 element의 카드 데이터가 영향을 받을 수 있습니다.</p>
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">취소</button>
+          <button class="btn-danger" onclick="doDeleteElement()">삭제</button>
+        </div>
+      </div>
+    </div>`;
+  showModal(html);
+}
+async function doDeleteElement() {
+  const elemId = document.getElementById('modalDelElemSelect').value;
+  if (!elemId) { toast('Element를 선택하세요.'); return; }
+  const elem = DB.elements.find(e => e.element_id === elemId);
+  const elemName = elem ? elem.element_name : elemId;
+  closeModal();
+  showConfirmModal('최종 확인', `"${elemName}" Element를 정말 삭제하시겠습니까?`, '삭제', async () => {
+    showLoading();
+    try {
+      const res = await gasPost({ action: 'deleteElement', element_id: elemId });
+      if (res.ok) { toast('Element 삭제 완료!'); await loadAll(); }
+      else { toast('삭제 실패: ' + (res.error || ''), 3000); }
+    } catch(e) { toast('오류: ' + e.message, 3000); }
+    hideLoading();
+  }, 'btn-danger');
+}
+
+// ===== Add Element from cat-tree + button =====
+function openAddElementForCategory(srgId, catId) {
+  openAddElementModal(catId);
+}
+
+// ===== Link Modals =====
+function openAddLinkModal() {
+  const nextNo = generateNextLinkNo();
+  const html = `
+    <div class="modal-overlay">
+      <div class="modal-box">
+        <h3>🔗 새 Link 추가</h3>
+        <label>No.</label>
+        <input type="text" id="modalLinkNo" value="${nextNo}" readonly>
+        <label>Site Name</label>
+        <input type="text" id="modalLinkName" placeholder="사이트 이름">
+        <label>URL</label>
+        <input type="text" id="modalLinkUrl" placeholder="https://...">
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">취소</button>
+          <button class="btn-confirm" onclick="doAddLink()">추가</button>
+        </div>
+      </div>
+    </div>`;
+  showModal(html);
+  setTimeout(() => document.getElementById('modalLinkName').focus(), 100);
+}
+async function doAddLink() {
+  const no = document.getElementById('modalLinkNo').value.trim();
+  const name = document.getElementById('modalLinkName').value.trim();
+  const url = document.getElementById('modalLinkUrl').value.trim();
+  if (!name) { toast('사이트 이름을 입력하세요.'); return; }
+  if (!url) { toast('URL을 입력하세요.'); return; }
+  closeModal(); showLoading();
+  try {
+    const res = await gasPost({ action: 'addLink', no, site_name: name, url });
+    if (res.ok) { toast('링크 추가 완료!'); await loadAll(); }
+    else { toast('추가 실패: ' + (res.error || ''), 3000); }
+  } catch(e) { toast('오류: ' + e.message, 3000); }
+  hideLoading();
+}
+function openEditLinkModal() {
+  const links = DB.links || [];
+  let optionsHtml = '';
+  links.forEach(l => { optionsHtml += `<option value="${escHtml(l.no)}">${escHtml(l.no)} - ${escHtml(l.site_name)}</option>`; });
+  const html = `
+    <div class="modal-overlay">
+      <div class="modal-box">
+        <h3>🔗 Link 수정</h3>
+        <label>수정할 Link 선택</label>
+        <select id="modalEditLinkSelect" onchange="onEditLinkSelect()">
+          <option value="">-- 선택 --</option>${optionsHtml}
+        </select>
+        <label>Site Name</label>
+        <input type="text" id="modalEditLinkName" placeholder="사이트 이름">
+        <label>URL</label>
+        <input type="text" id="modalEditLinkUrl" placeholder="https://...">
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">취소</button>
+          <button class="btn-confirm" onclick="doEditLink()">수정</button>
+        </div>
+      </div>
+    </div>`;
+  showModal(html);
+}
+function onEditLinkSelect() {
+  const no = document.getElementById('modalEditLinkSelect').value;
+  const link = (DB.links || []).find(l => l.no === no);
+  document.getElementById('modalEditLinkName').value = link ? link.site_name : '';
+  document.getElementById('modalEditLinkUrl').value = link ? link.url : '';
+}
+async function doEditLink() {
+  const no = document.getElementById('modalEditLinkSelect').value;
+  const name = document.getElementById('modalEditLinkName').value.trim();
+  const url = document.getElementById('modalEditLinkUrl').value.trim();
+  if (!no) { toast('링크를 선택하세요.'); return; }
+  if (!name) { toast('사이트 이름을 입력하세요.'); return; }
+  if (!url) { toast('URL을 입력하세요.'); return; }
+  closeModal(); showLoading();
+  try {
+    const res = await gasPost({ action: 'updateLink', no, site_name: name, url });
+    if (res.ok) { toast('링크 수정 완료!'); await loadAll(); }
+    else { toast('수정 실패: ' + (res.error || ''), 3000); }
+  } catch(e) { toast('오류: ' + e.message, 3000); }
+  hideLoading();
+}
+function openDeleteLinkModal() {
+  const links = DB.links || [];
+  let optionsHtml = '';
+  links.forEach(l => { optionsHtml += `<option value="${escHtml(l.no)}">${escHtml(l.no)} - ${escHtml(l.site_name)}</option>`; });
+  const html = `
+    <div class="modal-overlay">
+      <div class="modal-box">
+        <h3>🔗 Link 삭제</h3>
+        <label>삭제할 Link 선택</label>
+        <select id="modalDelLinkSelect">
+          <option value="">-- 선택 --</option>${optionsHtml}
+        </select>
+        <p style="color:#e53e3e;margin-top:12px;font-size:13px">⚠ 선택한 링크가 영구적으로 삭제됩니다.</p>
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">취소</button>
+          <button class="btn-danger" onclick="doDeleteLink()">삭제</button>
+        </div>
+      </div>
+    </div>`;
+  showModal(html);
+}
+async function doDeleteLink() {
+  const no = document.getElementById('modalDelLinkSelect').value;
+  if (!no) { toast('링크를 선택하세요.'); return; }
+  const link = (DB.links || []).find(l => l.no === no);
+  const linkName = link ? link.site_name : no;
+  closeModal();
+  showConfirmModal('최종 확인', `"${linkName}" 링크를 정말 삭제하시겠습니까?`, '삭제', async () => {
+    showLoading();
+    try {
+      const res = await gasPost({ action: 'deleteLink', no });
+      if (res.ok) { toast('링크 삭제 완료!'); await loadAll(); }
+      else { toast('삭제 실패: ' + (res.error || ''), 3000); }
+    } catch(e) { toast('오류: ' + e.message, 3000); }
+    hideLoading();
+  }, 'btn-danger');
+}
+
+// ===== Add Cat-0x item Modal =====
+function openAddCatItemModal(srgId, catKey) {
+  const d = DB.srgData.find(x => x.srg_id === srgId);
+  if (!d) return;
+  const catId = d.category_id;
+  const elemId = d.element_id;
+  if (!catId && !elemId) { showAlertModal('알림', '먼저 Category / Element를 선택하세요.'); return; }
+  const breadcrumb = makeBreadcrumb(d);
+  const html = `
+    <div class="modal-overlay">
+      <div class="modal-box wide">
+        <h3>${catKey} 항목 추가</h3>
+        <div class="modal-breadcrumb">${breadcrumb}</div>
+        <label>${catKey} 값</label>
+        <input type="text" id="modalCatItemVal" placeholder="값을 입력하세요">
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">취소</button>
+          <button class="btn-confirm" onclick="doAddCatItem('${srgId}','${catKey}','${catId}','${elemId}')">추가</button>
+        </div>
+      </div>
+    </div>`;
+  showModal(html);
+  setTimeout(() => document.getElementById('modalCatItemVal').focus(), 100);
+}
+async function doAddCatItem(srgId, catKey, catId, elemId) {
+  const val = document.getElementById('modalCatItemVal').value.trim();
+  if (!val) { toast('값을 입력하세요.'); return; }
+  closeModal(); showLoading();
+  try {
+    const res = await gasPost({ action: 'addCatItem', catKey, value: val, category_id: catId, element_id: elemId });
+    if (res.ok) { toast('항목 추가 완료!'); await loadAll(); }
+    else { toast('추가 실패: ' + (res.error || ''), 3000); }
+  } catch(e) { toast('오류: ' + e.message, 3000); }
+  hideLoading();
+}
+
+// ===== Sidebar (Explorer Tree) =====
+let openCategories = {};
+
+function buildSidebar() {
+  const sb = document.getElementById('sidebar');
+  let html = '';
+
+  // User email
+  const userEmail = currentUser ? (currentUser['e-mail'] || currentUser.email || '') : '';
+  if (userEmail) {
+    html += `<div style="padding:10px 14px 6px;font-size:15px;color:#718096;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;font-weight:600" title="${escHtml(userEmail)}">👤 ${escHtml(userEmail)}</div>`;
+    html += `<div style="border-top:1px solid #e2e6ea;margin:6px 12px 4px"></div>`;
+  }
+
+  // See All Cards
+  const allActive = currentView === 'cards' && !currentFilter ? ' active' : '';
+  html += `<div class="tree-node">`;
+  html += `<div class="tree-row${allActive}" onclick="filterAll()">`;
+  html += `<span class="tree-toggle"></span>`;
+  html += `<span class="tree-icon">📋</span>`;
+  html += `<span class="tree-label" style="font-weight:700">See All Cards</span>`;
+  html += `</div></div>`;
+
+  // Regular categories
+  DB.categories.forEach(cat => {
+    if (cat.category_id === 'category_99') return;
+    const catCode = cat.category_id.replace('category_', '');
+    const displayName = `${catCode}_${cat.category_name}`;
+    const elems = getElementsForCategory(cat.category_id);
+    const hasChildren = elems.length > 0;
+    const catActive = currentView === 'cards' && currentFilter && currentFilter.type === 'category' && currentFilter.id === cat.category_id;
+
+    if (currentFilter && currentFilter.type === 'element') {
+      const childMatch = elems.find(e => e.element_id === currentFilter.id);
+      if (childMatch) openCategories[cat.category_id] = true;
+    }
+    const isOpen = openCategories[cat.category_id];
+
+    html += `<div class="tree-node${isOpen ? ' open' : ''}" data-catid="${cat.category_id}">`;
+    html += `<div class="tree-row${catActive ? ' active' : ''}" onclick="onCatClick(event,'${cat.category_id}',${hasChildren})">`;
+    html += `<span class="tree-toggle${hasChildren ? ' has-children' : ''}" onclick="event.stopPropagation();toggleCatTree(event,'${cat.category_id}')"></span>`;
+    html += `<span class="tree-icon">${hasChildren ? (isOpen ? '📂' : '📁') : '📁'}</span>`;
+    html += `<span class="tree-label" style="font-weight:600">${escHtml(displayName)}</span>`;
+    html += `</div>`;
+
+    if (hasChildren) {
+      html += `<div class="tree-children">`;
+      elems.forEach(elem => {
+        const elemCode = elem.element_id.replace('element_', '');
+        const eActive = currentView === 'cards' && currentFilter && currentFilter.type === 'element' && currentFilter.id === elem.element_id;
+        html += `<div class="tree-child-row">`;
+        html += `<div class="tree-row${eActive ? ' active' : ''}" onclick="filterElement('${elem.element_id}')">`;
+        html += `<span class="tree-toggle"></span>`;
+        html += `<span class="tree-icon">📄</span>`;
+        html += `<span class="tree-label">${elemCode}_${escHtml(elem.element_name)}</span>`;
+        html += `</div></div>`;
+      });
+      html += `</div>`;
+    }
+    html += `</div>`;
+  });
+
+  // Divider before Page Links
+  html += `<div style="border-top:1px solid #e2e6ea;margin:24px 12px 8px"></div>`;
+
+  // ===== Page Links (expandable sub-menu) =====
+  const links = DB.links || [];
+  const hasLinks = links.length > 0;
+  const linksOpen = openCategories['__pageLinks__'];
+  html += `<div class="tree-node${linksOpen ? ' open' : ''}" data-catid="__pageLinks__">`;
+  html += `<div class="tree-row" onclick="toggleCatTree(event,'__pageLinks__')">`;
+  html += `<span class="tree-toggle${hasLinks ? ' has-children' : ''}" onclick="event.stopPropagation();toggleCatTree(event,'__pageLinks__')"></span>`;
+  html += `<span class="tree-icon">🔗</span>`;
+  html += `<span class="tree-label" style="font-weight:700">Page Links</span>`;
+  html += `</div>`;
+  if (hasLinks) {
+    html += `<div class="tree-children">`;
+    links.forEach(link => {
+      const url = link.url || '';
+      const href = url.startsWith('http') ? url : 'https://' + url;
+      html += `<div class="tree-child-row">`;
+      html += `<div class="tree-row" onclick="window.open('${escHtml(href)}','_blank')" title="${escHtml(url)}">`;
+      html += `<span class="tree-toggle"></span>`;
+      html += `<span class="tree-icon">🌐</span>`;
+      html += `<span class="tree-label">${escHtml(link.site_name)}</span>`;
+      html += `</div></div>`;
+    });
+    html += `</div>`;
+  }
+  html += `</div>`;
+
+  // Divider before Lab Management
+  html += `<div style="border-top:1px solid #e2e6ea;margin:8px 12px"></div>`;
+
+  // ===== Lab Management =====
+  const labOpen = openCategories['category_99'];
+  html += `<div class="tree-node${labOpen ? ' open' : ''}" data-catid="category_99">`;
+  html += `<div class="tree-row" onclick="onCatClick(event,'category_99',true)">`;
+  html += `<span class="tree-toggle has-children" onclick="event.stopPropagation();toggleCatTree(event,'category_99')"></span>`;
+  html += `<span class="tree-icon">⚙️</span>`;
+  html += `<span class="tree-label" style="font-weight:700">Lab Management</span>`;
+  html += `</div>`;
+  html += `<div class="tree-children">`;
+
+  // -- Category 관리 --
+  const catMgmtOpen = openCategories['__catMgmt__'];
+  html += `<div class="tree-child-row"><div class="tree-node${catMgmtOpen ? ' open' : ''}">`;
+  html += `<div class="tree-row" onclick="toggleCatTree(event,'__catMgmt__')">`;
+  html += `<span class="tree-toggle has-children" onclick="event.stopPropagation();toggleCatTree(event,'__catMgmt__')"></span>`;
+  html += `<span class="tree-icon">🏷️</span>`;
+  html += `<span class="tree-label" style="font-weight:600">Category 관리</span>`;
+  html += `</div><div class="tree-children">`;
+  html += `<div class="tree-child-row"><div class="tree-menu-item" onclick="openAddCategoryModal()"><span style="margin-right:4px">➕</span> Category 추가</div></div>`;
+  html += `<div class="tree-child-row"><div class="tree-menu-item" onclick="openEditCategoryModal()"><span style="margin-right:4px">✏️</span> Category 수정</div></div>`;
+  html += `<div class="tree-child-row"><div class="tree-menu-item" onclick="openDeleteCategoryModal()" style="color:#e53e3e"><span style="margin-right:4px">🗑️</span> Category 삭제</div></div>`;
+  html += `</div></div></div>`;
+
+  // -- Element 관리 --
+  const elemMgmtOpen = openCategories['__elemMgmt__'];
+  html += `<div class="tree-child-row"><div class="tree-node${elemMgmtOpen ? ' open' : ''}">`;
+  html += `<div class="tree-row" onclick="toggleCatTree(event,'__elemMgmt__')">`;
+  html += `<span class="tree-toggle has-children" onclick="event.stopPropagation();toggleCatTree(event,'__elemMgmt__')"></span>`;
+  html += `<span class="tree-icon">📑</span>`;
+  html += `<span class="tree-label" style="font-weight:600">Element 관리</span>`;
+  html += `</div><div class="tree-children">`;
+  html += `<div class="tree-child-row"><div class="tree-menu-item" onclick="openAddElementModal('')"><span style="margin-right:4px">➕</span> Element 추가</div></div>`;
+  html += `<div class="tree-child-row"><div class="tree-menu-item" onclick="openEditElementModal()"><span style="margin-right:4px">✏️</span> Element 수정</div></div>`;
+  html += `<div class="tree-child-row"><div class="tree-menu-item" onclick="openDeleteElementModal()" style="color:#e53e3e"><span style="margin-right:4px">🗑️</span> Element 삭제</div></div>`;
+  html += `</div></div></div>`;
+
+  // -- Links Management --
+  const linkMgmtOpen = openCategories['__linkMgmt__'];
+  html += `<div class="tree-child-row"><div class="tree-node${linkMgmtOpen ? ' open' : ''}">`;
+  html += `<div class="tree-row" onclick="toggleCatTree(event,'__linkMgmt__')">`;
+  html += `<span class="tree-toggle has-children" onclick="event.stopPropagation();toggleCatTree(event,'__linkMgmt__')"></span>`;
+  html += `<span class="tree-icon">🔗</span>`;
+  html += `<span class="tree-label" style="font-weight:600">Links Management</span>`;
+  html += `</div><div class="tree-children">`;
+  html += `<div class="tree-child-row"><div class="tree-menu-item" onclick="openAddLinkModal()"><span style="margin-right:4px">➕</span> Link 추가</div></div>`;
+  html += `<div class="tree-child-row"><div class="tree-menu-item" onclick="openEditLinkModal()"><span style="margin-right:4px">✏️</span> Link 수정</div></div>`;
+  html += `<div class="tree-child-row"><div class="tree-menu-item" onclick="openDeleteLinkModal()" style="color:#e53e3e"><span style="margin-right:4px">🗑️</span> Link 삭제</div></div>`;
+  html += `</div></div></div>`;
+
+  html += `</div></div>`; // tree-children, tree-node (Lab Management)
+
+  sb.innerHTML = html;
+}
+
+function toggleCatTree(event, catId) {
+  event.stopPropagation();
+  openCategories[catId] = !openCategories[catId];
+  buildSidebar();
+}
+function onCatClick(event, catId, hasChildren) {
+  if (catId === 'category_99' || catId === '__catMgmt__' || catId === '__linkMgmt__' || catId === '__elemMgmt__') {
+    openCategories[catId] = !openCategories[catId];
+    buildSidebar();
+    return;
+  }
+  if (hasChildren && !openCategories[catId]) openCategories[catId] = true;
+  filterCategory(catId); // guard is inside filterCategory
+}
+
+// ===== Edit guard =====
+function isEditingCard() {
+  // Check if any new card exists or any card is in modify mode
+  const hasNewCard = DB.srgData.some(d => String(d.srg_id).startsWith('NEW_'));
+  const hasModify = Object.keys(modifyModeCards).length > 0;
+  return hasNewCard || hasModify;
+}
+function guardedNavigate(action) {
+  if (isEditingCard()) {
+    showConfirmModal('편집 중', '작성 중인 내용이 있습니다. 이동하시겠습니까?\n변경 사항은 저장되지 않습니다.', '이동', () => {
+      // Discard new cards and modify modes
+      DB.srgData = DB.srgData.filter(d => !String(d.srg_id).startsWith('NEW_'));
+      modifyModeCards = {};
+      document.getElementById('btnNewCard').style.display = '';
+      action();
+    });
+  } else {
+    action();
+  }
+}
+
+// ===== Filters =====
+function filterAll() {
+  guardedNavigate(() => {
+    currentFilter = null; expandedCardId = null; modifyModeCards = {};
+    showCardsView();
+    buildSidebar();
+  });
+}
+function filterCategory(catId) {
+  guardedNavigate(() => {
+    currentFilter = { type: 'category', id: catId }; expandedCardId = null; modifyModeCards = {};
+    showCardsView();
+    buildSidebar();
+  });
+}
+function filterElement(elemId) {
+  guardedNavigate(() => {
+    currentFilter = { type: 'element', id: elemId }; expandedCardId = null; modifyModeCards = {};
+    showCardsView();
+    buildSidebar();
+  });
+}
+
+function getFilteredData() {
+  let data = DB.srgData;
+  if (!currentFilter) return data;
+  if (currentFilter.type === 'category') return data.filter(d => d.category_id === currentFilter.id);
+  if (currentFilter.type === 'element') return data.filter(d => d.element_id === currentFilter.id);
+  return data;
+}
+
+// ===== Breadcrumb =====
+function makeBreadcrumb(d) {
+  const parts = [];
+  if (d.category_id) {
+    const catCode = String(d.category_id).replace('category_', '');
+    parts.push(`${catCode}_${getCategoryName(d.category_id)}`);
+  }
+  if (d.element_id) {
+    const elemCode = String(d.element_id).replace('element_', '');
+    parts.push(`${elemCode}_${getElementName(d.element_id)}`);
+  }
+  if (d['cat-01']) parts.push(d['cat-01']);
+  if (d['cat-02']) parts.push(d['cat-02']);
+  if (d['cat-03']) parts.push(d['cat-03']);
+  if (d['cat-04']) parts.push(d['cat-04']);
+  return parts.map(p => `<span>${escHtml(p)}</span>`).join(' &gt;&gt; ');
+}
+
+function escHtml(s) { const d = document.createElement('div'); d.textContent = String(s || ''); return d.innerHTML; }
+
+function getCatDropValues(catKey, catId, elemId) {
+  return [...new Set(
+    DB.srgData
+      .filter(d => { if (elemId) return d.element_id === elemId; if (catId) return d.category_id === catId; return false; })
+      .map(d => d[catKey])
+      .filter(v => v && v.trim() !== '')
+  )].sort();
+}
+
+// ===== Render Cards =====
+function renderCards() {
+  const list = document.getElementById('cardList');
+  const filtered = getFilteredData();
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<p style="color:#a0aec0;padding:40px;text-align:center;font-size:15px">카드가 없습니다.</p>';
+    return;
+  }
+
+  let html = '';
+  filtered.forEach(d => {
+    const id = d.srg_id;
+    const isExpanded = expandedCardId === id;
+    const isNew = String(id).startsWith('NEW_');
+    const isModifyMode = isNew || modifyModeCards[id];
+
+    html += `<div class="card${isExpanded ? ' expanded' : ''}" id="card-${escHtml(id)}">`;
+
+    // Header
+    html += `<div class="card-header">`;
+    html += `<div class="card-left">`;
+    html += `<span class="card-id">${escHtml(isNew ? d._displayId || id : id)}</span>`;
+    const bc = makeBreadcrumb(d);
+    if (bc) html += `<span class="card-breadcrumb">${bc}</span>`;
+    if (d.apa) html += `<div class="card-apa">${escHtml(d.apa)}</div>`;
+    html += `</div>`;
+
+    if (isNew) {
+      html += `<button class="btn-cancel-new" onclick="cancelNewCard('${escHtml(id)}')">Cancel</button>`;
+    } else if (isModifyMode) {
+      html += `<button class="btn-cancel-new" onclick="cancelModify('${escHtml(id)}')">Cancel</button>`;
+    } else {
+      html += `<button class="btn-open" onclick="toggleCard('${escHtml(id)}')">${isExpanded ? 'Close' : 'Open'}</button>`;
+    }
+    html += `</div>`;
+
+    // Detail
+    html += `<div class="card-detail">`;
+    html += `<div class="detail-body">`;
+
+    const ro = !isModifyMode ? ' readonly' : '';
+    html += `<div class="detail-center">`;
+    html += `<div class="field-group"><textarea class="apa-short" data-field="apa" placeholder="APA"${ro}>${escHtml(d.apa)}</textarea></div>`;
+    html += `<div class="field-group"><textarea class="medium" data-field="context" placeholder="Context"${ro}>${escHtml(d.context)}</textarea></div>`;
+    html += `<div class="field-group"><textarea class="tall" data-field="text" placeholder="Text"${ro}>${escHtml(d.text)}</textarea></div>`;
+    html += `<div class="field-group"><textarea class="comment-tall" data-field="comment" placeholder="Comment"${ro}>${escHtml(d.comment)}</textarea></div>`;
+    html += `</div>`;
+
+    // Right panel
+    const locked = !isModifyMode;
+    html += `<div class="detail-right">`;
+    html += buildCatTree(d, locked);
+    html += `<div style="margin-top:12px"></div>`;
+    html += buildCatDropdowns(d, locked);
+
+    const btnLabel = isNew ? 'Save' : (isModifyMode ? 'Save' : 'Modify');
+    const btnAction = isNew
+      ? `confirmSave('${escHtml(id)}')`
+      : (isModifyMode ? `confirmSave('${escHtml(id)}')` : `modifyCard('${escHtml(id)}')`);
+    html += `<div class="detail-right-actions">`;
+    html += `<button class="btn-del" onclick="confirmDelete('${escHtml(id)}')"${isNew ? ' disabled style="opacity:.4;cursor:not-allowed;pointer-events:none"' : ''}>Del.</button>`;
+    html += `<button class="btn-save" id="btnSave-${escHtml(id)}" onclick="${btnAction}">${btnLabel}</button>`;
+    html += `<button onclick="confirmPrint('${escHtml(id)}')">Print</button>`;
+    html += `</div>`;
+
+    html += `</div>`; // detail-right
+    html += `</div>`; // detail-body
+    html += `</div>`; // card-detail
+    html += `</div>`; // card
+  });
+
+  list.innerHTML = html;
+  if (expandedCardId) {
+    const el = document.getElementById('card-' + expandedCardId);
+    if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+  }
+}
+
+// ===== Category tree inside detail (+ button adds element) =====
+function buildCatTree(d, locked) {
+  let html = `<div class="cat-tree${locked ? ' locked' : ''}">`;
+  DB.categories.forEach(cat => {
+    if (cat.category_id === 'category_99') return;
+    const catCode = cat.category_id.replace('category_', '');
+    const isSelected = d.category_id === cat.category_id;
+    html += `<div class="ct-cat" style="${isSelected ? 'color:#4a7dff' : ''}">`;
+    html += `<span onclick="setCatElem('${d.srg_id}','${cat.category_id}','')">${catCode}_${escHtml(cat.category_name)}</span>`;
+    if (!locked) {
+      html += `<span class="plus-btn" onclick="event.stopPropagation();openAddElementForCategory('${d.srg_id}','${cat.category_id}')" title="새 Element 추가">+</span>`;
+    }
+    html += `</div>`;
+
+    const elems = getElementsForCategory(cat.category_id);
+    elems.forEach(elem => {
+      const elemCode = elem.element_id.replace('element_', '');
+      const eSelected = d.element_id === elem.element_id;
+      html += `<div class="ct-elem${eSelected ? ' selected' : ''}"`;
+      if (!locked) html += ` onclick="setCatElem('${d.srg_id}','${cat.category_id}','${elem.element_id}')"`;
+      html += `>${elemCode}_${escHtml(elem.element_name)}</div>`;
+    });
+  });
+  html += '</div>';
+  return html;
+}
+
+function buildCatDropdowns(d, locked) {
+  let html = '';
+  for (let i = 1; i <= 4; i++) {
+    const key = 'cat-0' + i;
+    const val = d[key] || '';
+    const options = getCatDropValues(key, d.category_id, d.element_id);
+    html += `<div class="cat-drop-row">`;
+    html += `<select data-catdrop="${key}"${locked ? ' disabled' : ''}>`;
+    html += `<option value="">Cat-0${i}</option>`;
+    options.forEach(opt => { html += `<option value="${escHtml(opt)}"${val === opt ? ' selected' : ''}>${escHtml(opt)}</option>`; });
+    if (val && !options.includes(val)) html += `<option value="${escHtml(val)}" selected>${escHtml(val)}</option>`;
+    html += `</select>`;
+    html += `<span class="plus-btn${locked ? ' locked' : ''}" title="새 항목 추가" onclick="openAddCatItemModal('${d.srg_id}','${key}')">+</span>`;
+    html += `</div>`;
+  }
+  return html;
+}
+
+function setCatElem(srgId, catId, elemId) {
+  const d = DB.srgData.find(x => x.srg_id === srgId);
+  if (!d) return;
+  d.category_id = catId;
+  d.element_id = elemId;
+  renderCards();
+}
+
+function toggleCard(id) {
+  if (expandedCardId === id) { expandedCardId = null; delete modifyModeCards[id]; }
+  else { expandedCardId = id; }
+  renderCards();
+}
+function cancelNewCard(id) {
+  DB.srgData = DB.srgData.filter(d => d.srg_id !== id);
+  expandedCardId = null;
+  document.getElementById('btnNewCard').style.display = '';
+  renderCards();
+}
+
+function gatherCardData(srgId) {
+  const cardEl = document.getElementById('card-' + srgId);
+  if (!cardEl) return null;
+  const get = (sel) => { const el = cardEl.querySelector(sel); return el ? el.value : ''; };
+  const d = DB.srgData.find(x => x.srg_id === srgId);
+  return {
+    srg_id: srgId, apa: get('[data-field="apa"]'), context: get('[data-field="context"]'),
+    text: get('[data-field="text"]'), comment: get('[data-field="comment"]'),
+    category_id: d ? d.category_id : '', element_id: d ? d.element_id : '',
+    'cat-01': get('[data-catdrop="cat-01"]'), 'cat-02': get('[data-catdrop="cat-02"]'),
+    'cat-03': get('[data-catdrop="cat-03"]'), 'cat-04': get('[data-catdrop="cat-04"]')
+  };
+}
+
+function validateCard(srgId) {
+  const row = gatherCardData(srgId);
+  if (!row) return null;
+  const missing = [];
+  if (!row.apa.trim()) missing.push('APA');
+  if (!row.context.trim()) missing.push('Context');
+  if (!row.text.trim()) missing.push('Text');
+  if (!row.comment.trim()) missing.push('Comment');
+  if (missing.length > 0) { showAlertModal('입력 필요', missing.join(', ') + ' 항목을 입력해 주세요.'); return null; }
+  return row;
+}
+
+function confirmSave(srgId) {
+  const row = validateCard(srgId);
+  if (!row) return;
+  showConfirmModal('저장 확인', '이 카드를 저장하시겠습니까?', '저장', () => doSaveCard(srgId));
+}
+async function doSaveCard(srgId) {
+  const row = gatherCardData(srgId);
+  if (!row) return;
+  showLoading();
+  try {
+    const isNew = srgId.startsWith('NEW_');
+    const action = isNew ? 'create' : 'update';
+    if (isNew) {
+      const d = DB.srgData.find(x => x.srg_id === srgId);
+      row.srg_id = d && d._displayId ? d._displayId : generateNextSrgId();
+    }
+    const res = await gasPost({ action, row });
+    if (res.ok) {
+      toast('저장 완료!');
+      expandedCardId = res.srg_id || row.srg_id;
+      delete modifyModeCards[srgId];
+      await loadAll();
+    } else { toast('저장 실패: ' + (res.error || ''), 3000); }
+  } catch (e) { toast('오류: ' + e.message, 3000); }
+  hideLoading();
+}
+
+function confirmDelete(srgId) {
+  showConfirmModal('삭제 확인', '이 카드를 삭제하시겠습니까?\nsrg_ID: ' + srgId, '삭제', () => doDeleteCard(srgId), 'btn-danger');
+}
+async function doDeleteCard(srgId) {
+  if (srgId.startsWith('NEW_')) {
+    DB.srgData = DB.srgData.filter(d => d.srg_id !== srgId);
+    expandedCardId = null; renderCards(); return;
+  }
+  showLoading();
+  try {
+    const res = await gasPost({ action: 'delete', srg_id: srgId });
+    if (res.ok) { toast('삭제 완료!'); expandedCardId = null; await loadAll(); }
+    else { toast('삭제 실패: ' + (res.error || ''), 3000); }
+  } catch (e) { toast('오류: ' + e.message, 3000); }
+  hideLoading();
+}
+
+function modifyCard(srgId) { modifyModeCards[srgId] = true; renderCards(); }
+function cancelModify(srgId) { delete modifyModeCards[srgId]; renderCards(); }
+
+function confirmPrint(srgId) {
+  showConfirmModal('인쇄 확인', '이 카드를 인쇄하시겠습니까?', '인쇄', () => doPrintCard(srgId));
+}
+function doPrintCard(srgId) {
+  expandedCardId = srgId; renderCards();
+  setTimeout(() => window.print(), 300);
+}
+
+let newCardCounter = 0;
+let isInitialLoad = true;
+function openNewCard() {
+  newCardCounter++;
+  const tempId = 'NEW_' + newCardCounter;
+  const displayId = generateNextSrgId();
+  DB.srgData.unshift({
+    srg_id: tempId, _displayId: displayId,
+    apa: '', context: '', text: '', comment: '',
+    category_id: currentFilter?.type === 'category' ? currentFilter.id : '',
+    element_id:  currentFilter?.type === 'element' ? currentFilter.id : '',
+    'cat-01': '', 'cat-02': '', 'cat-03': '', 'cat-04': ''
+  });
+  expandedCardId = tempId;
+  document.getElementById('btnNewCard').style.display = 'none';
+  renderCards();
+}
+
+// ===== Auto-load =====
+loadAll();
+</script>
+</body>
+</html>
