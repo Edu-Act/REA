@@ -70,11 +70,14 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#f0f0f0;color:
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbwqh02HRq4fG7XsAYQtHNBqsTxHeEkfDSJ0teBgv8Qqhg3gM8qRrO9Wfdvz4btMBQuygQ/exec';
 
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+const mainPage = isMobile ? 'realab_m.html' : 'realab.html';
+
 // Already logged in → skip
 (function() {
   try {
     const user = sessionStorage.getItem('realab_user');
-    if (user) window.location.replace('realab.html');
+    if (user) window.location.replace(mainPage);
   } catch(e) {}
 })();
 
@@ -167,7 +170,7 @@ async function doLogin() {
 
       // Fade out and redirect
       document.getElementById('loginOverlay').classList.add('login-fade-out');
-      setTimeout(() => { window.location.href = 'realab.html'; }, 400);
+      setTimeout(() => { window.location.href = mainPage; }, 400);
     } else {
       errEl.textContent = '데이터 로드 실패: ' + (data.error || '');
       btn.style.display = '';
