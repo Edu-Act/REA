@@ -71,7 +71,8 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 /* detail center */
 .detail-center{flex:1;padding:18px 22px;display:flex;flex-direction:column;gap:14px;overflow-y:auto}
 .field-group label{display:block;font-weight:700;font-size:12px;color:#718096;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
-.field-group input,.field-group textarea{width:100%;border:1px solid #d2d8e0;border-radius:8px;padding:10px 14px;font-size:15px;font-family:inherit;resize:vertical;background:#fff;line-height:1.6;transition:border-color .15s,box-shadow .15s}
+.field-group input,.field-group textarea{width:100%;border:1px solid #d2d8e0;border-radius:8px;padding:10px 14px;font-size:15px;font-family:inherit;resize:vertical;background:#fff;line-height:1.6;transition:border-color .15s,box-shadow .15s;scrollbar-width:none;-ms-overflow-style:none}
+.field-group textarea::-webkit-scrollbar{display:none}
 .field-group input:focus,.field-group textarea:focus{outline:none;border-color:#4a7dff;box-shadow:0 0 0 3px rgba(74,125,255,.12)}
 .field-group input:read-only,.field-group textarea:read-only{background:#f1f3f5;color:#6c757d;border-color:#e2e6ea}
 .field-group textarea.tall{min-height:220px}
@@ -935,7 +936,7 @@ function buildSidebar() {
   });
 
   // Divider before Page Links
-  html += `<div style="border-top:1px solid #e2e6ea;margin:24px 12px 8px"></div>`;
+  html += `<div style="border-top:1px solid #e2e6ea;margin:40px 12px 8px"></div>`;
 
   // ===== Page Links (expandable sub-menu) =====
   const links = DB.links || [];
