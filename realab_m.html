@@ -221,7 +221,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 </div>
 
 <!-- ===== SIDEBAR BACKDROP ===== -->
-<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()" ontouchend="closeSidebar()"></div>
 
 <!-- ===== SIDEBAR DRAWER ===== -->
 <div class="sidebar" id="sidebarDrawer">
@@ -265,20 +265,160 @@ let currentView = 'cards';
 
 // ===== Logout =====
 function doLogout() {
+  closeSidebar();
   showConfirmModal('로그아웃', '로그아웃 하시겠습니까?', '로그아웃', () => {
-    sessionStorage.removeItem('realab_user');
-    window.location.href = 'index.html';
+    const LOGOUT_STEPS = [
+      '사용자 인증 정보 해제',
+      'Preload 캐시 데이터 삭제',
+      '카테고리 데이터 정리',
+      'Element 데이터 정리',
+      'Serge Card 데이터 정리',
+      '링크 데이터 정리',
+      '세션 스토리지 초기화',
+      '3초 후 로그인 페이지로 이동'
+    ];
+    const TOTAL = LOGOUT_STEPS.length;
+
+    let stepsHtml = LOGOUT_STEPS.map((s, i) =>
+      `<div class="lo-step" id="lo${i+1}">
+        <span class="lo-dot"></span>
+        <span style="line-height:1.5">${s}</span>
+        ${i < TOTAL - 1 ? '<span style="position:absolute;left:7px;top:18px;width:1.5px;height:100%;background:#e5e7eb"></span>' : ''}
+      </div>`
+    ).join('');
+
+    const html = `
+      <div class="modal-overlay" style="pointer-events:none">
+        <div class="modal-box" style="text-align:left;width:340px">
+          <h3 style="cursor:default;text-align:center;font-size:18px;margin-bottom:18px">로그아웃 하는 중...</h3>
+          <div id="loSteps">${stepsHtml}</div>
+        </div>
+      </div>`;
+    document.getElementById('modalContainer').innerHTML = html;
+
+    // CSS for step states (injected once)
+    if (!document.getElementById('logoutStepStyles')) {
+      const style = document.createElement('style');
+      style.id = 'logoutStepStyles';
+      style.textContent = `
+        .lo-step{display:flex;align-items:center;font-size:12.5px;color:#cbd5e0;position:relative;padding-left:24px;min-height:26px;transition:color .3s}
+        .lo-dot{position:absolute;left:1px;top:5px;width:14px;height:14px;border-radius:50%;border:2px solid #e2e8f0;background:#fff;display:flex;align-items:center;justify-content:center;font-size:8px;transition:all .3s;z-index:1}
+        .lo-step.active{color:#4a7dff !important;font-weight:600}
+        .lo-step.active .lo-dot{border-color:#4a7dff !important;background:#4a7dff !important;box-shadow:0 0 0 3px rgba(74,125,255,.15)}
+        .lo-step.done{color:#9ca3af}
+        .lo-step.done .lo-dot{border-color:#9ca3af;background:#9ca3af;box-shadow:none}
+        .lo-step.countdown{color:#4a7dff !important;font-weight:700}
+        .lo-step.countdown .lo-dot{border-color:#4a7dff !important;background:#4a7dff !important;box-shadow:0 0 0 3px rgba(74,125,255,.15)}
+      `;
+      document.head.appendChild(style);
+    }
+
+    function setLoStep(n) {
+      for (let i = 1; i <= TOTAL; i++) {
+        const el = document.getElementById('lo' + i);
+        if (!el) continue;
+        const dot = el.querySelector('.lo-dot');
+        el.classList.remove('active', 'done', 'countdown');
+        dot.textContent = '';
+        if (i < n) {
+          el.classList.add('done');
+          dot.textContent = '✓';
+          dot.style.color = '#fff'; dot.style.fontSize = '8px'; dot.style.fontWeight = '700';
+        } else if (i === n) {
+          el.classList.add('active');
+        }
+      }
+    }
+
+    async function runLogout() {
+      const delay = ms => new Promise(r => setTimeout(r, ms));
+
+      setLoStep(1);
+      sessionStorage.removeItem('realab_user');
+      currentUser = null;
+      await delay(400);
+
+      setLoStep(2);
+      sessionStorage.removeItem('realab_preload');
+      await delay(350);
+
+      setLoStep(3);
+      DB.categories = [];
+      await delay(300);
+
+      setLoStep(4);
+      DB.elements = [];
+      await delay(300);
+
+      setLoStep(5);
+      DB.srgData = [];
+      await delay(350);
+
+      setLoStep(6);
+      if (DB.links) DB.links = [];
+      await delay(300);
+
+      setLoStep(7);
+      try { sessionStorage.clear(); } catch(e) {}
+      await delay(350);
+
+      // Step 8: 3초 카운트다운
+      for (let i = 1; i <= 7; i++) {
+        const el = document.getElementById('lo' + i);
+        const dot = el ? el.querySelector('.lo-dot') : null;
+        if (el) { el.classList.remove('active'); el.classList.add('done'); }
+        if (dot) { dot.textContent = '✓'; dot.style.color = '#fff'; dot.style.fontSize = '8px'; dot.style.fontWeight = '700'; }
+      }
+
+      const step8 = document.getElementById('lo' + TOTAL);
+      const step8Label = step8 ? step8.querySelector('span:nth-child(2)') : null;
+      const step8Dot = step8 ? step8.querySelector('.lo-dot') : null;
+      step8.classList.remove('active');
+      step8.classList.add('countdown');
+      if (step8Dot) { step8Dot.textContent = '3'; step8Dot.style.color = '#fff'; step8Dot.style.fontSize = '9px'; step8Dot.style.fontWeight = '700'; }
+      if (step8Label) step8Label.textContent = '3초 후 로그인 페이지로 이동';
+
+      await delay(1000);
+      if (step8Dot) step8Dot.textContent = '2';
+      if (step8Label) step8Label.textContent = '2초 후 로그인 페이지로 이동';
+
+      await delay(1000);
+      if (step8Dot) step8Dot.textContent = '1';
+      if (step8Label) step8Label.textContent = '1초 후 로그인 페이지로 이동';
+
+      await delay(1000);
+
+      step8.classList.remove('countdown');
+      step8.classList.add('done');
+      if (step8Dot) { step8Dot.textContent = '✓'; step8Dot.style.fontSize = '8px'; }
+      if (step8Label) step8Label.textContent = '로그인 페이지로 이동';
+
+      const h3 = document.querySelector('#modalContainer .modal-box h3');
+      if (h3) { h3.textContent = '로그아웃 완료'; h3.style.color = '#9ca3af'; }
+
+      await delay(300);
+      window.location.href = 'index.html';
+    }
+
+    runLogout();
   });
 }
 
 // ===== Sidebar toggle =====
+let sidebarBusy = false;
 function openSidebar() {
+  if (sidebarBusy) return;
+  sidebarBusy = true;
   document.getElementById('sidebarDrawer').classList.add('open');
   document.getElementById('sidebarBackdrop').classList.add('open');
+  setTimeout(() => { sidebarBusy = false; }, 350);
 }
 function closeSidebar() {
+  if (sidebarBusy) return;
+  sidebarBusy = true;
   document.getElementById('sidebarDrawer').classList.remove('open');
   document.getElementById('sidebarBackdrop').classList.remove('open');
+  setTimeout(() => { sidebarBusy = false; }, 350);
 }
 
 // ===== Toast =====

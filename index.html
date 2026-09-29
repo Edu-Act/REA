@@ -9,59 +9,134 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#f0f0f0;color:#333;font-size:14px}
 
-#loginOverlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity .4s}
-#loginBox{background:#fff;border-radius:10px;padding:40px 36px 3px;width:340px;box-shadow:0 8px 30px rgba(0,0,0,.25);transition:transform .4s,opacity .4s;display:flex;flex-direction:column}
-#loginBox.loading-active{justify-content:flex-start;align-items:stretch;padding-top:50px}
+#loginOverlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.45);
+  display:flex;align-items:flex-start;justify-content:center;
+  padding-top:15vh;
+  z-index:9999;transition:opacity .4s;
+}
+#loginBox{
+  background:#fff;border-radius:10px;padding:40px 36px 30px;width:360px;
+  box-shadow:0 8px 30px rgba(0,0,0,.25);
+  transition:transform .4s,opacity .4s;
+  display:flex;flex-direction:column;
+}
 #loginBox h2{text-align:center;margin-bottom:24px;font-size:20px;color:#444}
 #loginBox input{width:100%;padding:10px 12px;margin-bottom:14px;border:1px solid #ccc;border-radius:6px;font-size:14px}
 #loginBox #loginPw{margin-bottom:38px}
-#loginBox button{width:100%;padding:11px;background:#4a7dff;color:#fff;border:none;border-radius:6px;font-size:15px;cursor:pointer;font-weight:600;transition:background .15s}
-#loginBox button:hover{background:#3a65d4}
-#loginBox button:disabled{background:#a0b4e0;cursor:not-allowed}
-#loginBtn.spinning{display:flex;align-items:center;justify-content:center;gap:10px}
-#loginBtn.spinning .btn-spinner{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:btnSpin .7s linear infinite;flex-shrink:0}
-@keyframes btnSpin{to{transform:rotate(360deg)}}
+
+/* ===== Login Button / Progress Bar ===== */
+#loginBtn{
+  width:100%;padding:11px;color:#fff;border:none;border-radius:6px;
+  font-size:15px;cursor:pointer;font-weight:600;
+  position:relative;overflow:hidden;
+  background:#4a7dff;
+  transition:background .15s;
+}
+#loginBtn:hover:not(:disabled):not(.progress){background:#3a65d4}
+#loginBtn:disabled:not(.progress){cursor:not-allowed}
+#loginBtn.progress{
+  background:#e2e8f0;color:#fff;cursor:pointer;
+}
+#loginBtn .btn-fill{
+  position:absolute;left:0;top:0;bottom:0;width:0%;
+  background:linear-gradient(90deg,#4a7dff,#5a8aff);
+  transition:width .4s ease;border-radius:6px;
+}
+#loginBtn .btn-fill.complete{background:#38a169}
+#loginBtn .btn-fill.error{background:#e53e3e}
+#loginBtn .btn-fill.paused{
+  background:repeating-linear-gradient(
+    -45deg,
+    #4a7dff, #4a7dff 8px,
+    #5a8aff 8px, #5a8aff 16px
+  );
+}
+#loginBtn .btn-text{position:relative;z-index:1;user-select:none}
+
 #loginError{color:#d32;font-size:13px;text-align:center;margin-top:8px;min-height:18px}
 
-/* Loading steps (below login box) */
-#loginLoadingArea{display:none;margin-top:10px;padding-top:0}
-.loading-active h2{margin-bottom:16px!important}
-.ll-bar-track{width:100%;height:5px;background:#e2e8f0;border-radius:5px;overflow:hidden;margin-bottom:14px;position:relative}
-.ll-bar-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#667eea 0%,#764ba2 25%,#4a7dff 50%,#38b2ac 75%,#667eea 100%);background-size:300% 100%;animation:loadSlide 1.8s ease-in-out infinite;width:0%;transition:width .5s ease}
-.ll-bar-track::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.35) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 1.2s ease-in-out infinite}
-@keyframes loadSlide{0%{background-position:100% 0}50%{background-position:0% 0}100%{background-position:-100% 0}}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.ll-steps{display:flex;flex-direction:column;gap:10px}
-.ll-step{font-size:13.5px;color:#a0aec0;display:flex;align-items:center;gap:8px;transition:color .3s}
-.ll-step.active{color:#4a7dff;font-weight:600}
-.ll-step.done{color:#38a169}
-.ll-step .s-icon{width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:11px}
-.ll-step.active .s-icon{animation:pulse .8s ease infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+/* ===== Process Steps — smooth reveal ===== */
+#processWrap{
+  max-height:0;overflow:hidden;
+  transition:max-height .5s ease;
+}
+#processArea{
+  padding-top:14px;margin-top:18px;
+  border-top:1px solid #e8ecf1;
+}
 
+.proc-steps{display:flex;flex-direction:column;gap:0}
+.proc-step{
+  display:flex;align-items:center;
+  font-size:12.5px;color:#cbd5e0;
+  position:relative;padding-left:24px;min-height:26px;
+  transition:color .3s;
+}
+.proc-step::before{
+  content:'';position:absolute;left:7px;top:18px;
+  width:1.5px;height:calc(100%);background:#e8ecf1;
+}
+.proc-step:last-child::before{display:none}
+.proc-step .step-dot{
+  position:absolute;left:1px;top:5px;
+  width:14px;height:14px;border-radius:50%;
+  border:2px solid #e2e8f0;background:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:8px;transition:all .3s;z-index:1;
+}
+.proc-step.active{color:#4a7dff;font-weight:600}
+.proc-step.active .step-dot{
+  border-color:#4a7dff;background:#4a7dff;
+  box-shadow:0 0 0 3px rgba(74,125,255,.15);
+}
+.proc-step.active .step-dot::after{
+  content:'';width:4px;height:4px;border-radius:50%;background:#fff;
+  animation:dotPulse .8s ease infinite;
+}
+@keyframes dotPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.proc-step.done{color:#38a169}
+.proc-step.done .step-dot{border-color:#38a169;background:#38a169;box-shadow:none}
+.proc-step.done .step-dot::after{content:'✓';color:#fff;font-size:8px;font-weight:700;animation:none}
+.proc-step.error{color:#e53e3e}
+.proc-step.error .step-dot{border-color:#e53e3e;background:#e53e3e;box-shadow:none}
+.proc-step.error .step-dot::after{content:'✕';color:#fff;font-size:8px;font-weight:700;animation:none}
+.proc-step.paused{color:#a0aec0;font-weight:600}
+.proc-step.paused .step-dot{
+  border-color:#a0aec0;background:#a0aec0;box-shadow:none;
+}
+.proc-step.paused .step-dot::after{
+  content:'❚❚';color:#fff;font-size:6px;font-weight:700;animation:none;letter-spacing:-1px;
+}
+.step-label{line-height:1.5}
+
+/* Fade out */
 .login-fade-out #loginBox{transform:translateY(-20px);opacity:0}
 .login-fade-out{opacity:0}
 </style>
 </head>
 <body>
 
-<!-- ===== LOGIN ===== -->
 <div id="loginOverlay">
   <div id="loginBox">
-    <h2>REA Lab Lo<a href="https://www.google.com/" target="_blank">g</a>in</h2>
+    <h2>REA Lab. Lo<a href="https://www.google.com/" target="_blank">g</a>in</h2>
     <input type="email" id="loginEmail" placeholder="E-mail" autocomplete="email">
     <input type="password" id="loginPw" placeholder="Password" autocomplete="current-password">
-    <button id="loginBtn" onclick="doLogin()">Login</button>
+    <button id="loginBtn" onclick="handleBtnClick()"><span class="btn-text">Login</span></button>
     <div id="loginError"></div>
 
-    <!-- Loading steps area (shown after login success) -->
-    <div id="loginLoadingArea">
-      <div class="ll-bar-track"><div class="ll-bar-fill"></div></div>
-      <div class="ll-steps">
-        <div class="ll-step" id="ls1"><span class="s-icon">○</span> 서버 연결 중</div>
-        <div class="ll-step" id="ls2"><span class="s-icon">○</span> 카테고리 불러오는 중</div>
-        <div class="ll-step" id="ls3"><span class="s-icon">○</span> 카드 데이터 로딩 중</div>
-        <div class="ll-step" id="ls4"><span class="s-icon">○</span> 화면 준비 완료</div>
+    <div id="processWrap">
+      <div id="processArea">
+        <div class="proc-steps">
+          <div class="proc-step" id="ps1"><span class="step-dot"></span><span class="step-label">로그인 정보 유효성 검증</span></div>
+          <div class="proc-step" id="ps2"><span class="step-dot"></span><span class="step-label">로그인 정보 서버 인증 요청</span></div>
+          <div class="proc-step" id="ps3"><span class="step-dot"></span><span class="step-label">로그인 정보 서버 응답 수신</span></div>
+          <div class="proc-step" id="ps4"><span class="step-dot"></span><span class="step-label">전체 데이터 API 호출</span></div>
+          <div class="proc-step" id="ps5"><span class="step-dot"></span><span class="step-label">자료 목록(Category) 수신 및 처리</span></div>
+          <div class="proc-step" id="ps6"><span class="step-dot"></span><span class="step-label">Serge Card 자료 수신 및 처리</span></div>
+          <div class="proc-step" id="ps7"><span class="step-dot"></span><span class="step-label">Preload Data 세션에 저장</span></div>
+          <div class="proc-step" id="ps8"><span class="step-dot"></span><span class="step-label">메인 페이지 화면 준비 완료</span></div>
+        </div>
       </div>
     </div>
   </div>
@@ -69,9 +144,15 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#f0f0f0;color:
 
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbwqh02HRq4fG7XsAYQtHNBqsTxHeEkfDSJ0teBgv8Qqhg3gM8qRrO9Wfdvz4btMBQuygQ/exec';
-
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
 const mainPage = isMobile ? 'realab_m.html' : 'realab.html';
+const TOTAL_STEPS = 8;
+const FETCH_TIMEOUT = 20000; // 20초 타임아웃
+
+let isRunning = false;   // 로그인 진행 중 여부
+let isPaused  = false;   // 일시정지 상태
+let pauseResolve = null; // 일시정지 해제 콜백
+let currentStepNum = 0;  // 현재 진행 단계 번호
 
 // Already logged in → skip
 (function() {
@@ -81,120 +162,259 @@ const mainPage = isMobile ? 'realab_m.html' : 'realab.html';
   } catch(e) {}
 })();
 
-function setStep(n) {
-  const barFill = document.querySelector('.ll-bar-fill');
-  if (barFill) barFill.style.width = (n * 25) + '%';
-  for (let i = 1; i <= 4; i++) {
-    const el = document.getElementById('ls' + i);
-    if (i < n) {
-      el.className = 'll-step done';
-      el.querySelector('.s-icon').textContent = '✓';
-    } else if (i === n) {
-      el.className = 'll-step active';
-      el.querySelector('.s-icon').textContent = '●';
-    } else {
-      el.className = 'll-step';
-      el.querySelector('.s-icon').textContent = '○';
+/* ── 버튼 클릭 핸들러 ── */
+function handleBtnClick() {
+  if (!isRunning) {
+    doLogin();
+  } else {
+    togglePause();
+  }
+}
+
+/* ── 일시정지 토글 ── */
+function togglePause() {
+  isPaused = !isPaused;
+  const btn = document.getElementById('loginBtn');
+  const fill = btn.querySelector('.btn-fill');
+  const btnText = btn.querySelector('.btn-text');
+  const currentStep = document.querySelector('.proc-step.active, .proc-step.paused');
+
+  if (isPaused) {
+    // 일시정지 상태로 전환
+    if (fill) fill.classList.add('paused');
+    if (btnText) btnText.textContent = '⏸  일시정지 — 클릭하면 재개';
+    if (currentStep) {
+      currentStep.classList.remove('active');
+      currentStep.classList.add('paused');
+    }
+  } else {
+    // 재개 — 현재 단계 텍스트 복원
+    if (fill) fill.classList.remove('paused');
+    if (currentStep) {
+      currentStep.classList.remove('paused');
+      currentStep.classList.add('active');
+    }
+    const activeEl = document.getElementById('ps' + currentStepNum);
+    const label = activeEl ? activeEl.querySelector('.step-label').textContent : '';
+    if (btnText) btnText.textContent = label + '...';
+    // 대기 중인 Promise 해제
+    if (pauseResolve) {
+      pauseResolve();
+      pauseResolve = null;
     }
   }
 }
 
+/* ── 일시정지 체크포인트 ── */
+function checkPause() {
+  if (!isPaused) return Promise.resolve();
+  return new Promise(resolve => { pauseResolve = resolve; });
+}
+
+/* ── 딜레이 (일시정지 인식) ── */
+async function wait(ms) {
+  await new Promise(r => setTimeout(r, ms));
+  await checkPause();
+}
+
+/* ── 상단 위치 고정 ── */
+function lockTop() {
+  // 이미 flex-start + padding-top으로 상단 고정됨
+}
+
+/* ── 프로세스 영역 부드러운 펼침 ── */
+function revealProcessArea() {
+  const wrap = document.getElementById('processWrap');
+  wrap.style.maxHeight = '400px';
+}
+
+/* ── 버튼 진행바 ── */
+function setBtnProgress(pct, text, state) {
+  const btn = document.getElementById('loginBtn');
+  let fill = btn.querySelector('.btn-fill');
+  if (!fill) {
+    fill = document.createElement('div');
+    fill.className = 'btn-fill';
+    btn.insertBefore(fill, btn.firstChild);
+    btn.classList.add('progress');
+  }
+  fill.style.width = pct + '%';
+  fill.classList.remove('complete', 'error', 'paused');
+  if (state === 'complete') fill.classList.add('complete');
+  if (state === 'error') fill.classList.add('error');
+  const btnText = btn.querySelector('.btn-text');
+  if (btnText && text) btnText.textContent = text;
+}
+
+/* ── 단계 업데이트 ── */
+function setProcessStep(n, isError) {
+  currentStepNum = n;
+  const pct = Math.min((n / TOTAL_STEPS) * 100, 100);
+  const activeEl = document.getElementById('ps' + n);
+  const label = activeEl ? activeEl.querySelector('.step-label').textContent : '';
+
+  if (isError) {
+    setBtnProgress(pct, '오류 발생', 'error');
+  } else if (n > TOTAL_STEPS) {
+    setBtnProgress(100, '모든 준비 완료!', 'complete');
+  } else {
+    setBtnProgress(pct, label + '...');
+  }
+
+  for (let i = 1; i <= TOTAL_STEPS; i++) {
+    const el = document.getElementById('ps' + i);
+    if (!el) continue;
+    el.classList.remove('active', 'done', 'error', 'paused');
+    if (i < n)       el.classList.add('done');
+    else if (i === n) el.classList.add(isError ? 'error' : 'active');
+  }
+}
+
+function markAllDone() {
+  for (let i = 1; i <= TOTAL_STEPS; i++) {
+    const el = document.getElementById('ps' + i);
+    if (el) { el.classList.remove('active', 'paused'); el.classList.add('done'); }
+  }
+}
+
+/* ── 타임아웃이 있는 fetch ── */
 async function gasFetch(url, retries) {
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      const r = await fetch(url);
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
+      const r = await fetch(url, { signal: controller.signal });
+      clearTimeout(timer);
       const text = await r.text();
       try { return JSON.parse(text); }
       catch(_) { throw new Error('서버 응답 파싱 오류'); }
     } catch(e) {
+      if (e.name === 'AbortError') {
+        if (attempt < retries) { await new Promise(r => setTimeout(r, 800)); continue; }
+        throw new Error('서버 응답 시간 초과 (20초)');
+      }
       if (attempt < retries) { await new Promise(r => setTimeout(r, 800)); continue; }
       throw e;
     }
   }
 }
 
+/* ── 메인 로그인 플로우 ── */
 async function doLogin() {
   const email = document.getElementById('loginEmail').value.trim();
   const pw    = document.getElementById('loginPw').value.trim();
   const errEl = document.getElementById('loginError');
   const btn   = document.getElementById('loginBtn');
 
-  if (!email || !pw) { errEl.textContent = '이메일과 비밀번호를 입력하세요.'; return; }
   errEl.textContent = '';
-  btn.disabled = true;
-  btn.classList.add('spinning');
-  btn.innerHTML = '<span class="btn-spinner"></span>';
+  isRunning = true;
+
+  // 상단 위치 고정 → 아래로만 확장
+  lockTop();
+  revealProcessArea();
+
+  // === Step 1: 로그인 정보 유효성 검증 ===
+  setProcessStep(1);
+  await wait(300);
+
+  if (!email || !pw) {
+    setProcessStep(1, true);
+    errEl.textContent = '이메일과 비밀번호를 입력하세요.';
+    isRunning = false;
+    return;
+  }
+
+  // === Step 2: 로그인 정보 서버 인증 요청 ===
+  setProcessStep(2);
 
   try {
-    // === Step 1: Login ===
+    await wait(150);
+    await checkPause();
     const loginUrl = GAS_URL + '?' + new URLSearchParams({ action: 'login', email, password: pw }).toString();
     const res = await gasFetch(loginUrl, 1);
 
+    await checkPause();
+
+    // === Step 3: 로그인 정보 서버 응답 수신 ===
+    setProcessStep(3);
+    await wait(350);
+
     if (!res.ok) {
+      setProcessStep(3, true);
       errEl.textContent = res.error || '로그인 실패';
-      btn.disabled = false;
-      btn.classList.remove('spinning');
-      btn.textContent = 'Login';
+      resetBtn(btn); isRunning = false;
       return;
     }
 
-    // Login success — save user, show loading steps
     sessionStorage.setItem('realab_user', JSON.stringify(res.user));
-    const box = document.getElementById('loginBox');
-    // Lock current size before hiding inputs
-    const boxRect = box.getBoundingClientRect();
-    box.style.minHeight = boxRect.height + 'px';
-    box.style.width = boxRect.width + 'px';
-    btn.style.display = 'none';
-    document.getElementById('loginEmail').style.display = 'none';
-    document.getElementById('loginPw').style.display = 'none';
-    document.getElementById('loginError').style.display = 'none';
-    box.classList.add('loading-active');
-    document.querySelector('#loginBox h2').textContent = 'REA LAB. Preparing';
-    document.getElementById('loginLoadingArea').style.display = 'block';
+    await checkPause();
 
-    // === Step 2~3: Fetch all data ===
-    setStep(1);
-    await new Promise(r => setTimeout(r, 150));
-    setStep(2);
+    // === Step 4: 전체 데이터 API 호출 ===
+    setProcessStep(4);
+    await wait(200);
+    await checkPause();
     const dataUrl = GAS_URL + '?' + new URLSearchParams({ action: 'getAll' }).toString();
     const data = await gasFetch(dataUrl, 2);
-    setStep(3);
 
-    if (data.ok) {
-      // Save pre-loaded data for realab.html
-      sessionStorage.setItem('realab_preload', JSON.stringify(data));
-      await new Promise(r => setTimeout(r, 200));
-      setStep(4);
-      await new Promise(r => setTimeout(r, 400));
+    await checkPause();
 
-      // Fade out and redirect
-      document.getElementById('loginOverlay').classList.add('login-fade-out');
-      setTimeout(() => { window.location.href = mainPage; }, 400);
-    } else {
+    if (!data.ok) {
+      setProcessStep(4, true);
       errEl.textContent = '데이터 로드 실패: ' + (data.error || '');
-      btn.style.display = '';
-      document.getElementById('loginEmail').style.display = '';
-      document.getElementById('loginPw').style.display = '';
-      document.getElementById('loginLoadingArea').style.display = 'none';
-      btn.disabled = false;
-      btn.classList.remove('spinning');
-      btn.textContent = 'Login';
+      resetBtn(btn); isRunning = false;
+      return;
     }
+
+    // === Step 5: 자료 목록(Category) 수신 및 처리 ===
+    setProcessStep(5);
+    await wait(350);
+    await checkPause();
+
+    // === Step 6: Serge Card 자료 수신 및 처리 ===
+    setProcessStep(6);
+    await wait(350);
+    await checkPause();
+
+    // === Step 7: Preload Data 세션에 저장 ===
+    setProcessStep(7);
+    sessionStorage.setItem('realab_preload', JSON.stringify(data));
+    await wait(300);
+    await checkPause();
+
+    // === Step 8: 메인 페이지 화면 준비 완료 ===
+    setProcessStep(8);
+    await wait(300);
+    markAllDone();
+    setProcessStep(TOTAL_STEPS + 1);
+
+    // 1초 대기 후 리다이렉트
+    await new Promise(r => setTimeout(r, 1000));
+
+    document.getElementById('loginOverlay').classList.add('login-fade-out');
+    setTimeout(() => { window.location.href = mainPage; }, 400);
+
   } catch (e) {
+    const cur = document.querySelector('.proc-step.active, .proc-step.paused');
+    const idx = cur ? parseInt(cur.id.replace('ps','')) : 2;
+    setProcessStep(idx, true);
     errEl.textContent = '서버 연결 오류: ' + e.message;
-    btn.style.display = '';
-    document.getElementById('loginEmail').style.display = '';
-    document.getElementById('loginPw').style.display = '';
-    document.getElementById('loginLoadingArea').style.display = 'none';
-    btn.disabled = false;
-    btn.classList.remove('spinning');
-    btn.textContent = 'Login';
+    resetBtn(btn);
+    isRunning = false;
   }
 }
 
+function resetBtn(btn) {
+  btn.classList.remove('progress');
+  const fill = btn.querySelector('.btn-fill');
+  if (fill) fill.remove();
+  const btnText = btn.querySelector('.btn-text');
+  if (btnText) btnText.textContent = 'Login';
+  isPaused = false;
+  isRunning = false;
+}
+
 // Enter key support
-document.getElementById('loginPw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+document.getElementById('loginPw').addEventListener('keydown', e => { if (e.key === 'Enter') handleBtnClick(); });
 document.getElementById('loginEmail').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('loginPw').focus(); });
 </script>
 </body>
