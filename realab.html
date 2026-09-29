@@ -244,7 +244,26 @@ let currentView = 'cards';
 function doLogout() {
   showConfirmModal('로그아웃', '로그아웃 하시겠습니까?', '로그아웃', () => {
     sessionStorage.removeItem('realab_user');
-    window.location.href = 'index.html';
+    let sec = 3;
+    const html = `
+      <div class="modal-overlay" style="pointer-events:none">
+        <div class="modal-box" style="text-align:center">
+          <h3 style="cursor:default">로그아웃 완료</h3>
+          <p style="margin-bottom:16px">로그아웃 되었습니다.</p>
+          <p><span id="logoutCountdown" style="font-size:28px;font-weight:800;color:#4a7dff">3</span></p>
+          <p style="font-size:13px;color:#888;margin-top:8px">초 후 로그인 페이지로 이동합니다...</p>
+        </div>
+      </div>`;
+    document.getElementById('modalContainer').innerHTML = html;
+    const countEl = document.getElementById('logoutCountdown');
+    const timer = setInterval(() => {
+      sec--;
+      if (countEl) countEl.textContent = sec;
+      if (sec <= 0) {
+        clearInterval(timer);
+        window.location.href = 'index.html';
+      }
+    }, 1000);
   });
 }
 
