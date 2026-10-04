@@ -42,7 +42,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .tree-menu-item:hover{background:#e4ecf7}
 
 /* ===== MAIN AREA ===== */
-.main{flex:1;overflow-y:auto;padding:20px 28px;background:#fff}
+.main{flex:1;overflow-y:scroll;padding:20px 28px;background:#fff}
 
 /* ===== NEW CARD BUTTON ===== */
 .btn-new-card{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px 18px;background:linear-gradient(135deg,#8e9aaf 0%,#6b7b8d 100%);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:16px;transition:transform .1s,box-shadow .2s;box-shadow:0 2px 8px rgba(107,123,141,.3)}
@@ -58,7 +58,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .card-id{font-weight:400;font-size:15px;color:#2c3e50;flex-shrink:0;letter-spacing:-.3px}
 .card-breadcrumb{font-size:15px;color:#5a6a7a;word-break:break-word;line-height:1.5}
 .card-breadcrumb span{font-weight:700;color:#34495e}
-.card-apa{width:100%;color:#4a7dff;font-size:14px;margin-top:5px;line-height:1.6;word-break:break-word;font-style:italic;padding-left:2em;text-indent:-2em}
+.card-apa{width:100%;color:#555;font-size:14px;margin-top:5px;line-height:1.6;word-break:break-word;padding-left:2em;text-indent:-2em}
 .btn-open{flex:0 0 auto;align-self:flex-start;padding:8px 24px;border:1px solid #c0c8d0;background:#fff;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;white-space:nowrap;transition:all .15s;color:#4a5568}
 .btn-open:hover{background:#f0f4f8;border-color:#a0aab5;color:#2d3748}
 .btn-cancel-new{flex:0 0 auto;align-self:flex-start;padding:8px 24px;border:1px solid #e53e3e;background:#fff;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;white-space:nowrap;color:#e53e3e;transition:all .15s}
@@ -67,7 +67,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 /* ===== CARD (expanded detail) ===== */
 .card-detail{display:none;border-top:1px solid #e8ecf0;background:#f8f9fb;padding:0}
 .card.expanded .card-detail{display:block}
-.detail-body{display:flex;flex:1;min-height:520px;align-items:stretch}
+.detail-body{display:flex;flex:1;min-height:520px}
 
 /* detail center */
 .detail-center{flex:1;padding:18px 22px;display:flex;flex-direction:column;gap:14px;overflow-y:auto}
@@ -75,19 +75,19 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .field-group input,.field-group textarea{width:100%;border:1px solid #d2d8e0;border-radius:8px;padding:10px 14px;font-size:15px;font-family:inherit;resize:vertical;background:#fff;line-height:1.6;transition:border-color .15s,box-shadow .15s;scrollbar-width:none;-ms-overflow-style:none}
 .field-group textarea::-webkit-scrollbar{display:none}
 .field-group input:focus,.field-group textarea:focus{outline:none;border-color:#4a7dff;box-shadow:0 0 0 3px rgba(74,125,255,.12)}
-.field-group input:read-only,.field-group textarea:read-only{background:#f1f3f5;color:#6c757d;border-color:#e2e6ea}
-.field-group textarea.tall{min-height:220px}
-.field-group textarea.apa-short{min-height:52px;max-height:80px}
-.field-group textarea.medium{min-height:90px}
+.field-group input:read-only,.field-group textarea:read-only{background:#f1f3f5;color:#000;border-color:#e2e6ea}
+.field-group textarea.tall{min-height:268px}
+.field-group textarea.apa-short{min-height:52px}
+.field-group textarea.medium{min-height:72px}
 .field-group.comment-group{flex:1;display:flex;flex-direction:column}
-.field-group.comment-group textarea{flex:1;min-height:150px}
+.field-group.comment-group textarea{flex:1;min-height:120px}
 
 /* detail right panel */
 .detail-right{width:280px;min-width:280px;padding:16px;overflow-y:auto;background:#f8f9fb;display:flex;flex-direction:column}
 .detail-right h4{font-size:11px;color:#a0aec0;margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px;font-weight:700}
 
 /* category / element selector */
-.cat-tree{margin-bottom:14px;overflow-y:scroll;border:1px solid #d2d8e0;border-radius:8px;padding:8px;background:#fff;min-height:180px;max-height:392px}
+.cat-tree{margin-bottom:14px;overflow-y:auto;border:1px solid #d2d8e0;border-radius:8px;padding:8px;background:#fff;min-height:180px;max-height:392px}
 .cat-tree .ct-cat{font-weight:700;font-size:13px;cursor:pointer;padding:4px 6px;display:flex;align-items:center;gap:4px;border-radius:4px;transition:background .12s}
 .cat-tree .ct-cat:hover{background:#f0f4f8}
 .cat-tree .ct-cat .plus-btn{margin-left:auto;width:22px;height:22px;border:1px solid #c0c8d0;border-radius:4px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;line-height:1;color:#555;transition:all .12s}
@@ -95,7 +95,8 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .cat-tree .ct-elem{padding:3px 6px 3px 22px;font-size:12px;color:#555;cursor:pointer;border-radius:4px;transition:background .12s}
 .cat-tree .ct-elem:hover{background:#e8eef6}
 .cat-tree .ct-elem.selected{background:#d0ddf0;font-weight:600;color:#2d3748}
-.cat-tree.locked{pointer-events:none;opacity:.55}
+.cat-tree.locked{pointer-events:none;opacity:.55;scrollbar-width:none;-ms-overflow-style:none}
+.cat-tree.locked::-webkit-scrollbar{display:none}
 .cat-tree.locked .ct-cat,.cat-tree.locked .ct-elem{cursor:default}
 
 /* cat dropdowns */
@@ -147,7 +148,8 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 /* ===== LOADING OVERLAY ===== */
 #loadingOverlay{position:fixed;inset:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9998}
 .loading-content{text-align:center}
-.loading-logo{font-size:32px;font-weight:800;color:#4a7dff;margin-bottom:24px;letter-spacing:-1px}
+.loading-logo{font-size:32px;font-weight:800;color:#4a7dff;margin-bottom:24px;letter-spacing:-1px;transition:font-size .2s}
+.loading-logo.action-msg{font-size:17px;font-weight:700;letter-spacing:0}
 .loading-bar-track{width:280px;height:4px;background:#e2e8f0;border-radius:4px;overflow:hidden;margin-bottom:16px}
 .loading-bar-fill{height:100%;background:linear-gradient(90deg,#667eea,#764ba2,#667eea);background-size:200% 100%;border-radius:4px;animation:loadSlide 1.5s ease-in-out infinite;width:60%}
 @keyframes loadSlide{0%{background-position:200% 0}100%{background-position:-200% 0}}
@@ -164,18 +166,47 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .toast.show{opacity:1}
 
 /* ===== PRINT ===== */
-@page{size:letter;margin:25mm 15mm 15mm 15mm}
+@page{size:letter;margin:20mm 15mm 15mm 15mm}
 @media print{
-  .sidebar,.btn-open,.btn-cancel-new,.detail-right-actions,.btn-new-card,.toast,.card-top-bar{display:none!important}
+  .sidebar,.btn-open,.btn-cancel-new,.detail-right-actions,.btn-new-card,.toast,.card-top-bar,.card-date-wrap{display:none!important}
+  .card-date-info{display:none!important}
   .layout{display:block!important}
-  .main{padding:20px 0 0 0!important}
-  .card{break-inside:avoid;border:1px solid #aaa}
-  .card-detail{display:block!important}
+  .main{padding:0!important;overflow:visible!important;height:auto!important;max-height:none!important}
+  .layout{height:auto!important;overflow:visible!important}
+  .card:not(.expanded){display:none!important}
+  .card.expanded{break-inside:auto!important;border:none!important;border-radius:0!important;box-shadow:none!important;overflow:visible!important;margin:0!important;height:auto!important;max-height:none!important}
+  .card{overflow:visible!important}
+  .card-header{padding:0!important;position:relative!important;border:none!important}
+  .card-left{flex-wrap:wrap!important}
+  /* Note ID and breadcrumb above the content area */
+  .card-id{display:block!important;width:100%!important;font-size:11px!important;color:#555!important;padding:0 0 0 0!important;order:-2!important;text-align:right!important}
+  .card-breadcrumb{display:block!important;width:100%!important;font-size:13px!important;color:#000!important;padding:0 0 13px 0!important;margin:0!important;order:-1!important}
+  .card-breadcrumb span{font-weight:600!important}
+  .card-apa-row{padding:0!important}
+  .card-apa{color:#000!important;font-size:13px!important;font-weight:normal!important;padding:0 0 12px 2em!important;text-indent:-2em!important}
+  .card-detail{display:block!important;border:none!important}
   .detail-right{display:none!important}
   .field-group textarea.apa-short{display:none!important}
-  .detail-center{width:100%!important;max-width:100%!important}
-  .detail-center .field-group textarea{width:100%!important;min-width:100%!important}
-  .detail-body{display:block!important}
+  .print-hide-apa{display:none!important}
+  .detail-center{width:100%!important;max-width:100%!important;padding:8px 0!important;overflow:visible!important}
+  .detail-body{display:block!important;overflow:visible!important;min-height:0!important;border:none!important}
+  .detail-center .field-group textarea{width:100%!important;min-width:100%!important;font-size:11px!important;line-height:1.6!important;height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;overflow-wrap:break-word!important;word-wrap:break-word!important;resize:none!important;border:none!important;background:#fff!important;box-shadow:none!important;padding:4px 0!important;color:#000!important;display:block!important;white-space:pre-wrap!important;text-align:justify!important}
+  .detail-center .field-group textarea[data-field="text"]{font-family:inherit!important;font-style:normal!important;font-size:11px!important;padding-left:5em!important;padding-right:5em!important;border:none!important}
+  .detail-center .field-group textarea[data-field="context"],.detail-center .field-group textarea[data-field="comment"]{text-indent:1em!important}
+  .detail-center .field-group textarea[data-field="text"]{text-indent:1em!important}
+  .detail-center .field-group{border:none!important;background:#fff!important;margin-bottom:4px!important;overflow:visible!important;page-break-inside:auto!important}
+  .detail-center .field-group label{font-size:10px!important;margin-bottom:2px!important}
+  .card-detail,.detail-body,.detail-center,.detail-center .field-group{overflow:visible!important}
+  .card.expanded .card-detail{background:#fff!important;border:none!important}
+  /* Print mirrors replace textareas to avoid clipping */
+  .print-ready .detail-center .field-group textarea{display:none!important}
+  .print-ready .detail-center .field-group .print-mirror{display:block!important;width:100%!important;font-size:11px!important;line-height:1.6!important;white-space:pre-wrap!important;word-wrap:break-word!important;overflow-wrap:break-word!important;color:#000!important;background:#fff!important;border:none!important;padding:4px 0!important;margin:0!important;font-family:inherit!important;text-indent:1em!important;text-align:justify!important}
+  .print-ready .detail-center .field-group .print-mirror[data-field="text"]{font-family:inherit!important;font-style:normal!important;font-size:11px!important;padding-left:5em!important;padding-right:5em!important;border:none!important;text-indent:1em!important}
+  /* Print page number footer */
+  .print-page-footer{display:block!important;position:fixed!important;bottom:0!important;left:0!important;right:0!important;text-align:center!important;font-size:10px!important;color:#999!important;padding:4px 0!important;counter-increment:page}
+  .print-page-footer::after{content:"page " counter(page)!important}
+  /* Remove all remaining borders */
+  *{border-color:transparent!important}
 }
 </style>
 </head>
@@ -401,20 +432,35 @@ function toast(msg, ms = 2000) {
 }
 
 // ===== Loading with steps =====
-function showLoading() {
+function showLoading(msg) {
   const ov = document.getElementById('loadingOverlay');
+  const logo = ov.querySelector('.loading-logo');
+  const steps = ov.querySelector('.loading-steps');
   if (isInitialLoad) {
     ov.style.background = '#fff';
+    if (logo) { logo.textContent = 'REA Lab'; logo.classList.remove('action-msg'); }
+    if (steps) steps.style.display = '';
+    setLoadStep(1);
   } else {
-    ov.style.background = 'rgba(255,255,255,.7)';
+    ov.style.background = 'rgba(255,255,255,.92)';
+    if (logo) { logo.textContent = msg || '처리 중...'; logo.classList.add('action-msg'); }
+    if (steps) steps.style.display = 'none';
   }
   ov.style.display = 'flex';
-  setLoadStep(1);
+}
+function updateLoadingMsg(msg) {
+  const ov = document.getElementById('loadingOverlay');
+  const logo = ov.querySelector('.loading-logo');
+  if (logo && logo.classList.contains('action-msg')) logo.textContent = msg;
 }
 function hideLoading() {
-  document.getElementById('loadingOverlay').style.display = 'none';
+  const ov = document.getElementById('loadingOverlay');
+  ov.style.display = 'none';
   isInitialLoad = false;
-  // reset steps
+  const logo = ov.querySelector('.loading-logo');
+  if (logo) { logo.textContent = 'REA Lab'; logo.classList.remove('action-msg'); }
+  const steps = ov.querySelector('.loading-steps');
+  if (steps) steps.style.display = '';
   for (let i = 1; i <= 4; i++) {
     const el = document.getElementById('ls' + i);
     el.className = 'loading-step';
@@ -662,7 +708,7 @@ async function doAddCategory() {
   const catId = document.getElementById('modalCatId').value;
   const catName = document.getElementById('modalCatName').value.trim();
   if (!catName) { toast('카테고리 이름을 입력하세요.'); return; }
-  closeModal(); showLoading();
+  closeModal(); showLoading('카테고리 추가 중...');
   try {
     const res = await gasPost({ action: 'addCategory', category_id: catId, category_name: catName });
     if (res.ok) {
@@ -713,7 +759,7 @@ async function doEditCategory() {
   const newName = document.getElementById('modalEditCatName').value.trim();
   if (!catId) { toast('카테고리를 선택하세요.'); return; }
   if (!newName) { toast('새 이름을 입력하세요.'); return; }
-  closeModal(); showLoading();
+  closeModal(); showLoading('카테고리 수정 중...');
   try {
     const res = await gasPost({ action: 'updateCategory', category_id: catId, category_name: newName });
     if (res.ok) {
@@ -758,7 +804,7 @@ async function doDeleteCategory() {
   const catName = cat ? cat.category_name : catId;
   closeModal();
   showConfirmModal('최종 확인', `"${catName}" 카테고리를 정말 삭제하시겠습니까?`, '삭제', async () => {
-    showLoading();
+    showLoading('카테고리 삭제 중...');
     try {
       const res = await gasPost({ action: 'deleteCategory', category_id: catId });
       if (res.ok) {
@@ -815,7 +861,7 @@ async function doAddElement() {
   const elemName = document.getElementById('modalElemName').value.trim();
   if (!catId) { toast('카테고리를 선택하세요.'); return; }
   if (!elemName) { toast('Element 이름을 입력하세요.'); return; }
-  closeModal(); showLoading();
+  closeModal(); showLoading('Element 추가 중...');
   try {
     const res = await gasPost({ action: 'addElement', element_id: elemId, element_name: elemName, category: catId });
     if (res.ok) {
@@ -862,7 +908,7 @@ async function doEditElement() {
   const newName = document.getElementById('modalEditElemName').value.trim();
   if (!elemId) { toast('Element를 선택하세요.'); return; }
   if (!newName) { toast('새 이름을 입력하세요.'); return; }
-  closeModal(); showLoading();
+  closeModal(); showLoading('Element 수정 중...');
   try {
     const res = await gasPost({ action: 'updateElement', element_id: elemId, element_name: newName });
     if (res.ok) {
@@ -906,7 +952,7 @@ async function doDeleteElement() {
   const elemName = elem ? elem.element_name : elemId;
   closeModal();
   showConfirmModal('최종 확인', `"${elemName}" Element를 정말 삭제하시겠습니까?`, '삭제', async () => {
-    showLoading();
+    showLoading('Element 삭제 중...');
     try {
       const res = await gasPost({ action: 'deleteElement', element_id: elemId });
       if (res.ok) {
@@ -993,7 +1039,7 @@ async function doAddLink() {
   const icon = document.getElementById('modalLinkIcon').value || '🌐';
   if (!name) { toast('사이트 이름을 입력하세요.'); return; }
   if (!url) { toast('URL을 입력하세요.'); return; }
-  closeModal(); showLoading();
+  closeModal(); showLoading('링크 추가 중...');
   try {
     const res = await gasPost({ action: 'addLink', no, site_name: name, url, icon });
     if (res.ok) {
@@ -1044,7 +1090,7 @@ async function doEditLink() {
   if (!no) { toast('링크를 선택하세요.'); return; }
   if (!name) { toast('사이트 이름을 입력하세요.'); return; }
   if (!url) { toast('URL을 입력하세요.'); return; }
-  closeModal(); showLoading();
+  closeModal(); showLoading('링크 수정 중...');
   try {
     const res = await gasPost({ action: 'updateLink', no, site_name: name, url, icon });
     if (res.ok) {
@@ -1084,7 +1130,7 @@ async function doDeleteLink() {
   const linkName = link ? link.site_name : no;
   closeModal();
   showConfirmModal('최종 확인', `"${linkName}" 링크를 정말 삭제하시겠습니까?`, '삭제', async () => {
-    showLoading();
+    showLoading('링크 삭제 중...');
     try {
       const res = await gasPost({ action: 'deleteLink', no });
       if (res.ok) {
@@ -1138,7 +1184,7 @@ function reorderLinkMove(idx, dir) {
 }
 async function doReorderLinks() {
   const items = window._reorderLinks;
-  closeModal(); showLoading();
+  closeModal(); showLoading('순서 변경 중...');
   try {
     const res = await gasPost({ action: 'reorderLinks', links: items });
     if (res.ok) {
@@ -1177,7 +1223,7 @@ function openAddCatItemModal(srgId, catKey) {
 async function doAddCatItem(srgId, catKey, catId, elemId) {
   const val = document.getElementById('modalCatItemVal').value.trim();
   if (!val) { toast('값을 입력하세요.'); return; }
-  closeModal(); showLoading();
+  closeModal(); showLoading('항목 추가 중...');
   try {
     const res = await gasPost({ action: 'addCatItem', catKey, value: val, category_id: catId, element_id: elemId });
     if (res.ok) {
@@ -1479,9 +1525,9 @@ function renderCards() {
     html += `<span class="card-id">${escHtml(formatNoteId(isNew ? d._displayId || id : id))}</span>`;
     const bc = makeBreadcrumb(d);
     if (bc) html += `<span class="card-breadcrumb">${bc}</span>`;
-    if (d.apa) html += `<div class="card-apa">${escHtml(d.apa)}</div>`;
     html += `</div>`;
 
+    html += `<div class="card-date-wrap" style="display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0;gap:4px">`;
     if (isNew) {
       html += `<button class="btn-cancel-new" onclick="cancelNewCard('${escHtml(id)}')">Cancel</button>`;
     } else if (isModifyMode) {
@@ -1490,6 +1536,16 @@ function renderCards() {
       html += `<button class="btn-open" onclick="toggleCard('${escHtml(id)}')">${isExpanded ? 'Close' : 'Open'}</button>`;
     }
     html += `</div>`;
+    html += `</div>`;
+    // APA + Date row: tops aligned via flex align-items:flex-start
+    if (d.apa || d.date) {
+      html += `<div class="card-apa-row" style="display:flex;align-items:flex-start;padding:0 20px 8px 20px">`;
+      html += `<div class="card-apa" style="flex:1;margin-top:0">${escHtml(d.apa || '')}</div>`;
+      if (d.date) {
+        html += `<span class="card-date-info" style="font-size:14px;color:#999;white-space:nowrap;line-height:1.6;flex-shrink:0;margin-left:14px">${escHtml(d.date)}</span>`;
+      }
+      html += `</div>`;
+    }
 
     // Detail
     html += `<div class="card-detail">`;
@@ -1529,7 +1585,11 @@ function renderCards() {
   list.innerHTML = html;
   if (expandedCardId) {
     const el = document.getElementById('card-' + expandedCardId);
-    if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+    if (el) {
+      setTimeout(() => {
+        setupAutoResize(el);
+      }, 50);
+    }
   }
 }
 
@@ -1540,7 +1600,7 @@ function buildCatTree(d, locked) {
     if (cat.category_id === 'category_99') return;
     const catCode = cat.category_id.replace('category_', '');
     const isSelected = d.category_id === cat.category_id;
-    html += `<div class="ct-cat" style="${isSelected ? 'color:#4a7dff' : ''}">`;
+    html += `<div class="ct-cat${isSelected ? ' ct-cat-selected' : ''}" style="${isSelected ? 'color:#4a7dff' : ''}">`;
     html += `<span onclick="setCatElem('${d.srg_id}','${cat.category_id}','')">${catCode}_${escHtml(cat.category_name)}</span>`;
     if (!locked) {
       html += `<span class="plus-btn" onclick="event.stopPropagation();openAddElementForCategory('${d.srg_id}','${cat.category_id}')" title="새 Element 추가">+</span>`;
@@ -1567,15 +1627,106 @@ function buildCatDropdowns(d, locked) {
     const val = d[key] || '';
     const options = getCatDropValues(key, d.category_id, d.element_id);
     html += `<div class="cat-drop-row">`;
-    html += `<select data-catdrop="${key}"${locked ? ' disabled' : ''}>`;
+    html += `<select data-catdrop="${key}"${locked ? ' disabled' : ''} onchange="toggleCatBtn(this,'${d.srg_id}','${key}')">`;
     html += `<option value="">Cat-0${i}</option>`;
     options.forEach(opt => { html += `<option value="${escHtml(opt)}"${val === opt ? ' selected' : ''}>${escHtml(opt)}</option>`; });
     if (val && !options.includes(val)) html += `<option value="${escHtml(val)}" selected>${escHtml(val)}</option>`;
     html += `</select>`;
-    html += `<span class="plus-btn${locked ? ' locked' : ''}" title="새 항목 추가" onclick="openAddCatItemModal('${d.srg_id}','${key}')">+</span>`;
+    if (!locked && val) {
+      html += `<span class="plus-btn" title="항목 수정" onclick="openModifyCatItemModal('${d.srg_id}','${key}')" style="font-size:11px;font-weight:700">M</span>`;
+    } else {
+      html += `<span class="plus-btn${locked ? ' locked' : ''}" title="새 항목 추가" onclick="openAddCatItemModal('${d.srg_id}','${key}')">+</span>`;
+    }
     html += `</div>`;
   }
   return html;
+}
+
+function toggleCatBtn(sel, srgId, catKey) {
+  const row = sel.closest('.cat-drop-row');
+  const btn = row ? row.querySelector('.plus-btn') : null;
+  if (!btn || btn.classList.contains('locked')) return;
+  if (sel.value) {
+    btn.textContent = 'M';
+    btn.title = '항목 수정';
+    btn.style.fontSize = '11px';
+    btn.style.fontWeight = '700';
+    btn.setAttribute('onclick', "openModifyCatItemModal('" + srgId + "','" + catKey + "')");
+  } else {
+    btn.textContent = '+';
+    btn.title = '새 항목 추가';
+    btn.style.fontSize = '';
+    btn.style.fontWeight = '';
+    btn.setAttribute('onclick', "openAddCatItemModal('" + srgId + "','" + catKey + "')");
+  }
+}
+
+function openModifyCatItemModal(srgId, catKey) {
+  const d = DB.srgData.find(x => x.srg_id === srgId);
+  if (!d) return;
+  const cardEl = document.getElementById('card-' + srgId);
+  const sel = cardEl ? cardEl.querySelector('[data-catdrop="' + catKey + '"]') : null;
+  const currentVal = sel ? sel.value : (d[catKey] || '');
+  if (!currentVal) { toast('선택된 값이 없습니다.'); return; }
+  const displayKey = catKey.replace('cat-0','Cat-0');
+  const html = `
+    <div class="modal-overlay">
+      <div class="modal-box">
+        <h3>${displayKey} 항목 수정</h3>
+        <label>현재 명칭</label>
+        <input type="text" id="modalCatItemOld" value="${escHtml(currentVal)}" readonly style="background:#f1f3f5;color:#6c757d">
+        <label>새 명칭</label>
+        <input type="text" id="modalCatItemNew" value="${escHtml(currentVal)}">
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">취소</button>
+          <button class="btn-confirm" onclick="doModifyCatItem('${srgId}','${catKey}')">수정</button>
+        </div>
+      </div>
+    </div>`;
+  showModal(html);
+  setTimeout(() => { const inp = document.getElementById('modalCatItemNew'); inp.focus(); inp.select(); }, 100);
+}
+
+async function doModifyCatItem(srgId, catKey) {
+  const oldVal = document.getElementById('modalCatItemOld').value.trim();
+  const newVal = document.getElementById('modalCatItemNew').value.trim();
+  if (!newVal) { toast('새 값을 입력하세요.'); return; }
+  if (oldVal === newVal) { closeModal(); return; }
+  const d = DB.srgData.find(x => x.srg_id === srgId);
+  closeModal();
+  showLoading('항목 수정 데이터 준비 중...');
+  try {
+    updateLoadingMsg('서버에 수정 요청 전송 중...');
+    await new Promise(r => setTimeout(r, 150));
+    const res = await gasPost({
+      action: 'renameCatItem',
+      catKey, oldValue: oldVal, newValue: newVal,
+      category_id: d ? d.category_id : '',
+      element_id: d ? d.element_id : ''
+    });
+    if (res.ok) {
+      updateLoadingMsg('서버에서 최신 데이터 불러오는 중...');
+      await new Promise(r => setTimeout(r, 150));
+      const freshRes = await gasGet({ action: 'getAll' });
+      if (freshRes.ok) {
+        updateLoadingMsg('로컬 데이터 업데이트 중...');
+        await new Promise(r => setTimeout(r, 150));
+        DB = freshRes;
+        if (!DB.links) DB.links = [];
+        DB.links = DB.links.map(l => {
+          if (l['no.'] !== undefined && l.no === undefined) { l.no = l['no.']; }
+          return l;
+        });
+        updateLoadingMsg('화면 갱신 중...');
+        await new Promise(r => setTimeout(r, 150));
+        skipSnapshot = true;
+        buildSidebar();
+        renderCards();
+      }
+      toast('항목 수정 완료!');
+    } else { toast('수정 실패: ' + (res.error || ''), 3000); }
+  } catch(e) { toast('오류: ' + e.message, 3000); }
+  hideLoading();
 }
 
 function setCatElem(srgId, catId, elemId) {
@@ -1605,17 +1756,24 @@ function gatherCardData(srgId) {
   if (!cardEl) return null;
   const get = (sel) => { const el = cardEl.querySelector(sel); return el ? el.value : ''; };
   const d = DB.srgData.find(x => x.srg_id === srgId);
+  // Generate current date in yyyy.mm.dd hh:mm:ss format
+  const now = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  const dateStr = now.getFullYear() + '.' + pad(now.getMonth()+1) + '.' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
   return {
     srg_id: srgId, apa: get('[data-field="apa"]'), context: get('[data-field="context"]'),
     text: get('[data-field="text"]'), comment: get('[data-field="comment"]'),
     category_id: d ? d.category_id : '', element_id: d ? d.element_id : '',
     'cat-01': get('[data-catdrop="cat-01"]'), 'cat-02': get('[data-catdrop="cat-02"]'),
-    'cat-03': get('[data-catdrop="cat-03"]'), 'cat-04': get('[data-catdrop="cat-04"]')
+    'cat-03': get('[data-catdrop="cat-03"]'), 'cat-04': get('[data-catdrop="cat-04"]'),
+    date: dateStr
   };
 }
 
 // Save unsaved form input into DB before re-rendering
+let skipSnapshot = false;
 function snapshotEditingCards() {
+  if (skipSnapshot) { skipSnapshot = false; return; }
   const editingIds = Object.keys(modifyModeCards);
   // Also include NEW_ cards
   DB.srgData.forEach(d => {
@@ -1660,29 +1818,38 @@ function confirmSave(srgId) {
 async function doSaveCard(srgId) {
   const row = gatherCardData(srgId);
   if (!row) return;
-  showLoading();
+  const isNew = srgId.startsWith('NEW_');
+  showLoading('카드 데이터 수집 중...');
+  await new Promise(r => setTimeout(r, 200));
   try {
-    const isNew = srgId.startsWith('NEW_');
     const action = isNew ? 'create' : 'update';
     if (isNew) {
       const d = DB.srgData.find(x => x.srg_id === srgId);
       row.srg_id = d && d._displayId ? d._displayId : generateNextSrgId();
     }
-    const res = await gasPost({ action, row });
+    updateLoadingMsg('서버에 데이터 전송 중...');
+    await new Promise(r => setTimeout(r, 150));
+    // create는 retry 시 중복 행 생성 방지를 위해 retry=0
+    const payload = { action, row };
+    const res = isNew
+      ? await gasFetch(GAS_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(payload) }, 0)
+      : await gasPost(payload);
     if (res.ok) {
+      updateLoadingMsg('로컬 데이터 업데이트 중...');
+      await new Promise(r => setTimeout(r, 150));
       const finalId = res.srg_id || row.srg_id;
       if (isNew) {
-        // Replace temp entry with real one
         const idx = DB.srgData.findIndex(x => x.srg_id === srgId);
         if (idx >= 0) {
-          DB.srgData[idx] = { ...row, srg_id: finalId };
+          DB.srgData[idx] = { ...row, srg_id: finalId, date: row.date };
           delete DB.srgData[idx]._displayId;
         }
       } else {
-        // Update existing entry
         const idx = DB.srgData.findIndex(x => x.srg_id === srgId);
-        if (idx >= 0) DB.srgData[idx] = { ...row };
+        if (idx >= 0) DB.srgData[idx] = { ...row, date: row.date };
       }
+      updateLoadingMsg('화면 갱신 중...');
+      await new Promise(r => setTimeout(r, 150));
       expandedCardId = finalId;
       delete modifyModeCards[srgId];
       buildSidebar(); renderCards();
@@ -1700,7 +1867,7 @@ async function doDeleteCard(srgId) {
     DB.srgData = DB.srgData.filter(d => d.srg_id !== srgId);
     expandedCardId = null; renderCards(); return;
   }
-  showLoading();
+  showLoading('삭제 중...');
   try {
     const res = await gasPost({ action: 'delete', srg_id: srgId });
     if (res.ok) {
@@ -1727,8 +1894,49 @@ function cancelModify(srgId) {
 }
 
 function confirmPrint(srgId) {
+  const mainEl = document.getElementById('main');
+  const savedScrollTop = mainEl ? mainEl.scrollTop : 0;
   expandedCardId = srgId; renderCards();
-  setTimeout(() => window.print(), 300);
+  // Restore scroll position after renderCards
+  if (mainEl) mainEl.scrollTop = savedScrollTop;
+  setTimeout(() => {
+    const card = document.getElementById('card-' + srgId);
+    if (!card) return;
+    // Replace textareas with div mirrors for print (textareas clip content)
+    // Exclude apa-short (already shown in card header)
+    const textareas = card.querySelectorAll('.detail-center textarea:not(.apa-short)');
+    const mirrors = [];
+    textareas.forEach(ta => {
+      const div = document.createElement('div');
+      div.className = 'print-mirror';
+      div.textContent = ta.value;
+      div.dataset.field = ta.dataset.field;
+      div.style.cssText = 'display:none';
+      ta.parentNode.insertBefore(div, ta.nextSibling);
+      mirrors.push({ ta, div });
+    });
+    // Hide the APA field-group in detail center (already shown in card header)
+    const apaTa = card.querySelector('.detail-center textarea.apa-short');
+    const apaGroup = apaTa ? apaTa.closest('.field-group') : null;
+    if (apaGroup) apaGroup.classList.add('print-hide-apa');
+    // Add print-ready class
+    card.classList.add('print-ready');
+    // Add page number footer (position:fixed renders on every printed page in Chrome)
+    const pageFooter = document.createElement('div');
+    pageFooter.className = 'print-page-footer';
+    pageFooter.id = 'printPageFooter';
+    document.body.appendChild(pageFooter);
+    setTimeout(() => {
+      window.print();
+      // Clean up mirrors and footer, restore scroll
+      mirrors.forEach(m => m.div.remove());
+      card.classList.remove('print-ready');
+      if (apaGroup) apaGroup.classList.remove('print-hide-apa');
+      const footer = document.getElementById('printPageFooter');
+      if (footer) footer.remove();
+      if (mainEl) mainEl.scrollTop = savedScrollTop;
+    }, 200);
+  }, 300);
 }
 
 let newCardCounter = 0;
@@ -1747,6 +1955,80 @@ function openNewCard() {
   expandedCardId = tempId;
   document.getElementById('btnNewCard').style.display = 'none';
   renderCards();
+}
+
+// ===== Auto-resize textareas =====
+function autoResizeTextarea(ta) {
+  const minH = parseInt(window.getComputedStyle(ta).minHeight) || 0;
+  // Temporarily remove min-height to get true scrollHeight
+  ta.style.minHeight = '0';
+  ta.style.height = 'auto';
+  const scrollH = ta.scrollHeight;
+  ta.style.minHeight = '';
+  ta.style.height = Math.max(minH, scrollH) + 'px';
+}
+
+function setupAutoResize(cardEl) {
+  if (!cardEl) return;
+  const textareas = cardEl.querySelectorAll('.detail-center textarea');
+  textareas.forEach(ta => {
+    autoResizeTextarea(ta);
+    ta.removeEventListener('input', ta._autoResizeHandler);
+    ta._autoResizeHandler = () => { autoResizeTextarea(ta); syncRightPanel(cardEl); };
+    ta.addEventListener('input', ta._autoResizeHandler);
+  });
+  syncRightPanel(cardEl);
+  // Scroll cat-tree to show selected category at top
+  scrollCatTreeToSelected(cardEl);
+}
+
+// ===== Resize handler: auto-adjust textarea heights on browser resize =====
+window.addEventListener('resize', (function() {
+  let timer;
+  return function() {
+    clearTimeout(timer);
+    timer = setTimeout(function() {
+      if (!expandedCardId) return;
+      const card = document.getElementById('card-' + expandedCardId);
+      if (!card) return;
+      const textareas = card.querySelectorAll('.detail-center textarea');
+      textareas.forEach(ta => autoResizeTextarea(ta));
+      syncRightPanel(card);
+    }, 100);
+  };
+})());
+
+function scrollCatTreeToSelected(cardEl) {
+  if (!cardEl) return;
+  const catTree = cardEl.querySelector('.cat-tree');
+  if (!catTree) return;
+  const selectedCat = catTree.querySelector('.ct-cat-selected');
+  if (selectedCat) {
+    selectedCat.scrollIntoView({ block: 'center', behavior: 'instant' });
+  }
+}
+
+function syncRightPanel(cardEl) {
+  if (!cardEl) return;
+  const center = cardEl.querySelector('.detail-center');
+  const right = cardEl.querySelector('.detail-right');
+  if (!center || !right) return;
+  // Get the bottom of the comment textarea
+  const commentTa = center.querySelector('[data-field="comment"]');
+  if (!commentTa) return;
+  const centerBottom = commentTa.getBoundingClientRect().bottom;
+  // Get the actions bar
+  const actions = right.querySelector('.detail-right-actions');
+  if (!actions) return;
+  // Calculate how much extra space is needed
+  const actionsBottom = actions.getBoundingClientRect().bottom;
+  const diff = centerBottom - actionsBottom;
+  // Find the spacer area between cat-04 and actions border-top
+  // We adjust margin-top on actions to push it down
+  const currentMarginTop = parseInt(window.getComputedStyle(actions).marginTop) || 16;
+  if (diff > 0) {
+    actions.style.marginTop = (currentMarginTop + diff) + 'px';
+  }
 }
 
 // ===== Auto-load =====
