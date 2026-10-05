@@ -187,6 +187,7 @@ td.col-confirm { white-space: nowrap; width: 5%; }
         <div style="display:flex; align-items:center; gap:6px;">
           <button class="btn-font-size" onclick="changeOcrFontSize(-1)" title="글씨 줄이기">A-</button>
           <button class="btn-font-size" onclick="changeOcrFontSize(1)" title="글씨 키우기">A+</button>
+          <button class="btn-ocr-reset" onclick="resetApiKey()" title="API 키 재설정">Key</button>
           <button class="btn-ocr-reset" onclick="clearOcr()">초기화</button>
         </div>
       </div>
@@ -369,14 +370,30 @@ function showPastedImage(imgUrl) {
 // ===========================
 // Google Cloud Vision API 설정
 // ===========================
-const VISION_API_KEY = 'AIzaSyC7HeuZtHopbtRjhOamxfKvoH55OZQCy24';
-const VISION_API_URL = 'https://vision.googleapis.com/v1/images:annotate?key=' + VISION_API_KEY;
+// API 키는 localStorage에 저장 (코드에 노출하지 않음)
+function getVisionApiKey() {
+  return localStorage.getItem('gcv_api_key') || '';
+}
+function setVisionApiKey(key) {
+  localStorage.setItem('gcv_api_key', key.trim());
+}
 
 // ===========================
 // OCR: Run Google Cloud Vision API (자동 실행)
 // ===========================
 async function runOcr() {
   if (!pastedImageData) return;
+
+  // API 키 확인
+  let apiKey = getVisionApiKey();
+  if (!apiKey) {
+    apiKey = prompt('Google Cloud Vision API 키를 입력하세요.\n(한 번 입력하면 브라우저에 저장됩니다)');
+    if (!apiKey || !apiKey.trim()) {
+      toast('API 키가 필요합니다.', 2500);
+      return;
+    }
+    setVisionApiKey(apiKey);
+  }
 
   const progressEl = document.getElementById('ocrProgress');
   const progressFill = document.getElementById('progressFill');
@@ -393,8 +410,10 @@ async function runOcr() {
 
     progressFill.style.width = '50%';
 
+    const visionUrl = 'https://vision.googleapis.com/v1/images:annotate?key=' + apiKey;
+
     // Google Cloud Vision API 호출
-    const response = await fetch(VISION_API_URL, {
+    const response = await fetch(visionUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -437,8 +456,9 @@ async function runOcr() {
     }, 200);
   } catch(e) {
     progressEl.style.display = 'none';
-    if (e.message.includes('API key')) {
-      toast('API 키 오류: 키를 확인해주세요.', 3000);
+    if (e.message.includes('API key') || e.message.includes('API_KEY_INVALID') || e.message.includes('PERMISSION_DENIED')) {
+      localStorage.removeItem('gcv_api_key');
+      toast('API 키 오류: 키를 확인해주세요. 다시 시도하면 재입력할 수 있습니다.', 3000);
     } else if (e.message.includes('RESOURCE_EXHAUSTED') || e.message.includes('quota')) {
       toast('월 무료 한도(1,000건) 초과입니다.', 3000);
     } else {
@@ -485,6 +505,11 @@ function mergeLines(raw) {
 // ===========================
 // OCR: Clear
 // ===========================
+function resetApiKey() {
+  localStorage.removeItem('gcv_api_key');
+  toast('API 키가 초기화되었습니다. 다음 OCR 시 재입력합니다.', 2000);
+}
+
 function changeOcrFontSize(delta) {
   const ta = document.getElementById('ocrResult');
   let current = parseFloat(window.getComputedStyle(ta).fontSize);
