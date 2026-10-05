@@ -3,548 +3,2137 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>REA LAB. Bookmark</title>
-<!-- Google Cloud Vision API for OCR -->
+<link rel="icon" href="data:,">
+<title>REA Lab</title>
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-html { overflow-y: scroll; }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background: #f0f2f5;
-  color: #2c3e50;
-  min-height: 100vh;
-}
+/* ===== RESET & BASE ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#333;font-size:14px;-webkit-text-size-adjust:100%;overscroll-behavior:none}
 
-/* Header */
-.header {
-  background: #fff;
-  border-bottom: 1px solid #e2e6ea;
-  padding: 12px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-.header-left { display: flex; align-items: center; gap: 12px; }
-.header-title { font-size: 18px; font-weight: 800; color: #2c3e50; letter-spacing: -0.5px; }
-.header-title span { font-size: 13px; font-weight: 400; color: #7ec8e3; margin-left: 6px; }
-.count-label { font-size: 12px; color: #888; background: #f0f2f5; padding: 3px 10px; border-radius: 10px; }
-.header-actions { display: flex; gap: 8px; }
-.btn-refresh { background: #4a7dff; color: #fff; border: none; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .2s; }
-.btn-refresh:hover { background: #3a6ae0; }
-.btn-refresh:disabled { opacity: .5; cursor: not-allowed; }
-.btn-close { background: #e2e6ea; color: #555; border: none; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .2s; }
-.btn-close:hover { background: #d2d6da; }
-.btn-sheet { background: #34a853; color: #fff; border: none; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .2s; }
-.btn-sheet:hover { background: #2d9249; }
+/* ===== LAYOUT ===== */
+.layout{display:block;overflow:hidden}
 
-/* ===== Two-Panel Layout ===== */
-.main-container { display: flex; height: calc(100vh - 49px); }
-.panel-left { width: 50%; overflow-y: auto; border-right: 1px solid #e2e6ea; }
-.panel-right { width: 50%; overflow: hidden; display: flex; flex-direction: column; }
+/* ===== MOBILE TOP BAR ===== */
+.mobile-topbar{position:fixed;top:0;left:0;right:0;height:50px;background:#fff;border-bottom:1px solid #e2e6ea;display:flex;align-items:center;justify-content:space-between;padding:0 12px;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.hamburger-btn{background:none;border:none;font-size:24px;cursor:pointer;color:#4a5568;padding:4px 8px;border-radius:6px}
+.hamburger-btn:active{background:#e2e8f0}
+.topbar-title{font-size:18px;font-weight:800;color:#2c3e50;letter-spacing:-.5px}
 
-/* ===== Left Panel: Table ===== */
-.table-wrap { padding: 10px 16px; overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
-thead th { background: #f7f8fa; padding: 11px 12px; text-align: center; font-size: 13px; font-weight: 700; color: #555; border-bottom: 2px solid #e2e6ea; white-space: nowrap; }
-tbody tr { transition: background .15s; line-height: 1.8; }
-tbody tr:hover { background: #f7f9fc; }
-tbody tr.row-hidden td { color: #bbb; }
-tbody td {
-  padding: 10px 12px; font-size: 13px; border-bottom: 1px solid #f0f1f3;
-  vertical-align: top; text-align: center; color: #000;
-}
-td.col-id { white-space: nowrap; width: 12%; }
-td.col-ref { word-break: break-word; width: 16%; }
-td.col-page { white-space: nowrap; width: 8%; }
-td.col-sentence { width: 27%; word-break: break-word; text-align: left; }
-td.col-comment { width: 27%; word-break: break-word; text-align: left; }
-td.col-confirm { white-space: nowrap; width: 5%; }
+/* ===== SIDEBAR DRAWER ===== */
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:280px;background:#fafbfc;z-index:200;transform:translateX(-100%);transition:transform .3s ease;display:flex;flex-direction:column;box-shadow:4px 0 20px rgba(0,0,0,.15)}
+.sidebar.open{transform:translateX(0)}
+.sidebar-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:199;display:none}
+.sidebar-backdrop.open{display:block}
+.sidebar-close-row{display:flex;justify-content:flex-end;padding:8px 12px 0}
+.btn-sidebar-close{background:none;border:none;font-size:22px;cursor:pointer;color:#a0aec0;padding:4px 10px;border-radius:6px}
+.btn-sidebar-close:active{background:#e2e8f0;color:#4a5568}
+.sidebar-top{flex:1;overflow-y:auto;padding-bottom:8px;scrollbar-width:none;-ms-overflow-style:none}
+.sidebar-top::-webkit-scrollbar{display:none}
+.sidebar-bottom{padding:10px 12px;border-top:1px solid #e2e6ea}
+.sidebar-bottom .btn-logout{width:100%;padding:9px 16px;border:1px solid #ccc;background:#fff;border-radius:6px;cursor:pointer;font-size:13px;color:#555;font-weight:600;transition:all .15s}
+.sidebar-bottom .btn-logout:hover{background:#f0f0f0;border-color:#aaa}
 
-/* Confirm Checkbox */
-.confirm-cb {
-  -webkit-appearance: none; -moz-appearance: none; appearance: none;
-  width: 16px; height: 16px; border: 1.5px solid #aaa; border-radius: 3px;
-  background: #fff; cursor: pointer; position: relative; margin-top: 2px;
-}
-.confirm-cb:checked { background: #fff; border-color: #aaa; }
-.confirm-cb:checked::after {
-  content: '\2713'; position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%, -50%); font-size: 12px; font-weight: 700; color: #000; line-height: 1;
-}
+.tree-node{position:relative;cursor:pointer}
+.tree-row{display:flex;align-items:center;padding:4px 10px 4px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:5px;margin:1px 6px;transition:background .12s}
+.tree-row:hover{background:#e4ecf7}
+.tree-row.active{background:#d0e0f5;font-weight:600}
+.tree-toggle{width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;color:#555;margin-right:1px}
+.tree-toggle.has-children{cursor:pointer}
+.tree-toggle.has-children::before{content:'▶';display:block;transition:transform .15s}
+.tree-node.open>.tree-row .tree-toggle.has-children::before{transform:rotate(90deg)}
+.tree-icon{width:18px;height:18px;flex-shrink:0;margin-right:5px;display:inline-flex;align-items:center;justify-content:center;font-size:15px}
+.tree-label{flex:1;overflow:hidden;text-overflow:ellipsis;font-size:13px;color:#333}
+.tree-children{display:none;padding-left:12px;position:relative}
+.tree-children::before{content:'';position:absolute;left:17px;top:0;bottom:8px;width:1px;background:#d8dce0}
+.tree-node.open>.tree-children{display:block}
+.tree-child-row{position:relative;padding-left:10px}
+.tree-child-row::before{content:'';position:absolute;left:5px;top:12px;width:10px;height:1px;background:#d8dce0}
+.tree-spacer{height:28px}
+.tree-divider{height:16px}
+.tree-menu-item{display:flex;align-items:center;padding:4px 8px 4px 12px;margin:2px 4px;border-radius:5px;cursor:pointer;color:#4a7dff;font-size:12px;font-weight:600;transition:background .12s}
+.tree-menu-item:hover{background:#e4ecf7}
 
-/* ===== Right Panel: OCR ===== */
-.ocr-panel {
-  display: flex; flex-direction: column; height: 100%; padding: 16px; gap: 12px;
-}
-.ocr-header { display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-.ocr-title { font-size: 15px; font-weight: 700; color: #2c3e50; }
-.ocr-title span { font-size: 12px; font-weight: 400; color: #7ec8e3; margin-left: 6px; }
-.btn-font-size { background: #e2e6ea; color: #555; border: none; border-radius: 6px; padding: 5px 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: background .2s; min-width: 28px; }
-.btn-font-size:hover { background: #d2d6da; }
-.btn-ocr-reset { background: #e2e6ea; color: #555; border: none; border-radius: 6px; padding: 5px 12px; font-size: 12px; font-weight: 600; cursor: pointer; transition: background .2s; }
-.btn-ocr-reset:hover { background: #d2d6da; }
+/* ===== MAIN AREA ===== */
+.main{width:100%;overflow-y:scroll;padding:58px 12px 60px 12px;background:#fff;height:100vh}
 
-/* Paste zone — 고정 높이, 스크롤 */
-.paste-zone {
-  border: 2px dashed #c8cdd3; border-radius: 10px; background: #fafbfc;
-  height: 45%; min-height: 160px; flex-shrink: 0;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  cursor: pointer; transition: border-color .2s, background .2s;
-  position: relative; overflow: hidden;
-}
-.paste-zone:hover { border-color: #4a7dff; background: #f0f4ff; }
-.paste-zone.has-image {
-  border-style: solid; border-color: #e2e6ea; cursor: default;
-  overflow-y: auto; justify-content: flex-start;
-}
-.paste-zone.has-image:hover { border-color: #e2e6ea; background: #fafbfc; }
-.paste-zone-text { color: #999; font-size: 13px; text-align: center; line-height: 1.6; pointer-events: none; }
-.paste-zone-text .icon { font-size: 28px; display: block; margin-bottom: 6px; }
-.paste-zone img {
-  width: 100%; display: block; object-fit: contain; background: #f7f8fa; border-radius: 8px;
-}
-.paste-zone .btn-remove-img {
-  position: sticky; top: 6px; float: right; margin: 6px 6px 0 0;
-  width: 24px; height: 24px; background: rgba(0,0,0,.5); color: #fff;
-  border: none; border-radius: 50%; font-size: 14px; line-height: 1;
-  cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 2;
-}
-.paste-zone .btn-remove-img:hover { background: rgba(0,0,0,.7); }
+/* ===== NEW CARD BUTTON ===== */
+.btn-new-card{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px 16px;background:linear-gradient(135deg,#8e9aaf 0%,#6b7b8d 100%);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:16px;transition:transform .1s,box-shadow .2s;box-shadow:0 2px 8px rgba(107,123,141,.3);scroll-margin-top:58px}
+.btn-new-card:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(107,123,141,.4)}
+.btn-new-card:active{transform:translateY(0)}
 
-/* Progress */
-.ocr-progress {
-  display: none; background: #fff; border-radius: 8px; padding: 14px 16px;
-  box-shadow: 0 1px 3px rgba(0,0,0,.06); flex-shrink: 0;
-}
-.ocr-progress-bar { width: 100%; height: 6px; background: #e2e6ea; border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
-.ocr-progress-fill { height: 100%; background: #4a7dff; border-radius: 3px; width: 0%; transition: width .3s; }
+/* ===== CARD (collapsed) ===== */
+.card{background:#fff;border:1px solid #e2e6ea;border-radius:10px;margin-bottom:12px;overflow:hidden;transition:all .25s ease;box-shadow:0 1px 4px rgba(0,0,0,.06);scroll-margin-top:58px}
+.card:hover{box-shadow:0 3px 12px rgba(0,0,0,.1);border-color:#cdd3da}
+.card.expanded{box-shadow:0 4px 20px rgba(0,0,0,.12);border-color:#b0bac5}
+.card-header{display:flex;flex-direction:column;align-items:flex-start;padding:12px 14px;gap:8px;cursor:default}
+.card-left{display:flex;flex-direction:column;gap:4px;width:100%;min-width:0}
+.card-id{font-weight:400;font-size:13px;color:#2c3e50;letter-spacing:-.3px}
+.card-breadcrumb{font-size:13px;color:#5a6a7a;word-break:break-word;line-height:1.5}
+.card-breadcrumb span{font-weight:700;color:#34495e}
+.card-apa{width:100%;color:#555;font-size:13px;margin-top:5px;line-height:1.6;word-break:break-word;padding-left:2em;text-indent:-2em}
+.btn-open{width:100%;align-self:stretch;padding:8px 24px;border:1px solid #c0c8d0;background:#fff;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;white-space:nowrap;transition:all .15s;color:#4a5568;margin-top:8px}
+.btn-open:hover{background:#f0f4f8;border-color:#a0aab5;color:#2d3748}
+.btn-cancel-new{width:100%;align-self:stretch;padding:8px 24px;border:1px solid #e53e3e;background:#fff;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;white-space:nowrap;color:#e53e3e;transition:all .15s;margin-top:8px}
+.btn-cancel-new:hover{background:#fff5f5;border-color:#c53030}
 
-/* Result text — 나머지 공간, 스크롤 */
-.ocr-result-wrap {
-  flex: 1; display: none; flex-direction: column; min-height: 0;
-}
-.ocr-result {
-  flex: 1; width: 100%; border: 1px solid #e2e6ea; border-radius: 8px;
-  padding: 12px 3.5em; font-size: 17px; line-height: 1.8; color: #2c3e50;
-  background: #fff; resize: none; outline: none; font-family: inherit;
-  overflow-y: auto;
-}
-.ocr-result:focus { border-color: #4a7dff; }
+/* ===== CARD (expanded detail) ===== */
+.card-detail{display:none;border-top:1px solid #e8ecf0;background:#f8f9fb;padding:0}
+.card.expanded .card-detail{display:block}
+.detail-body{display:flex;flex-direction:column;min-height:auto;align-items:stretch}
 
-/* Loading overlay */
-.loading-overlay {
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(255,255,255,.7); display: flex; align-items: center; justify-content: center; z-index: 999;
-}
-.loading-spinner { width: 32px; height: 32px; border: 3px solid #e2e6ea; border-top: 3px solid #4a7dff; border-radius: 50%; animation: spin .8s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
+/* detail center */
+.detail-center{flex:1;padding:14px;display:flex;flex-direction:column;gap:14px;overflow-y:visible;width:100%}
+.field-group label{display:block;font-weight:700;font-size:12px;color:#718096;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.field-group input,.field-group textarea{width:100%;border:1px solid #d2d8e0;border-radius:8px;padding:10px 14px;font-size:13px;font-family:inherit;resize:vertical;background:#fff;line-height:1.6;transition:border-color .15s,box-shadow .15s;scrollbar-width:none;-ms-overflow-style:none;text-align:justify;overflow:hidden}
+.field-group textarea::-webkit-scrollbar{display:none}
+.field-group input:focus,.field-group textarea:focus{outline:none;border-color:#4a7dff;box-shadow:0 0 0 3px rgba(74,125,255,.12)}
+.field-group input:read-only,.field-group textarea:read-only{background:#f1f3f5;color:#000;border-color:#e2e6ea}
+.field-group textarea.tall{min-height:150px}
+.field-group textarea.apa-short{min-height:44px;max-height:80px}
+.field-group textarea.medium{min-height:70px}
+.field-group.comment-group{display:flex;flex-direction:column}
+.field-group.comment-group textarea{min-height:150px}
 
-.empty-state { text-align: center; padding: 40px 20px; color: #a0aec0; font-size: 14px; }
+/* detail right panel */
+.detail-right{width:100%;min-width:auto;padding:16px;overflow-y:auto;background:#f8f9fb;display:flex;flex-direction:column;border-top:1px solid #e2e6ea}
+.detail-right h4{font-size:11px;color:#a0aec0;margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px;font-weight:700}
 
-/* Toast */
-.toast {
-  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-  background: #2c3e50; color: #fff; padding: 8px 20px; border-radius: 6px;
-  font-size: 13px; z-index: 1000; opacity: 0; transition: opacity .3s; pointer-events: none;
+/* category / element selector */
+.cat-tree{margin-bottom:14px;overflow-y:scroll;border:1px solid #d2d8e0;border-radius:8px;padding:8px;background:#fff;min-height:180px;max-height:200px}
+.cat-tree .ct-cat{font-weight:700;font-size:13px;cursor:pointer;padding:4px 6px;display:flex;align-items:center;gap:4px;border-radius:4px;transition:background .12s}
+.cat-tree .ct-cat:hover{background:#f0f4f8}
+.cat-tree .ct-cat .plus-btn{margin-left:auto;width:22px;height:22px;border:1px solid #c0c8d0;border-radius:4px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;line-height:1;color:#555;transition:all .12s}
+.cat-tree .ct-cat .plus-btn:hover{background:#e8eef6;border-color:#4a7dff;color:#4a7dff}
+.cat-tree .ct-elem{padding:3px 6px 3px 22px;font-size:12px;color:#555;cursor:pointer;border-radius:4px;transition:background .12s}
+.cat-tree .ct-elem:hover{background:#e8eef6}
+.cat-tree .ct-elem.selected{background:#d0ddf0;font-weight:600;color:#2d3748}
+.cat-tree.locked{pointer-events:none;opacity:.55;scrollbar-width:none;-ms-overflow-style:none}
+.cat-tree.locked::-webkit-scrollbar{display:none}
+.cat-tree.locked .ct-cat,.cat-tree.locked .ct-elem{cursor:default}
+
+/* cat dropdowns */
+.cat-drop-row{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.cat-drop-row select{flex:1;padding:6px 10px;border:1px solid #d2d8e0;border-radius:6px;font-size:12px;background:#fff;transition:border-color .15s}
+.cat-drop-row select:focus{border-color:#4a7dff;outline:none}
+.cat-drop-row select:disabled{background:#f1f3f5;color:#999;cursor:not-allowed}
+.cat-drop-row .plus-btn{width:24px;height:24px;border:1px solid #c0c8d0;border-radius:5px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:#555;flex-shrink:0;transition:all .12s}
+.cat-drop-row .plus-btn:hover{background:#e8eef6;border-color:#4a7dff;color:#4a7dff}
+.cat-drop-row .plus-btn.locked{pointer-events:none;opacity:.4}
+
+/* action buttons */
+.detail-right-actions{display:flex;gap:0;margin-top:16px;padding-top:14px;border-top:1px solid #e2e6ea;justify-content:space-between}
+.detail-right-actions button{flex:1;padding:12px 0;border:1px solid #c0c8d0;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;background:#fff;text-align:center;transition:all .15s}
+.detail-right-actions button:not(:last-child){margin-right:6px}
+.detail-right-actions button:hover{background:#f0f4f8}
+.detail-right-actions .btn-del{color:#e53e3e;border-color:#e53e3e}
+.detail-right-actions .btn-del:hover{background:#fff5f5}
+.detail-right-actions .btn-save{color:#fff;background:linear-gradient(135deg,#667eea,#5a67d8);border-color:transparent}
+.detail-right-actions .btn-save:hover{background:linear-gradient(135deg,#5a67d8,#4c51bf)}
+
+/* ===== CLOSE BUTTON AT BOTTOM ===== */
+.btn-close-bottom{width:100%;padding:10px 0;border:1px solid #c0c8d0;background:#fff;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;color:#4a5568;transition:all .15s;margin-top:8px}
+.btn-close-bottom:hover{background:#f0f4f8;border-color:#a0aab5;color:#2d3748}
+.btn-close-bottom:active{background:#e2e8f0}
+
+/* ===== CARD ACTION ROW (below Close button) ===== */
+.card-action-row{display:flex;gap:6px;width:100%;margin-top:4px}
+.card-action-row .btn-act{flex:1;padding:8px 0;border:1px solid #c0c8d0;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;background:#fff;text-align:center;transition:all .15s}
+.card-action-row .btn-act:hover{background:#f0f4f8}
+.card-action-row .btn-del{color:#e53e3e;border-color:#e53e3e}
+.card-action-row .btn-del:hover{background:#fff5f5}
+.card-action-row .btn-save{color:#fff;background:linear-gradient(135deg,#667eea,#5a67d8);border-color:transparent}
+.card-action-row .btn-save:hover{background:linear-gradient(135deg,#5a67d8,#4c51bf)}
+
+/* ===== CARD TOP CLOSE ===== */
+.card-top-bar{display:flex;justify-content:flex-end;padding:8px 14px 0 14px}
+.btn-close-top{background:none;border:none;font-size:18px;cursor:pointer;color:#a0aec0;padding:2px 8px;border-radius:5px;transition:all .12s}
+.btn-close-top:hover{background:#e2e8f0;color:#4a5568}
+
+/* ===== MODAL ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(2px)}
+.modal-box{background:#fff;border-radius:14px;padding:24px 20px;width:calc(100% - 32px);max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal-box.wide{width:calc(100% - 32px);max-width:680px}
+.modal-box h3{margin-bottom:16px;font-size:18px;color:#2d3748;font-weight:700;cursor:grab;user-select:none}
+.modal-box h3:active{cursor:grabbing}
+.modal-box p{font-size:14px;color:#4a5568;margin-bottom:8px;line-height:1.6}
+.modal-box label{display:block;font-size:13px;font-weight:600;color:#555;margin-bottom:4px;margin-top:12px}
+.modal-box input,.modal-box select{width:100%;padding:12px;border:1px solid #d2d8e0;border-radius:8px;font-size:14px;margin-bottom:4px;transition:border-color .15s}
+.modal-box input:focus,.modal-box select:focus{outline:none;border-color:#4a7dff;box-shadow:0 0 0 3px rgba(74,125,255,.12)}
+.modal-breadcrumb{font-size:13px;color:#4a5568;margin-bottom:12px;line-height:1.5;padding:10px 14px;background:#f7f8fa;border-radius:8px;border:1px solid #e2e6ea}
+.modal-breadcrumb span{font-weight:700}
+.modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:22px}
+.modal-btns button{padding:9px 24px;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s}
+.modal-btns .btn-cancel{background:#edf2f7;color:#4a5568}
+.modal-btns .btn-cancel:hover{background:#e2e8f0}
+.modal-btns .btn-confirm{background:#4a7dff;color:#fff}
+.modal-btns .btn-confirm:hover{background:#3a65d4}
+.modal-btns .btn-danger{background:#e53e3e;color:#fff}
+.modal-btns .btn-danger:hover{background:#c53030}
+
+
+/* ===== STATISTICS VIEW (mobile) ===== */
+.statistics-view{display:flex;flex-direction:column;min-height:calc(100vh - 58px);overflow:hidden}
+.statistics-left{padding:16px;overflow-y:auto;border-bottom:1px solid #e2e6ea}
+.statistics-right{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden}
+.statistics-right-header{padding:16px 16px 0 16px;flex-shrink:0}
+.statistics-right-body{flex:1;overflow-y:auto;padding:0 16px 16px 16px}
+.statistics-left h3{font-size:15px;font-weight:700;color:#2d3748;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #4a7dff}
+.statistics-right-header h3{font-size:15px;font-weight:700;color:#2d3748;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid #4a7dff}
+.stat-tree{border:1px solid #d2d8e0;border-radius:8px;padding:8px;background:#fff}
+.stat-tree .st-cat{font-weight:700;font-size:13px;padding:5px 8px;display:flex;align-items:baseline;gap:6px;border-radius:4px;color:#2d3748;cursor:pointer;transition:background .12s}
+.stat-tree .st-cat:hover{background:#f0f4f8}
+.stat-tree .st-cat .st-leader{flex:1;border-bottom:1px dotted #c0c8d0;min-width:12px;margin:0 4px;align-self:baseline;position:relative;top:-3px}
+.stat-tree .st-cat .st-count{flex-shrink:0;font-size:11px;font-weight:600;color:#fff;background:#4a7dff;border-radius:10px;padding:1px 8px;min-width:22px;text-align:center}
+.stat-tree .st-elem{padding:4px 8px 4px 28px;font-size:12px;color:#555;display:flex;align-items:baseline;gap:6px;border-radius:4px;transition:background .12s}
+.stat-tree .st-elem:hover{background:#f0f4f8}
+.stat-tree .st-elem .st-leader{flex:1;border-bottom:1px dotted #d2d8e0;min-width:12px;margin:0 4px;align-self:baseline;position:relative;top:-3px}
+.stat-tree .st-elem .st-count{flex-shrink:0;font-size:11px;font-weight:500;color:#4a7dff;background:#edf2f7;border-radius:10px;padding:1px 7px;min-width:20px;text-align:center}
+.stat-tree .st-children{display:none}
+.stat-tree .st-node.open>.st-children{display:block}
+.stat-tree .st-toggle{width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:#a0aec0;flex-shrink:0;transition:transform .15s}
+.stat-tree .st-node.open>.st-cat>.st-toggle{transform:rotate(90deg)}
+.apa-list{list-style:none;padding:0;margin:0}
+.apa-list li{padding:8px 10px;font-size:13px;line-height:1.7;color:#2d3748;border-bottom:1px solid #f0f2f5;padding-left:4em;text-indent:-4em;word-break:break-word}
+.apa-list li:last-child{border-bottom:none}
+.apa-list li.apa-highlight{font-weight:700;background:#f0f4ff}
+.st-name{cursor:pointer;border-radius:3px;padding:1px 3px;transition:background .12s,color .12s}
+.st-name:hover{background:#e8eef6;color:#4a7dff}
+.st-name.st-name-active{background:#4a7dff;color:#fff;border-radius:4px}
+
+/* ===== LOADING OVERLAY ===== */
+#loadingOverlay{position:fixed;inset:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9998}
+.loading-content{text-align:center}
+.loading-logo{font-size:32px;font-weight:800;color:#4a7dff;margin-bottom:24px;letter-spacing:-1px}
+.loading-bar-track{width:280px;height:4px;background:#e2e8f0;border-radius:4px;overflow:hidden;margin-bottom:16px}
+.loading-bar-fill{height:100%;background:linear-gradient(90deg,#667eea,#764ba2,#667eea);background-size:200% 100%;border-radius:4px;animation:loadSlide 1.5s ease-in-out infinite;width:60%}
+@keyframes loadSlide{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.loading-steps{display:flex;flex-direction:column;gap:8px;align-items:center}
+.loading-step{font-size:13px;color:#a0aec0;display:flex;align-items:center;gap:8px;transition:color .3s}
+.loading-step.active{color:#4a7dff;font-weight:600}
+.loading-step.done{color:#38a169}
+.loading-step .step-icon{width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:12px}
+.loading-step.active .step-icon{animation:pulse .8s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ===== TOAST ===== */
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);padding:12px 24px;background:#2d3748;color:#fff;border-radius:10px;font-size:14px;font-weight:500;z-index:9999;opacity:0;transition:opacity .3s;box-shadow:0 4px 14px rgba(0,0,0,.2);max-width:calc(100% - 32px)}
+.toast.show{opacity:1}
+
+/* ===== PRINT ===== */
+@page{size:letter;margin:20mm 15mm 15mm 15mm}
+@media print{
+  .sidebar,.btn-open,.btn-cancel-new,.detail-right-actions,.btn-new-card,.toast,.card-top-bar,.mobile-topbar,.sidebar-backdrop,.card-date-wrap,.card-action-row,.btn-close-bottom{display:none!important}
+  .card-date-info{display:none!important}
+  .layout{display:block!important}
+  .main{padding:0!important;overflow:visible!important;height:auto!important;max-height:none!important}
+  .layout{height:auto!important;overflow:visible!important}
+  .card:not(.expanded){display:none!important}
+  .card.expanded{break-inside:auto!important;border:none!important;border-radius:0!important;box-shadow:none!important;overflow:visible!important;margin:0!important;height:auto!important;max-height:none!important}
+  .card{overflow:visible!important}
+  .card-header{padding:0!important;position:relative!important;border:none!important;flex-direction:column!important}
+  .card-left{flex-wrap:wrap!important}
+  .card-id{display:block!important;width:100%!important;font-size:11px!important;color:#555!important;padding:0 0 0 0!important;order:-2!important;text-align:right!important}
+  .card-breadcrumb{display:block!important;width:100%!important;font-size:13px!important;color:#000!important;padding:0 0 13px 0!important;margin:0!important;order:-1!important}
+  .card-breadcrumb span{font-weight:600!important}
+  .card-apa-row{padding:0!important}
+  .card-apa{color:#000!important;font-size:13px!important;font-weight:normal!important;padding:0 0 12px 2em!important;text-indent:-2em!important}
+  .card-detail{display:block!important;border:none!important}
+  .detail-right{display:none!important}
+  .field-group textarea.apa-short{display:none!important}
+  .print-hide-apa{display:none!important}
+  .detail-center{width:100%!important;max-width:100%!important;padding:8px 0!important;overflow:visible!important}
+  .detail-body{display:block!important;overflow:visible!important;min-height:0!important;border:none!important}
+  .detail-center .field-group textarea{width:100%!important;min-width:100%!important;font-size:11px!important;line-height:1.6!important;height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;overflow-wrap:break-word!important;word-wrap:break-word!important;resize:none!important;border:none!important;background:#fff!important;box-shadow:none!important;padding:4px 0!important;color:#000!important;display:block!important;white-space:pre-wrap!important;text-align:justify!important}
+  .detail-center .field-group textarea[data-field="text"]{font-family:inherit!important;font-style:normal!important;font-size:11px!important;padding-left:5em!important;padding-right:5em!important;border:none!important}
+  .detail-center .field-group textarea[data-field="context"],.detail-center .field-group textarea[data-field="comment"]{text-indent:1em!important}
+  .detail-center .field-group textarea[data-field="text"]{text-indent:1em!important}
+  .detail-center .field-group{border:none!important;background:#fff!important;margin-bottom:4px!important;overflow:visible!important;page-break-inside:auto!important}
+  .detail-center .field-group label{font-size:10px!important;margin-bottom:2px!important}
+  .card-detail,.detail-body,.detail-center,.detail-center .field-group{overflow:visible!important}
+  .card.expanded .card-detail{background:#fff!important;border:none!important}
+  .print-ready .detail-center .field-group textarea{display:none!important}
+  .print-ready .detail-center .field-group .print-mirror{display:block!important;width:100%!important;font-size:11px!important;line-height:1.6!important;white-space:pre-wrap!important;word-wrap:break-word!important;overflow-wrap:break-word!important;color:#000!important;background:#fff!important;border:none!important;padding:4px 0!important;margin:0!important;font-family:inherit!important;text-indent:1em!important;text-align:justify!important}
+  .print-ready .detail-center .field-group .print-mirror[data-field="text"]{font-family:inherit!important;font-style:normal!important;font-size:11px!important;padding-left:5em!important;padding-right:5em!important;border:none!important;text-indent:1em!important}
+  .print-page-footer{display:none!important}
+  *{border-color:transparent!important}
 }
-.toast.show { opacity: 1; }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="header-left">
-    <div class="header-title">REA LAB. <span>Bookmark</span></div>
-    <span class="count-label" id="countLabel">0</span>
-  </div>
-  <div class="header-actions">
-    <button class="btn-sheet" onclick="window.open('https://docs.google.com/spreadsheets/d/1LmJe56gYTHnNSk7RCgBYRcVhL2o9cSvcJFklCrfQRVQ/edit?gid=0#gid=0','_blank')">Bookmark Sheet</button>
-    <button class="btn-refresh" id="btnRefresh" onclick="loadBookmarks(true)">Refresh</button>
-    <button class="btn-close" onclick="window.close()">Close</button>
-  </div>
-</div>
-
-<div class="main-container">
-  <!-- Left Panel -->
-  <div class="panel-left">
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>ID</th><th>Reference</th><th>Page</th><th>Sentence</th><th>Comment</th><th>Confirm</th></tr></thead>
-        <tbody id="tableBody"></tbody>
-      </table>
-      <div class="empty-state" id="emptyState" style="display:none">No bookmarks found.</div>
-    </div>
-  </div>
-
-  <!-- Right Panel: OCR -->
-  <div class="panel-right">
-    <div class="ocr-panel">
-      <div class="ocr-header">
-        <div class="ocr-title">OCR <span>Image to Text</span></div>
-        <div style="display:flex; align-items:center; gap:6px;">
-          <button class="btn-font-size" onclick="changeOcrFontSize(-1)" title="글씨 줄이기">A-</button>
-          <button class="btn-font-size" onclick="changeOcrFontSize(1)" title="글씨 키우기">A+</button>
-          <button class="btn-ocr-reset" onclick="resetApiKey()" title="API 키 재설정">Key</button>
-          <button class="btn-ocr-reset" onclick="clearOcr()">초기화</button>
-        </div>
-      </div>
-
-      <div class="paste-zone" id="pasteZone" onclick="pasteFromClipboard()">
-        <div class="paste-zone-text" id="pasteZoneText">
-          <span class="icon">📋</span>
-          클릭하여 이미지 붙여넣기<br>또는 Ctrl+V / Cmd+V
-        </div>
-        <img id="pasteImg" src="" alt="Preview" style="display:none">
-        <button class="btn-remove-img" id="btnRemoveImg" onclick="event.stopPropagation(); clearOcr()" title="이미지 제거" style="display:none">✕</button>
-      </div>
-
-      <div class="ocr-progress" id="ocrProgress">
-        <div class="ocr-progress-bar"><div class="ocr-progress-fill" id="progressFill"></div></div>
-      </div>
-
-      <div class="ocr-result-wrap" id="ocrResultWrap">
-        <textarea class="ocr-result" id="ocrResult" placeholder="인식된 텍스트가 여기에 표시됩니다..."></textarea>
-      </div>
+<!-- ===== LOADING ===== -->
+<div id="loadingOverlay" style="display:none">
+  <div class="loading-content">
+    <div class="loading-logo">REA Lab</div>
+    <div class="loading-bar-track"><div class="loading-bar-fill"></div></div>
+    <div class="loading-steps">
+      <div class="loading-step" id="ls1"><span class="step-icon">○</span> 서버 연결 중</div>
+      <div class="loading-step" id="ls2"><span class="step-icon">○</span> 카테고리 불러오는 중</div>
+      <div class="loading-step" id="ls3"><span class="step-icon">○</span> 카드 데이터 로딩 중</div>
+      <div class="loading-step" id="ls4"><span class="step-icon">○</span> 화면 구성 중</div>
     </div>
   </div>
 </div>
 
+<!-- ===== TOAST ===== -->
 <div class="toast" id="toast"></div>
-<div id="loadingOverlay" class="loading-overlay" style="display:none"><div class="loading-spinner"></div></div>
+
+<!-- ===== MODAL CONTAINER ===== -->
+<div id="modalContainer"></div>
+
+<!-- ===== MOBILE TOP BAR ===== -->
+<div class="mobile-topbar" id="mobileTopbar" style="display:none">
+  <button class="hamburger-btn" onclick="openSidebar()">☰</button>
+  <span class="topbar-title">REA LAB.</span>
+  <span style="width:40px"></span>
+</div>
+
+<!-- ===== SIDEBAR BACKDROP ===== -->
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()" ontouchend="closeSidebar()"></div>
+
+<!-- ===== SIDEBAR DRAWER ===== -->
+<div class="sidebar" id="sidebarDrawer">
+  <div class="sidebar-close-row"><button class="btn-sidebar-close" onclick="closeSidebar()">✕</button></div>
+  <div class="sidebar-top" id="sidebar"></div>
+  <div class="sidebar-bottom">
+    <button class="btn-logout" onclick="doLogout()">Logout</button>
+  </div>
+</div>
+
+<!-- ===== APP ===== -->
+<div class="layout" id="appLayout" style="display:none">
+
+  <!-- MAIN -->
+  <div class="main" id="main">
+    <button class="btn-new-card" id="btnNewCard" onclick="openNewCard()">+ 새 카드 추가</button>
+    <div id="cardList"></div>
+    <div id="statisticsView" style="display:none"></div>
+  </div>
+
+</div>
 
 <script>
-const BOOKMARK_GAS_URL = 'https://script.google.com/macros/s/AKfycbzkKrp51oH_HSPPDhFXFpCFawJgOTO-v6plws-sfURXZvdTNBPGdkscqSN2uBBsfSJa/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwqh02HRq4fG7XsAYQtHNBqsTxHeEkfDSJ0teBgv8Qqhg3gM8qRrO9Wfdvz4btMBQuygQ/exec';
 
-let allBookmarks = [];
-let pastedImageData = null;
+// ===== Session check =====
+let currentUser = null;
+(function() {
+  try {
+    const stored = sessionStorage.getItem('realab_user');
+    if (!stored) { window.location.replace('index.html'); return; }
+    currentUser = JSON.parse(stored);
+  } catch(e) { window.location.replace('index.html'); }
+})();
 
-// ===========================
-// Bookmark
-// ===========================
-async function loadBookmarks(forceRefresh) {
-  const btn = document.getElementById('btnRefresh');
-  btn.disabled = true;
-  showLoading();
-  if (!forceRefresh) {
-    try {
-      const cached = sessionStorage.getItem('realab_bookmarks');
-      if (cached) {
-        allBookmarks = JSON.parse(cached);
-        sessionStorage.removeItem('realab_bookmarks');
-        renderTable();
-        toast('Loaded ' + allBookmarks.length + ' bookmarks (cached)');
-        btn.disabled = false; hideLoading(); return;
+// ===== State =====
+let DB = { categories: [], elements: [], srgData: [], users: [], links: [] };
+let currentFilter = null;
+let expandedCardId = null;
+let modifyModeCards = {};
+let currentView = 'cards';
+
+// ===== Logout =====
+function doLogout() {
+  closeSidebar();
+  showConfirmModal('로그아웃', '로그아웃 하시겠습니까?', '로그아웃', () => {
+    const LOGOUT_STEPS = [
+      '사용자 인증 정보 해제',
+      'Preload 캐시 데이터 삭제',
+      '카테고리 데이터 정리',
+      'Element 데이터 정리',
+      'Serge Card 데이터 정리',
+      '링크 데이터 정리',
+      '세션 스토리지 초기화',
+      '3초 후 로그인 페이지로 이동'
+    ];
+    const TOTAL = LOGOUT_STEPS.length;
+
+    let stepsHtml = LOGOUT_STEPS.map((s, i) =>
+      `<div class="lo-step" id="lo${i+1}">
+        <span class="lo-dot"></span>
+        <span style="line-height:1.5">${s}</span>
+        ${i < TOTAL - 1 ? '<span style="position:absolute;left:7px;top:18px;width:1.5px;height:100%;background:#e5e7eb"></span>' : ''}
+      </div>`
+    ).join('');
+
+    const html = `
+      <div class="modal-overlay" style="pointer-events:none">
+        <div class="modal-box" style="text-align:left;width:340px">
+          <h3 style="cursor:default;text-align:center;font-size:18px;margin-bottom:18px">로그아웃 하는 중...</h3>
+          <div id="loSteps">${stepsHtml}</div>
+        </div>
+      </div>`;
+    document.getElementById('modalContainer').innerHTML = html;
+
+    // CSS for step states (injected once)
+    if (!document.getElementById('logoutStepStyles')) {
+      const style = document.createElement('style');
+      style.id = 'logoutStepStyles';
+      style.textContent = `
+        .lo-step{display:flex;align-items:center;font-size:12.5px;color:#cbd5e0;position:relative;padding-left:24px;min-height:26px;transition:color .3s}
+        .lo-dot{position:absolute;left:1px;top:5px;width:14px;height:14px;border-radius:50%;border:2px solid #e2e8f0;background:#fff;display:flex;align-items:center;justify-content:center;font-size:8px;transition:all .3s;z-index:1}
+        .lo-step.active{color:#4a7dff !important;font-weight:600}
+        .lo-step.active .lo-dot{border-color:#4a7dff !important;background:#4a7dff !important;box-shadow:0 0 0 3px rgba(74,125,255,.15)}
+        .lo-step.done{color:#9ca3af}
+        .lo-step.done .lo-dot{border-color:#9ca3af;background:#9ca3af;box-shadow:none}
+        .lo-step.countdown{color:#4a7dff !important;font-weight:700}
+        .lo-step.countdown .lo-dot{border-color:#4a7dff !important;background:#4a7dff !important;box-shadow:0 0 0 3px rgba(74,125,255,.15)}
+      `;
+      document.head.appendChild(style);
+    }
+
+    function setLoStep(n) {
+      for (let i = 1; i <= TOTAL; i++) {
+        const el = document.getElementById('lo' + i);
+        if (!el) continue;
+        const dot = el.querySelector('.lo-dot');
+        el.classList.remove('active', 'done', 'countdown');
+        dot.textContent = '';
+        if (i < n) {
+          el.classList.add('done');
+          dot.textContent = '✓';
+          dot.style.color = '#fff'; dot.style.fontSize = '8px'; dot.style.fontWeight = '700';
+        } else if (i === n) {
+          el.classList.add('active');
+        }
       }
-    } catch(e) {}
+    }
+
+    async function runLogout() {
+      const delay = ms => new Promise(r => setTimeout(r, ms));
+
+      setLoStep(1);
+      sessionStorage.removeItem('realab_user');
+      currentUser = null;
+      await delay(400);
+
+      setLoStep(2);
+      sessionStorage.removeItem('realab_preload');
+      await delay(350);
+
+      setLoStep(3);
+      DB.categories = [];
+      await delay(300);
+
+      setLoStep(4);
+      DB.elements = [];
+      await delay(300);
+
+      setLoStep(5);
+      DB.srgData = [];
+      await delay(350);
+
+      setLoStep(6);
+      if (DB.links) DB.links = [];
+      await delay(300);
+
+      setLoStep(7);
+      try { sessionStorage.clear(); } catch(e) {}
+      await delay(350);
+
+      // Step 8: 3초 카운트다운
+      for (let i = 1; i <= 7; i++) {
+        const el = document.getElementById('lo' + i);
+        const dot = el ? el.querySelector('.lo-dot') : null;
+        if (el) { el.classList.remove('active'); el.classList.add('done'); }
+        if (dot) { dot.textContent = '✓'; dot.style.color = '#fff'; dot.style.fontSize = '8px'; dot.style.fontWeight = '700'; }
+      }
+
+      const step8 = document.getElementById('lo' + TOTAL);
+      const step8Label = step8 ? step8.querySelector('span:nth-child(2)') : null;
+      const step8Dot = step8 ? step8.querySelector('.lo-dot') : null;
+      step8.classList.remove('active');
+      step8.classList.add('countdown');
+      if (step8Dot) { step8Dot.textContent = '3'; step8Dot.style.color = '#fff'; step8Dot.style.fontSize = '9px'; step8Dot.style.fontWeight = '700'; }
+      if (step8Label) step8Label.textContent = '3초 후 로그인 페이지로 이동';
+
+      await delay(1000);
+      if (step8Dot) step8Dot.textContent = '2';
+      if (step8Label) step8Label.textContent = '2초 후 로그인 페이지로 이동';
+
+      await delay(1000);
+      if (step8Dot) step8Dot.textContent = '1';
+      if (step8Label) step8Label.textContent = '1초 후 로그인 페이지로 이동';
+
+      await delay(1000);
+
+      step8.classList.remove('countdown');
+      step8.classList.add('done');
+      if (step8Dot) { step8Dot.textContent = '✓'; step8Dot.style.fontSize = '8px'; }
+      if (step8Label) step8Label.textContent = '로그인 페이지로 이동';
+
+      const h3 = document.querySelector('#modalContainer .modal-box h3');
+      if (h3) { h3.textContent = '로그아웃 완료'; h3.style.color = '#9ca3af'; }
+
+      await delay(300);
+      window.location.href = 'index.html';
+    }
+
+    runLogout();
+  });
+}
+
+// ===== Sidebar toggle =====
+let sidebarBusy = false;
+function openSidebar() {
+  if (sidebarBusy) return;
+  sidebarBusy = true;
+  document.getElementById('sidebarDrawer').classList.add('open');
+  document.getElementById('sidebarBackdrop').classList.add('open');
+  setTimeout(() => { sidebarBusy = false; }, 350);
+}
+function closeSidebar() {
+  if (sidebarBusy) return;
+  sidebarBusy = true;
+  document.getElementById('sidebarDrawer').classList.remove('open');
+  document.getElementById('sidebarBackdrop').classList.remove('open');
+  setTimeout(() => { sidebarBusy = false; }, 350);
+}
+
+// ===== Toast =====
+function toast(msg, ms = 2000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), ms);
+}
+
+// ===== Loading with steps =====
+function showLoading() {
+  const ov = document.getElementById('loadingOverlay');
+  if (isInitialLoad) {
+    ov.style.background = '#fff';
+  } else {
+    ov.style.background = 'rgba(255,255,255,.7)';
   }
-  try {
-    const url = BOOKMARK_GAS_URL + '?action=getBookmarks&t=' + Date.now();
-    const res = await fetch(url);
-    const json = await res.json();
-    if (json.ok) { allBookmarks = json.bookmarks || []; renderTable(); toast('Loaded ' + allBookmarks.length + ' bookmarks'); }
-    else { toast('Error: ' + (json.error || 'unknown'), 3000); }
-  } catch(e) { toast('Network error: ' + e.message, 3000); }
-  btn.disabled = false; hideLoading();
+  ov.style.display = 'flex';
+  setLoadStep(1);
+}
+function hideLoading() {
+  document.getElementById('loadingOverlay').style.display = 'none';
+  isInitialLoad = false;
+  // reset steps
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('ls' + i);
+    el.className = 'loading-step';
+    el.querySelector('.step-icon').textContent = '○';
+  }
+}
+function setLoadStep(n) {
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('ls' + i);
+    if (i < n) {
+      el.className = 'loading-step done';
+      el.querySelector('.step-icon').textContent = '✓';
+    } else if (i === n) {
+      el.className = 'loading-step active';
+      el.querySelector('.step-icon').textContent = '●';
+    } else {
+      el.className = 'loading-step';
+      el.querySelector('.step-icon').textContent = '○';
+    }
+  }
 }
 
-function renderTable() {
-  const tbody = document.getElementById('tableBody');
-  const emptyEl = document.getElementById('emptyState');
-  const countEl = document.getElementById('countLabel');
-  countEl.textContent = allBookmarks.length;
-  if (allBookmarks.length === 0) { tbody.innerHTML = ''; emptyEl.style.display = ''; return; }
-  emptyEl.style.display = 'none';
-
-  const sorted = [...allBookmarks].sort((a, b) => {
-    const aH = String(a.hide) !== '1', bH = String(b.hide) !== '1';
-    if (aH !== bH) return aH ? 1 : -1;
-    return !aH ? String(a.id).localeCompare(String(b.id)) : String(a.confirm_date||'').localeCompare(String(b.confirm_date||''));
+// ===== GAS fetch helpers (with retry) =====
+async function gasFetch(url, options, retries = 2) {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const r = await fetch(url, options);
+      const text = await r.text();
+      try { return JSON.parse(text); }
+      catch(_) { throw new Error('서버 응답 파싱 오류'); }
+    } catch(e) {
+      if (attempt < retries) { await new Promise(r => setTimeout(r, 800)); continue; }
+      throw e;
+    }
+  }
+}
+async function gasGet(params) {
+  const url = GAS_URL + '?' + new URLSearchParams(params).toString();
+  return gasFetch(url, {});
+}
+async function gasPost(body) {
+  return gasFetch(GAS_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify(body)
   });
-
-  let html = '';
-  sorted.forEach((b) => {
-    const isHidden = String(b.hide) !== '1';
-    const rc = isHidden ? ' class="row-hidden"' : '';
-    const ps = b.page_from ? (b.page_to ? b.page_from + ' ~ ' + b.page_to : String(b.page_from)) : '';
-    html += '<tr' + rc + '>';
-    html += '<td class="col-id">' + esc(b.id) + '</td>';
-    html += '<td class="col-ref">' + esc(b.reference) + '</td>';
-    html += '<td class="col-page">' + esc(ps) + '</td>';
-    html += '<td class="col-sentence">' + esc(b.sentence) + '</td>';
-    html += '<td class="col-comment">' + esc(b.comment) + '</td>';
-    html += '<td class="col-confirm"><input type="checkbox" class="confirm-cb"' + (isHidden ? ' checked' : '') + ' onchange="toggleHide(\'' + esc(b.id) + '\', this.checked)" title="체크 시 숨김"></td>';
-    html += '</tr>';
-  });
-  tbody.innerHTML = html;
 }
 
-function esc(s) { const d = document.createElement('div'); d.textContent = String(s||''); return d.innerHTML; }
-
-function generateTimestampId() {
-  const n = new Date();
-  const p = (v) => String(v).padStart(2,'0');
-  return n.getFullYear() + p(n.getMonth()+1) + p(n.getDate()) + '-' + p(n.getHours()) + p(n.getMinutes()) + p(n.getSeconds());
-}
-
-async function toggleHide(id, isNowChecked) {
-  const newHide = isNowChecked ? '0' : '1';
-  const cd = isNowChecked ? generateTimestampId() : '';
+// ===== Load all data =====
+async function loadAll() {
   showLoading();
   try {
-    const url = BOOKMARK_GAS_URL + '?action=updateBookmarkHide&id=' + encodeURIComponent(id) + '&hide=' + encodeURIComponent(newHide) + '&confirm_date=' + encodeURIComponent(cd) + '&t=' + Date.now();
-    const res = await fetch(url);
-    const json = await res.json();
-    if (json.ok) {
-      const bm = allBookmarks.find(b => String(b.id) === String(id));
-      if (bm) { bm.hide = newHide; bm.confirm_date = cd; }
-      renderTable();
-      toast(isNowChecked ? 'Hidden' : 'Visible');
-    } else { toast('Error: ' + (json.error||''), 3000); }
-  } catch(e) { toast('Network error: ' + e.message, 3000); }
+    let res = null;
+
+    // Check for pre-loaded data from login page
+    try {
+      const preload = sessionStorage.getItem('realab_preload');
+      if (preload) {
+        sessionStorage.removeItem('realab_preload');
+        res = JSON.parse(preload);
+      }
+    } catch(_) {}
+
+    // If no pre-loaded data, fetch from server
+    if (!res) {
+      setLoadStep(1);
+      setLoadStep(2);
+      res = await gasGet({ action: 'getAll' });
+    }
+
+    setLoadStep(3);
+    if (res.ok) {
+      DB = res;
+      if (!DB.links) DB.links = [];
+      // Normalize "no." header to "no" (sheet header has period)
+      DB.links = DB.links.map(l => {
+        if (l['no.'] !== undefined && l.no === undefined) { l.no = l['no.']; }
+        return l;
+      });
+      setLoadStep(4);
+      buildSidebar();
+      renderCards();
+      document.getElementById('appLayout').style.display = 'block';
+      document.getElementById('mobileTopbar').style.display = 'flex';
+    } else {
+      toast('데이터 로드 실패: ' + (res.error || ''), 3000);
+    }
+  } catch (e) {
+    toast('서버 오류: ' + e.message, 3000);
+  }
   hideLoading();
 }
 
-// ===========================
-// OCR: Click to paste
-// ===========================
-async function pasteFromClipboard() {
-  if (pastedImageData) return;
-  try {
-    const items = await navigator.clipboard.read();
-    for (const item of items) {
-      const imgType = item.types.find(t => t.startsWith('image/'));
-      if (imgType) {
-        const blob = await item.getType(imgType);
-        loadImageBlob(blob);
-        return;
-      }
+// ===== Switch view =====
+function showCardsView() {
+  currentView = 'cards';
+  document.getElementById('btnNewCard').style.display = '';
+  document.getElementById('cardList').style.display = '';
+  document.getElementById('statisticsView').style.display = 'none';
+  renderCards();
+}
+function openBookmarkWindow() {
+  closeSidebar();
+  window.open('bookmark.html', 'BookmarkViewer', 'width=' + screen.availWidth + ',height=' + Math.round(screen.availHeight * 0.7) + ',left=0,top=0,resizable=yes,scrollbars=yes');
+}
+
+function showStatisticsView() {
+  guardedNavigate(() => {
+    closeSidebar();
+    currentView = 'statistics';
+    currentFilter = null;
+    expandedCardId = null;
+    modifyModeCards = {};
+    document.getElementById('btnNewCard').style.display = 'none';
+    document.getElementById('cardList').style.display = 'none';
+    document.getElementById('statisticsView').style.display = '';
+    renderStatistics();
+    buildSidebar();
+  });
+}
+
+function formatApa(raw) {
+  let s = escHtml(raw);
+  s = s.replace(/((?:\(\d{4}[a-z]?\)\.\s|(?:Ed|Eds)\.\)\.\s))([A-Z][^.]+?)(\.|\s\()/g, function(m, pre, title, after) {
+    return pre + '<i>' + title + '</i>' + after;
+  });
+  s = s.replace(/((?:\(\d{4}[a-z]?\)\.\s))([가-힣][^.]+?)(\.)/g, function(m, pre, title, after) {
+    return pre + '<b>' + title + '</b>' + after;
+  });
+  s = s.replace(/(\.\s)([A-Z][A-Za-z\s&:]+),\s(\d+)(\(\d+\))?/g, function(m, dot, journal, vol, issue) {
+    return dot + '<i>' + journal + ', ' + vol + '</i>' + (issue || '');
+  });
+  s = s.replace(/(\.\s)([가-힣][가-힣\s&]+),\s(\d+)(\(\d+\))?/g, function(m, dot, journal, vol, issue) {
+    return dot + '<i>' + journal + ', ' + vol + '</i>' + (issue || '');
+  });
+  return s;
+}
+
+function renderStatistics() {
+  const container = document.getElementById('statisticsView');
+
+  let leftHtml = '<h3>📂 Card Statistics</h3>';
+  leftHtml += '<div class="stat-tree">';
+
+  const otherCat = DB.categories.find(c => c.category_id === 'category_99');
+  const regularCats = DB.categories.filter(c => c.category_id !== 'category_99');
+  const orderedCats = otherCat ? [otherCat, ...regularCats] : regularCats;
+
+  orderedCats.forEach(cat => {
+    const catCode = cat.category_id.replace('category_', '');
+    const displayName = catCode + '_' + cat.category_name;
+    const elems = getElementsForCategory(cat.category_id);
+    const catCount = DB.srgData.filter(d => d.category_id === cat.category_id).length;
+    const hasChildren = elems.length > 0;
+
+    leftHtml += '<div class="st-node open">';
+    leftHtml += '<div class="st-cat" onclick="this.parentElement.classList.toggle(\'open\')">';
+    if (hasChildren) {
+      leftHtml += '<span class="st-toggle">▶</span>';
+    } else {
+      leftHtml += '<span class="st-toggle" style="visibility:hidden">▶</span>';
     }
-    toast('클립보드에 이미지가 없습니다.', 2000);
-  } catch(e) {
-    toast('클립보드 접근 권한이 필요합니다. Ctrl+V로 붙여넣으세요.', 2500);
-  }
-}
-
-// Ctrl+V
-document.addEventListener('paste', (e) => {
-  const items = e.clipboardData && e.clipboardData.items;
-  if (!items) return;
-  for (let i = 0; i < items.length; i++) {
-    if (items[i].type.indexOf('image') !== -1) {
-      e.preventDefault();
-      loadImageBlob(items[i].getAsFile());
-      return;
+    leftHtml += '<span class="st-name" onclick="event.stopPropagation();highlightApaByFilter(\'category\',\'' + cat.category_id + '\',this)">' + escHtml(displayName) + '</span>';
+    if (catCount > 0) {
+      leftHtml += '<span class="st-leader"></span>';
+      leftHtml += '<span class="st-count">' + catCount + '건</span>';
     }
-  }
-});
+    leftHtml += '</div>';
 
-function loadImageBlob(blob) {
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    pastedImageData = ev.target.result;
-    showPastedImage(pastedImageData);
-    // 자동으로 OCR 시작
-    runOcr();
-  };
-  reader.readAsDataURL(blob);
-}
-
-function showPastedImage(imgUrl) {
-  const zone = document.getElementById('pasteZone');
-  document.getElementById('pasteZoneText').style.display = 'none';
-  const img = document.getElementById('pasteImg');
-  img.src = imgUrl;
-  img.style.display = 'block';
-  document.getElementById('btnRemoveImg').style.display = 'flex';
-  zone.classList.add('has-image');
-  document.getElementById('ocrResultWrap').style.display = 'none';
-  document.getElementById('ocrProgress').style.display = 'none';
-}
-
-// ===========================
-// OCR: 이미지 전처리 (그레이스케일 + 대비 강화 + 이진화)
-// ===========================
-// ===========================
-// Google Cloud Vision API 설정
-// ===========================
-// API 키는 localStorage에 저장 (코드에 노출하지 않음)
-function getVisionApiKey() {
-  return localStorage.getItem('gcv_api_key') || '';
-}
-function setVisionApiKey(key) {
-  localStorage.setItem('gcv_api_key', key.trim());
-}
-
-// ===========================
-// OCR: Run Google Cloud Vision API (자동 실행)
-// ===========================
-async function runOcr() {
-  if (!pastedImageData) return;
-
-  // API 키 확인
-  let apiKey = getVisionApiKey();
-  if (!apiKey) {
-    apiKey = prompt('Google Cloud Vision API 키를 입력하세요.\n(한 번 입력하면 브라우저에 저장됩니다)');
-    if (!apiKey || !apiKey.trim()) {
-      toast('API 키가 필요합니다.', 2500);
-      return;
+    if (hasChildren) {
+      leftHtml += '<div class="st-children">';
+      elems.forEach(elem => {
+        const elemCode = elem.element_id.replace('element_', '');
+        const elemCount = DB.srgData.filter(d => d.element_id === elem.element_id).length;
+        leftHtml += '<div class="st-elem">';
+        leftHtml += '<span class="st-name" onclick="highlightApaByFilter(\'element\',\'' + elem.element_id + '\',this)">' + elemCode + '_' + escHtml(elem.element_name) + '</span>';
+        if (elemCount > 0) {
+          leftHtml += '<span class="st-leader"></span>';
+          leftHtml += '<span class="st-count">' + elemCount + '건</span>';
+        }
+        leftHtml += '</div>';
+      });
+      leftHtml += '</div>';
     }
-    setVisionApiKey(apiKey);
+    leftHtml += '</div>';
+  });
+
+  leftHtml += '</div>';
+
+  const apaSet = new Set();
+  DB.srgData.forEach(d => {
+    const apa = (d.apa || '').trim();
+    if (apa) apaSet.add(apa);
+  });
+  const apaList = [...apaSet].sort((a, b) => a.localeCompare(b, 'ko'));
+
+  let rightHeaderHtml = '<h3>📚 참고문헌 (APA)</h3>';
+
+  let rightBodyHtml = '<ul class="apa-list" id="statApaList">';
+  apaList.forEach((apa, idx) => {
+    rightBodyHtml += '<li data-apa="' + escHtml(apa) + '">' + formatApa(apa) + '</li>';
+  });
+  if (apaList.length === 0) {
+    rightBodyHtml += '<li style="color:#a0aec0;text-indent:0;padding-left:12px">참고문헌이 없습니다.</li>';
+  }
+  rightBodyHtml += '</ul>';
+
+  container.innerHTML = '<div class="statistics-view">' +
+    '<div class="statistics-left">' + leftHtml + '</div>' +
+    '<div class="statistics-right">' +
+      '<div class="statistics-right-header">' + rightHeaderHtml + '</div>' +
+      '<div class="statistics-right-body">' + rightBodyHtml + '</div>' +
+    '</div>' +
+    '</div>';
+}
+
+function highlightApaByFilter(type, id, clickedEl) {
+  const allNames = document.querySelectorAll('.stat-tree .st-name');
+  const wasActive = clickedEl.classList.contains('st-name-active');
+  allNames.forEach(n => n.classList.remove('st-name-active'));
+
+  const list = document.getElementById('statApaList');
+  if (!list) return;
+  const items = list.querySelectorAll('li[data-apa]');
+
+  if (wasActive) {
+    items.forEach(li => li.classList.remove('apa-highlight'));
+    return;
   }
 
-  const progressEl = document.getElementById('ocrProgress');
-  const progressFill = document.getElementById('progressFill');
-  const resultWrap = document.getElementById('ocrResultWrap');
-  const resultEl = document.getElementById('ocrResult');
+  clickedEl.classList.add('st-name-active');
 
-  progressEl.style.display = 'block';
-  resultWrap.style.display = 'none';
-  progressFill.style.width = '30%';
+  const matchingApas = new Set();
+  DB.srgData.forEach(d => {
+    const match = type === 'category' ? d.category_id === id : d.element_id === id;
+    if (match) {
+      const apa = (d.apa || '').trim();
+      if (apa) matchingApas.add(apa);
+    }
+  });
 
-  try {
-    // base64 데이터 추출 (data:image/...;base64, 접두사 제거)
-    const base64Data = pastedImageData.split(',')[1];
+  items.forEach(li => {
+    const apaVal = li.getAttribute('data-apa');
+    if (matchingApas.has(apaVal)) {
+      li.classList.add('apa-highlight');
+    } else {
+      li.classList.remove('apa-highlight');
+    }
+  });
+}
 
-    progressFill.style.width = '50%';
+// ===== Helpers =====
+function getCategoryName(catId) {
+  const c = DB.categories.find(c => c.category_id === catId);
+  return c ? c.category_name : catId;
+}
+function getElementName(elemId) {
+  const e = DB.elements.find(e => e.element_id === elemId);
+  return e ? e.element_name : elemId;
+}
+function getElementsForCategory(catId) {
+  return DB.elements.filter(e => e.category === catId);
+}
 
-    const visionUrl = 'https://vision.googleapis.com/v1/images:annotate?key=' + apiKey;
+function generateNextSrgId() {
+  let maxNum = 0;
+  DB.srgData.forEach(d => {
+    const m = String(d.srg_id).match(/srg_(\d+)/);
+    if (m) { const n = parseInt(m[1], 10); if (n > maxNum) maxNum = n; }
+  });
+  return 'srg_' + String(maxNum + 1).padStart(5, '0');
+}
+function generateNextCategoryId() {
+  let maxNum = 0;
+  DB.categories.forEach(c => {
+    if (c.category_id === 'category_99') return;
+    const m = String(c.category_id).match(/category_(\d+)/);
+    if (m) { const n = parseInt(m[1], 10); if (n > maxNum) maxNum = n; }
+  });
+  return 'category_' + String(maxNum + 1).padStart(2, '0');
+}
+function generateNextElementId(catId) {
+  const catCode = catId.replace('category_', '');
+  const prefix = 'element_' + catCode + '-';
+  const existing = DB.elements.filter(e => e.category === catId);
+  if (existing.length === 0) return prefix + '00';
+  let maxSub = -1;
+  existing.forEach(e => {
+    const m = String(e.element_id).match(/element_\d+-(\d+)/);
+    if (m) { const n = parseInt(m[1], 10); if (n > maxSub) maxSub = n; }
+  });
+  return prefix + String(maxSub + 1).padStart(2, '0');
+}
+function generateNextLinkNo() {
+  let maxNum = 0;
+  (DB.links || []).forEach(l => {
+    const n = parseInt(l.no, 10);
+    if (!isNaN(n) && n > maxNum) maxNum = n;
+  });
+  return String(maxNum + 1);
+}
 
-    // Google Cloud Vision API 호출
-    const response = await fetch(visionUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        requests: [{
-          image: { content: base64Data },
-          features: [{ type: 'TEXT_DETECTION' }],
-          imageContext: {
-            languageHints: ['ko', 'en']
-          }
-        }]
-      })
+// ===== Modal helpers =====
+function showModal(html) {
+  document.getElementById('modalContainer').innerHTML = html;
+  // Setup drag-safe overlay dismiss (click only, not drag)
+  const overlay = document.querySelector('#modalContainer .modal-overlay');
+  if (overlay) {
+    let overlayMouseDownTarget = null;
+    overlay.addEventListener('mousedown', e => { overlayMouseDownTarget = e.target; });
+    overlay.addEventListener('mouseup', e => {
+      if (e.target === overlay && overlayMouseDownTarget === overlay) closeModal();
+      overlayMouseDownTarget = null;
     });
-
-    progressFill.style.width = '80%';
-
-    if (!response.ok) {
-      const errData = await response.json();
-      throw new Error(errData.error?.message || 'API 요청 실패 (' + response.status + ')');
-    }
-
-    const data = await response.json();
-    const annotation = data.responses[0];
-
-    if (annotation.error) {
-      throw new Error(annotation.error.message);
-    }
-
-    const rawText = annotation.fullTextAnnotation?.text || '';
-    const text = mergeLines(rawText.trim());
-
-    progressFill.style.width = '100%';
-
-    setTimeout(() => {
-      progressEl.style.display = 'none';
-      resultWrap.style.display = 'flex';
-      resultEl.value = text || '(인식된 텍스트가 없습니다)';
-
-      if (text) toast('텍스트 인식 완료!');
-      else toast('인식된 텍스트가 없습니다.', 2500);
-    }, 200);
-  } catch(e) {
-    progressEl.style.display = 'none';
-    if (e.message.includes('API key') || e.message.includes('API_KEY_INVALID') || e.message.includes('PERMISSION_DENIED')) {
-      localStorage.removeItem('gcv_api_key');
-      toast('API 키 오류: 키를 확인해주세요. 다시 시도하면 재입력할 수 있습니다.', 3000);
-    } else if (e.message.includes('RESOURCE_EXHAUSTED') || e.message.includes('quota')) {
-      toast('월 무료 한도(1,000건) 초과입니다.', 3000);
-    } else {
-      toast('OCR 오류: ' + e.message, 3000);
-    }
+  }
+  // Setup draggable modal from h3
+  const box = document.querySelector('#modalContainer .modal-box');
+  const h3 = box ? box.querySelector('h3') : null;
+  if (box && h3) {
+    let isDragging = false, startX = 0, startY = 0, origLeft = 0, origTop = 0;
+    box.style.position = 'relative';
+    box.style.left = '0px';
+    box.style.top = '0px';
+    h3.addEventListener('mousedown', e => {
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      origLeft = parseInt(box.style.left) || 0;
+      origTop = parseInt(box.style.top) || 0;
+      e.preventDefault();
+    });
+    document.addEventListener('mousemove', function modalDrag(e) {
+      if (!isDragging) return;
+      box.style.left = (origLeft + e.clientX - startX) + 'px';
+      box.style.top = (origTop + e.clientY - startY) + 'px';
+    });
+    document.addEventListener('mouseup', function modalDragEnd() {
+      isDragging = false;
+    });
   }
 }
+function closeModal() { document.getElementById('modalContainer').innerHTML = ''; }
 
-/**
- * 후처리: 이미지 줄바꿈을 자연스러운 문단으로 합치기
- * Vision API는 원본 이미지의 줄바꿈을 그대로 반환하므로, 문단 내 줄을 합친다.
- */
-function mergeLines(raw) {
-  const lines = raw.split('\n');
-  const paragraphs = [];
-  let current = '';
+function showConfirmModal(title, message, confirmText, onConfirm, btnClass = 'btn-confirm') {
+  const html = `
+    <div class="modal-overlay">
+      <div class="modal-box">
+        <h3>${escHtml(title)}</h3>
+        <p>${escHtml(message)}</p>
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">취소</button>
+          <button class="${btnClass}" id="modalConfirmBtn">${escHtml(confirmText)}</button>
+        </div>
+      </div>
+    </div>`;
+  showModal(html);
+  document.getElementById('modalConfirmBtn').addEventListener('click', () => { closeModal(); onConfirm(); });
+}
 
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
-    if (line === '') {
-      if (current) { paragraphs.push(current); current = ''; }
-      continue;
-    }
+function showAlertModal(title, message) {
+  const html = `
+    <div class="modal-overlay">
+      <div class="modal-box">
+        <h3>${escHtml(title)}</h3>
+        <p>${escHtml(message)}</p>
+        <div class="modal-btns">
+          <button class="btn-confirm" onclick="closeModal()">확인</button>
+        </div>
+      </div>
+    </div>`;
+  showModal(html);
+}
 
-    if (!current) {
-      current = line;
-    } else {
-      const lastChar = current.charAt(current.length - 1);
-      // 문장 끝 부호로 끝나면 새 문단
-      if (/[.?!。]$/.test(current) && /^[A-Z가-힣「\[]/.test(line)) {
-        paragraphs.push(current);
-        current = line;
-      } else {
-        // 같은 문단 내 줄 합치기
-        current += ' ' + line;
+// ===== Add Category Modal =====
+function openAddCategoryModal() {
+  const nextId = generateNextCategoryId();
+  const html = `
+    <div class="modal-overlay">
+      <div class="modal-box">
+        <h3>새 Category 추가</h3>
+        <label>Category ID</label>
+        <input type="text" id="modalCatId" value="${nextId}" readonly>
+        <label>Category Name</label>
+        <input type="text" id="modalCatName" placeholder="카테고리 이름 입력">
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">취소</button>
+          <button class="btn-confirm" onclick="doAddCategory()">추가</button>
+        </div>
+      </div>
+    </div>`;
+  showModal(html);
+  setTimeout(() => document.getElementById('modalCatName').focus(), 100);
+}
+async function doAddCategory() {
+  const catId = document.getElementById('modalCatId').value;
+  const catName = document.getElementById('modalCatName').value.trim();
+  if (!catName) { toast('카테고리 이름을 입력하세요.'); return; }
+  closeModal(); showLoading();
+  try {
+    const res = await gasPost({ action: 'addCategory', category_id: catId, category_name: catName });
+    if (res.ok) {
+      // Insert before category_99
+      const idx = DB.categories.findIndex(c => c.category_id === 'category_99');
+      const newCat = { category_id: catId, category_name: catName };
+      if (idx >= 0) DB.categories.splice(idx, 0, newCat); else DB.categories.push(newCat);
+      buildSidebar(); renderCards();
+      toast('카테고리 추가 완료!');
+    } else { toast('추가 실패: ' + (res.error || ''), 3000); }
+  } catch(e) { toast('오류: ' + e.message, 3000); }
+  hideLoading();
+}
+
+// ===== Edit Category Modal =====
+function openEditCategoryModal() {
+  let optionsHtml = '';
+  DB.categories.forEach(c => {
+    if (c.category_id === 'category_99') return;
+    const code = c.category_id.replace('category_', '');
+    optionsHtml += `<option value="${escHtml(c.category_id)}">${code}_${escHtml(c.category_name)}</option>`;
+  });
+  const html = `
+    <div class="modal-overlay">
+      <div class="modal-box">
+        <h3>Category 수정</h3>
+        <label>수정할 Category 선택</label>
+        <select id="modalEditCatSelect" onchange="onEditCatSelect()">
+          <option value="">-- 선택 --</option>${optionsHtml}
+        </select>
+        <label>새 Category Name</label>
+        <input type="text" id="modalEditCatName" placeholder="새 이름 입력">
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">취소</button>
+          <button class="btn-confirm" onclick="doEditCategory()">수정</button>
+        </div>
+      </div>
+    </div>`;
+  showModal(html);
+}
+function onEditCatSelect() {
+  const catId = document.getElementById('modalEditCatSelect').value;
+  const cat = DB.categories.find(c => c.category_id === catId);
+  document.getElementById('modalEditCatName').value = cat ? cat.category_name : '';
+}
+async function doEditCategory() {
+  const catId = document.getElementById('modalEditCatSelect').value;
+  const newName = document.getElementById('modalEditCatName').value.trim();
+  if (!catId) { toast('카테고리를 선택하세요.'); return; }
+  if (!newName) { toast('새 이름을 입력하세요.'); return; }
+  closeModal(); showLoading();
+  try {
+    const res = await gasPost({ action: 'updateCategory', category_id: catId, category_name: newName });
+    if (res.ok) {
+      const cat = DB.categories.find(c => c.category_id === catId);
+      if (cat) cat.category_name = newName;
+      buildSidebar(); renderCards();
+      toast('카테고리 수정 완료!');
+    } else { toast('수정 실패: ' + (res.error || ''), 3000); }
+  } catch(e) { toast('오류: ' + e.message, 3000); }
+  hideLoading();
+}
+
+// ===== Delete Category Modal =====
+function openDeleteCategoryModal() {
+  let optionsHtml = '';
+  DB.categories.forEach(c => {
+    if (c.category_id === 'category_99') return;
+    const code = c.category_id.replace('category_', '');
+    optionsHtml += `<option value="${escHtml(c.category_id)}">${code}_${escHtml(c.category_name)}</option>`;
+  });
+  const html = `
+    <div class="modal-overlay">
+      <div class="modal-box">
+        <h3>Category 삭제</h3>
+        <label>삭제할 Category 선택</label>
+        <select id="modalDelCatSelect">
+          <option value="">-- 선택 --</option>${optionsHtml}
+        </select>
+        <p style="color:#e53e3e;margin-top:12px;font-size:13px">⚠ 삭제하면 해당 카테고리의 모든 element 데이터가 영향을 받을 수 있습니다.</p>
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">취소</button>
+          <button class="btn-danger" onclick="doDeleteCategory()">삭제</button>
+        </div>
+      </div>
+    </div>`;
+  showModal(html);
+}
+async function doDeleteCategory() {
+  const catId = document.getElementById('modalDelCatSelect').value;
+  if (!catId) { toast('카테고리를 선택하세요.'); return; }
+  const cat = DB.categories.find(c => c.category_id === catId);
+  const catName = cat ? cat.category_name : catId;
+  closeModal();
+  showConfirmModal('최종 확인', `"${catName}" 카테고리를 정말 삭제하시겠습니까?`, '삭제', async () => {
+    showLoading();
+    try {
+      const res = await gasPost({ action: 'deleteCategory', category_id: catId });
+      if (res.ok) {
+        DB.categories = DB.categories.filter(c => c.category_id !== catId);
+        if (currentFilter && currentFilter.id === catId) currentFilter = null;
+        buildSidebar(); renderCards();
+        toast('카테고리 삭제 완료!');
+      } else { toast('삭제 실패: ' + (res.error || ''), 3000); }
+    } catch(e) { toast('오류: ' + e.message, 3000); }
+    hideLoading();
+  }, 'btn-danger');
+}
+
+// ===== Add Element Modal (from sidebar or cat-tree + button) =====
+function openAddElementModal(preselectedCatId) {
+  let catOptions = '';
+  DB.categories.forEach(c => {
+    if (c.category_id === 'category_99') return;
+    const code = c.category_id.replace('category_', '');
+    const sel = preselectedCatId === c.category_id ? ' selected' : '';
+    catOptions += `<option value="${escHtml(c.category_id)}"${sel}>${code}_${escHtml(c.category_name)}</option>`;
+  });
+  const html = `
+    <div class="modal-overlay">
+      <div class="modal-box">
+        <h3>새 Element 추가</h3>
+        <label>소속 Category</label>
+        <select id="modalElemCatSelect" onchange="onElemCatChange()">
+          <option value="">-- 선택 --</option>${catOptions}
+        </select>
+        <label>Element ID</label>
+        <input type="text" id="modalElemId" value="" readonly>
+        <label>Element Name</label>
+        <input type="text" id="modalElemName" placeholder="Element 이름 입력">
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">취소</button>
+          <button class="btn-confirm" onclick="doAddElement()">추가</button>
+        </div>
+      </div>
+    </div>`;
+  showModal(html);
+  if (preselectedCatId) {
+    document.getElementById('modalElemId').value = generateNextElementId(preselectedCatId);
+  }
+  setTimeout(() => document.getElementById('modalElemName').focus(), 100);
+}
+function onElemCatChange() {
+  const catId = document.getElementById('modalElemCatSelect').value;
+  document.getElementById('modalElemId').value = catId ? generateNextElementId(catId) : '';
+}
+async function doAddElement() {
+  const catId = document.getElementById('modalElemCatSelect').value;
+  const elemId = document.getElementById('modalElemId').value;
+  const elemName = document.getElementById('modalElemName').value.trim();
+  if (!catId) { toast('카테고리를 선택하세요.'); return; }
+  if (!elemName) { toast('Element 이름을 입력하세요.'); return; }
+  closeModal(); showLoading();
+  try {
+    const res = await gasPost({ action: 'addElement', element_id: elemId, element_name: elemName, category: catId });
+    if (res.ok) {
+      DB.elements.push({ element_id: elemId, element_name: elemName, category: catId });
+      buildSidebar(); renderCards();
+      toast('Element 추가 완료!');
+    } else { toast('추가 실패: ' + (res.error || ''), 3000); }
+  } catch(e) { toast('오류: ' + e.message, 3000); }
+  hideLoading();
+}
+
+// ===== Edit Element Modal =====
+function openEditElementModal() {
+  let optionsHtml = '';
+  [...DB.elements].sort((a, b) => a.element_id.localeCompare(b.element_id)).forEach(e => {
+    const code = e.element_id.replace('element_', '');
+    optionsHtml += `<option value="${escHtml(e.element_id)}">${code}_${escHtml(e.element_name)}</option>`;
+  });
+  const html = `
+    <div class="modal-overlay">
+      <div class="modal-box">
+        <h3>Element 수정</h3>
+        <label>수정할 Element 선택</label>
+        <select id="modalEditElemSelect" onchange="onEditElemSelect()">
+          <option value="">-- 선택 --</option>${optionsHtml}
+        </select>
+        <label>새 Element Name</label>
+        <input type="text" id="modalEditElemName" placeholder="새 이름 입력">
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">취소</button>
+          <button class="btn-confirm" onclick="doEditElement()">수정</button>
+        </div>
+      </div>
+    </div>`;
+  showModal(html);
+}
+function onEditElemSelect() {
+  const elemId = document.getElementById('modalEditElemSelect').value;
+  const elem = DB.elements.find(e => e.element_id === elemId);
+  document.getElementById('modalEditElemName').value = elem ? elem.element_name : '';
+}
+async function doEditElement() {
+  const elemId = document.getElementById('modalEditElemSelect').value;
+  const newName = document.getElementById('modalEditElemName').value.trim();
+  if (!elemId) { toast('Element를 선택하세요.'); return; }
+  if (!newName) { toast('새 이름을 입력하세요.'); return; }
+  closeModal(); showLoading();
+  try {
+    const res = await gasPost({ action: 'updateElement', element_id: elemId, element_name: newName });
+    if (res.ok) {
+      const elem = DB.elements.find(e => e.element_id === elemId);
+      if (elem) elem.element_name = newName;
+      buildSidebar(); renderCards();
+      toast('Element 수정 완료!');
+    } else { toast('수정 실패: ' + (res.error || ''), 3000); }
+  } catch(e) { toast('오류: ' + e.message, 3000); }
+  hideLoading();
+}
+
+// ===== Delete Element Modal =====
+function openDeleteElementModal() {
+  let optionsHtml = '';
+  [...DB.elements].sort((a, b) => a.element_id.localeCompare(b.element_id)).forEach(e => {
+    const code = e.element_id.replace('element_', '');
+    optionsHtml += `<option value="${escHtml(e.element_id)}">${code}_${escHtml(e.element_name)}</option>`;
+  });
+  const html = `
+    <div class="modal-overlay">
+      <div class="modal-box">
+        <h3>Element 삭제</h3>
+        <label>삭제할 Element 선택</label>
+        <select id="modalDelElemSelect">
+          <option value="">-- 선택 --</option>${optionsHtml}
+        </select>
+        <p style="color:#e53e3e;margin-top:12px;font-size:13px">⚠ 삭제하면 해당 element의 카드 데이터가 영향을 받을 수 있습니다.</p>
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">취소</button>
+          <button class="btn-danger" onclick="doDeleteElement()">삭제</button>
+        </div>
+      </div>
+    </div>`;
+  showModal(html);
+}
+async function doDeleteElement() {
+  const elemId = document.getElementById('modalDelElemSelect').value;
+  if (!elemId) { toast('Element를 선택하세요.'); return; }
+  const elem = DB.elements.find(e => e.element_id === elemId);
+  const elemName = elem ? elem.element_name : elemId;
+  closeModal();
+  showConfirmModal('최종 확인', `"${elemName}" Element를 정말 삭제하시겠습니까?`, '삭제', async () => {
+    showLoading();
+    try {
+      const res = await gasPost({ action: 'deleteElement', element_id: elemId });
+      if (res.ok) {
+        DB.elements = DB.elements.filter(e => e.element_id !== elemId);
+        if (currentFilter && currentFilter.id === elemId) currentFilter = null;
+        buildSidebar(); renderCards();
+        toast('Element 삭제 완료!');
+      } else { toast('삭제 실패: ' + (res.error || ''), 3000); }
+    } catch(e) { toast('오류: ' + e.message, 3000); }
+    hideLoading();
+  }, 'btn-danger');
+}
+
+// ===== Add Element from cat-tree + button =====
+function openAddElementForCategory(srgId, catId) {
+  openAddElementModal(catId);
+}
+
+// ===== Link Icon Options =====
+const LINK_ICONS = [
+  { value: '🌐', label: '인터넷 사이트' },
+  { value: '📊', label: '구글 시트' },
+  { value: '📝', label: '구글 독스' },
+  { value: '📁', label: '구글 드라이브' },
+  { value: '📰', label: '뉴스/블로그' },
+  { value: '🎓', label: '교육/학습' },
+  { value: '📚', label: '도서관/자료' },
+  { value: '🔬', label: '연구/논문' },
+  { value: '💻', label: '개발/코딩' },
+  { value: '📧', label: '이메일' },
+  { value: '🗂️', label: '데이터베이스' },
+  { value: '📹', label: '영상/미디어' },
+];
+function renderIconSelector(containerId, selectedIcon) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;margin-bottom:8px';
+  LINK_ICONS.forEach(ic => {
+    const div = document.createElement('div');
+    div.textContent = ic.value;
+    div.title = ic.label;
+    div.dataset.icon = ic.value;
+    const isSel = selectedIcon === ic.value;
+    div.style.cssText = 'width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:2px solid ' + (isSel ? '#4a7dff' : '#e2e6ea') + ';border-radius:8px;cursor:pointer;font-size:20px;background:' + (isSel ? '#eef3ff' : '#fff') + ';transition:all .12s';
+    div.addEventListener('click', function() {
+      document.getElementById('modalLinkIcon').value = ic.value;
+      wrap.querySelectorAll('div').forEach(function(d) { d.style.borderColor = '#e2e6ea'; d.style.background = '#fff'; });
+      div.style.borderColor = '#4a7dff';
+      div.style.background = '#eef3ff';
+    });
+    wrap.appendChild(div);
+  });
+  container.appendChild(wrap);
+}
+
+// ===== Link Modals =====
+function openAddLinkModal() {
+  const nextNo = generateNextLinkNo();
+  const html = '<div class="modal-overlay"><div class="modal-box">' +
+    '<h3>🔗 새 Link 추가</h3>' +
+    '<label>No.</label>' +
+    '<input type="text" id="modalLinkNo" value="' + nextNo + '" readonly>' +
+    '<label>Site Name</label>' +
+    '<input type="text" id="modalLinkName" placeholder="사이트 이름">' +
+    '<label>URL</label>' +
+    '<input type="text" id="modalLinkUrl" placeholder="https://...">' +
+    '<label>Icon</label>' +
+    '<input type="hidden" id="modalLinkIcon" value="🌐">' +
+    '<div id="addLinkIconGrid"></div>' +
+    '<div class="modal-btns">' +
+    '<button class="btn-cancel" onclick="closeModal()">취소</button>' +
+    '<button class="btn-confirm" onclick="doAddLink()">추가</button>' +
+    '</div></div></div>';
+  showModal(html);
+  renderIconSelector('addLinkIconGrid', '🌐');
+  setTimeout(() => document.getElementById('modalLinkName').focus(), 100);
+}
+async function doAddLink() {
+  const no = document.getElementById('modalLinkNo').value.trim();
+  const name = document.getElementById('modalLinkName').value.trim();
+  const url = document.getElementById('modalLinkUrl').value.trim();
+  const icon = document.getElementById('modalLinkIcon').value || '🌐';
+  if (!name) { toast('사이트 이름을 입력하세요.'); return; }
+  if (!url) { toast('URL을 입력하세요.'); return; }
+  closeModal(); showLoading();
+  try {
+    const res = await gasPost({ action: 'addLink', no, site_name: name, url, icon });
+    if (res.ok) {
+      DB.links.push({ no: String(res.no || no), site_name: name, url, icon });
+      buildSidebar();
+      toast('링크 추가 완료!');
+    } else { toast('추가 실패: ' + (res.error || ''), 3000); }
+  } catch(e) { toast('오류: ' + e.message, 3000); }
+  hideLoading();
+}
+function openEditLinkModal() {
+  const links = DB.links || [];
+  let optionsHtml = '';
+  links.forEach(l => { optionsHtml += '<option value="' + escHtml(String(l.no)) + '">' + escHtml(l.no) + ' - ' + escHtml(l.site_name) + '</option>'; });
+  const html = '<div class="modal-overlay"><div class="modal-box">' +
+    '<h3>🔗 Link 수정</h3>' +
+    '<label>수정할 Link 선택</label>' +
+    '<select id="modalEditLinkSelect"><option value="">-- 선택 --</option>' + optionsHtml + '</select>' +
+    '<label>Site Name</label>' +
+    '<input type="text" id="modalEditLinkName" placeholder="사이트 이름">' +
+    '<label>URL</label>' +
+    '<input type="text" id="modalEditLinkUrl" placeholder="https://...">' +
+    '<label>Icon</label>' +
+    '<input type="hidden" id="modalLinkIcon" value="🌐">' +
+    '<div id="editLinkIconGrid"></div>' +
+    '<div class="modal-btns">' +
+    '<button class="btn-cancel" onclick="closeModal()">취소</button>' +
+    '<button class="btn-confirm" onclick="doEditLink()">수정</button>' +
+    '</div></div></div>';
+  showModal(html);
+  renderIconSelector('editLinkIconGrid', '🌐');
+  document.getElementById('modalEditLinkSelect').addEventListener('change', onEditLinkSelect);
+}
+function onEditLinkSelect() {
+  const no = document.getElementById('modalEditLinkSelect').value;
+  const link = (DB.links || []).find(l => String(l.no) === String(no));
+  document.getElementById('modalEditLinkName').value = link ? (link.site_name || '') : '';
+  document.getElementById('modalEditLinkUrl').value = link ? (link.url || '') : '';
+  const icon = link ? (link.icon || '🌐') : '🌐';
+  document.getElementById('modalLinkIcon').value = icon;
+  renderIconSelector('editLinkIconGrid', icon);
+}
+async function doEditLink() {
+  const no = document.getElementById('modalEditLinkSelect').value;
+  const name = document.getElementById('modalEditLinkName').value.trim();
+  const url = document.getElementById('modalEditLinkUrl').value.trim();
+  const icon = document.getElementById('modalLinkIcon').value || '🌐';
+  if (!no) { toast('링크를 선택하세요.'); return; }
+  if (!name) { toast('사이트 이름을 입력하세요.'); return; }
+  if (!url) { toast('URL을 입력하세요.'); return; }
+  closeModal(); showLoading();
+  try {
+    const res = await gasPost({ action: 'updateLink', no, site_name: name, url, icon });
+    if (res.ok) {
+      const link = DB.links.find(l => String(l.no) === String(no));
+      if (link) { link.site_name = name; link.url = url; link.icon = icon; }
+      buildSidebar();
+      toast('링크 수정 완료!');
+    } else { toast('수정 실패: ' + (res.error || ''), 3000); }
+  } catch(e) { toast('오류: ' + e.message, 3000); }
+  hideLoading();
+}
+function openDeleteLinkModal() {
+  const links = DB.links || [];
+  let optionsHtml = '';
+  links.forEach(l => { optionsHtml += `<option value="${escHtml(l.no)}">${escHtml(l.no)} - ${escHtml(l.site_name)}</option>`; });
+  const html = `
+    <div class="modal-overlay">
+      <div class="modal-box">
+        <h3>🔗 Link 삭제</h3>
+        <label>삭제할 Link 선택</label>
+        <select id="modalDelLinkSelect">
+          <option value="">-- 선택 --</option>${optionsHtml}
+        </select>
+        <p style="color:#e53e3e;margin-top:12px;font-size:13px">⚠ 선택한 링크가 영구적으로 삭제됩니다.</p>
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">취소</button>
+          <button class="btn-danger" onclick="doDeleteLink()">삭제</button>
+        </div>
+      </div>
+    </div>`;
+  showModal(html);
+}
+async function doDeleteLink() {
+  const no = document.getElementById('modalDelLinkSelect').value;
+  if (!no) { toast('링크를 선택하세요.'); return; }
+  const link = (DB.links || []).find(l => String(l.no) === String(no));
+  const linkName = link ? link.site_name : no;
+  closeModal();
+  showConfirmModal('최종 확인', `"${linkName}" 링크를 정말 삭제하시겠습니까?`, '삭제', async () => {
+    showLoading();
+    try {
+      const res = await gasPost({ action: 'deleteLink', no });
+      if (res.ok) {
+        DB.links = DB.links.filter(l => String(l.no) !== String(no));
+        buildSidebar();
+        toast('링크 삭제 완료!');
+      } else { toast('삭제 실패: ' + (res.error || ''), 3000); }
+    } catch(e) { toast('오류: ' + e.message, 3000); }
+    hideLoading();
+  }, 'btn-danger');
+}
+
+// ===== Reorder Links Modal =====
+function openReorderLinksModal() {
+  const links = DB.links || [];
+  if (links.length === 0) { showAlertModal('알림', '등록된 Link가 없습니다.'); return; }
+  // Clone links for reorder
+  window._reorderLinks = links.map(l => ({ no: l.no, site_name: l.site_name, url: l.url, icon: l.icon || '' }));
+  renderReorderModal();
+}
+function renderReorderModal() {
+  const items = window._reorderLinks;
+  let listHtml = '';
+  items.forEach((item, idx) => {
+    listHtml += `<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:${idx % 2 === 0 ? '#f7f8fa' : '#fff'};border-radius:6px;margin-bottom:4px">`;
+    listHtml += `<span style="font-weight:700;color:#4a7dff;min-width:28px">${idx + 1}</span>`;
+    listHtml += `<span style="flex:1;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(item.site_name)}</span>`;
+    listHtml += `<button onclick="reorderLinkMove(${idx},-1)" style="width:28px;height:28px;border:1px solid #d2d8e0;border-radius:5px;background:#fff;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center"${idx === 0 ? ' disabled style="opacity:.3;cursor:not-allowed"' : ''}>▲</button>`;
+    listHtml += `<button onclick="reorderLinkMove(${idx},1)" style="width:28px;height:28px;border:1px solid #d2d8e0;border-radius:5px;background:#fff;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center"${idx === items.length - 1 ? ' disabled style="opacity:.3;cursor:not-allowed"' : ''}>▼</button>`;
+    listHtml += `</div>`;
+  });
+  const html = `
+    <div class="modal-overlay">
+      <div class="modal-box wide">
+        <h3>🔗 Link 순서 관리</h3>
+        <div style="max-height:400px;overflow-y:auto;margin-bottom:8px">${listHtml}</div>
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">취소</button>
+          <button class="btn-confirm" onclick="doReorderLinks()">저장</button>
+        </div>
+      </div>
+    </div>`;
+  showModal(html);
+}
+function reorderLinkMove(idx, dir) {
+  const items = window._reorderLinks;
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= items.length) return;
+  [items[idx], items[newIdx]] = [items[newIdx], items[idx]];
+  renderReorderModal();
+}
+async function doReorderLinks() {
+  const items = window._reorderLinks;
+  closeModal(); showLoading();
+  try {
+    const res = await gasPost({ action: 'reorderLinks', links: items });
+    if (res.ok) {
+      DB.links = items.map((l, i) => ({ no: String(i + 1), site_name: l.site_name, url: l.url, icon: l.icon || '' }));
+      buildSidebar();
+      toast('순서 변경 완료!');
+    } else { toast('순서 변경 실패: ' + (res.error || ''), 3000); }
+  } catch(e) { toast('오류: ' + e.message, 3000); }
+  hideLoading();
+}
+
+// ===== Add Cat-0x item Modal =====
+function openAddCatItemModal(srgId, catKey) {
+  const d = DB.srgData.find(x => x.srg_id === srgId);
+  if (!d) return;
+  const catId = d.category_id;
+  const elemId = d.element_id;
+  if (!catId && !elemId) { showAlertModal('알림', '먼저 Category / Element를 선택하세요.'); return; }
+  const breadcrumb = makeBreadcrumb(d);
+  const html = `
+    <div class="modal-overlay">
+      <div class="modal-box wide">
+        <h3>${catKey} 항목 추가</h3>
+        <div class="modal-breadcrumb">${breadcrumb}</div>
+        <label>${catKey} 값</label>
+        <input type="text" id="modalCatItemVal" placeholder="값을 입력하세요">
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">취소</button>
+          <button class="btn-confirm" onclick="doAddCatItem('${srgId}','${catKey}','${catId}','${elemId}')">추가</button>
+        </div>
+      </div>
+    </div>`;
+  showModal(html);
+  setTimeout(() => document.getElementById('modalCatItemVal').focus(), 100);
+}
+async function doAddCatItem(srgId, catKey, catId, elemId) {
+  const val = document.getElementById('modalCatItemVal').value.trim();
+  if (!val) { toast('값을 입력하세요.'); return; }
+  closeModal(); showLoading();
+  try {
+    const res = await gasPost({ action: 'addCatItem', catKey, value: val, category_id: catId, element_id: elemId });
+    if (res.ok) {
+      // Update local: find matching card or add value to current card
+      const card = DB.srgData.find(d => d.srg_id === srgId);
+      if (card) {
+        const existing = (card[catKey] || '').trim();
+        card[catKey] = existing ? existing + ', ' + val : val;
       }
+      renderCards();
+      toast('항목 추가 완료!');
+    } else { toast('추가 실패: ' + (res.error || ''), 3000); }
+  } catch(e) { toast('오류: ' + e.message, 3000); }
+  hideLoading();
+}
+
+// ===== Sidebar (Explorer Tree) =====
+let openCategories = {};
+
+function buildSidebar() {
+  const sb = document.getElementById('sidebar');
+  let html = '';
+
+  // REA LAB. title (clickable for reload)
+  html += `<div style="padding:16px 14px 2px;font-size:22px;color:#2c3e50;text-align:center;font-weight:800;letter-spacing:-0.5px;cursor:pointer" onclick="location.reload(true)" title="새로고침">REA LAB.</div>`;
+  // Email under REA LAB.
+  const emailAddr = currentUser ? currentUser.email : '';
+  html += `<div style="font-size:12.5px;color:#999;text-align:center;padding:0 14px 4px;word-break:break-all">${escHtml(emailAddr)}</div>`;
+  html += `<div style="border-top:1px solid #e2e6ea;margin:4px 12px 4px"></div>`;
+
+  // See All Cards
+  const allActive = currentView === 'cards' && !currentFilter ? ' active' : '';
+  html += `<div class="tree-node">`;
+  html += `<div class="tree-row${allActive}" onclick="filterAll()">`;
+  html += `<span class="tree-toggle"></span>`;
+  html += `<span class="tree-icon">📋</span>`;
+  html += `<span class="tree-label" style="font-weight:700">All Notes <span style="font-size:11px;color:#888;font-weight:400">(${DB.srgData.length})</span></span>`;
+  html += `</div></div>`;
+
+  // Regular categories
+  DB.categories.forEach(cat => {
+    if (cat.category_id === 'category_99') return;
+    const catCode = cat.category_id.replace('category_', '');
+    const displayName = `${catCode}_${cat.category_name}`;
+    const elems = getElementsForCategory(cat.category_id);
+    const hasChildren = elems.length > 0;
+    const catActive = currentView === 'cards' && currentFilter && currentFilter.type === 'category' && currentFilter.id === cat.category_id;
+
+    if (currentFilter && currentFilter.type === 'element') {
+      const childMatch = elems.find(e => e.element_id === currentFilter.id);
+      if (childMatch) openCategories[cat.category_id] = true;
+    }
+    const isOpen = openCategories[cat.category_id];
+
+    html += `<div class="tree-node${isOpen ? ' open' : ''}" data-catid="${cat.category_id}">`;
+    html += `<div class="tree-row${catActive ? ' active' : ''}" onclick="onCatClick(event,'${cat.category_id}',${hasChildren})">`;
+    html += `<span class="tree-toggle${hasChildren ? ' has-children' : ''}" onclick="event.stopPropagation();toggleCatTree(event,'${cat.category_id}')"></span>`;
+    html += `<span class="tree-icon">${hasChildren ? (isOpen ? '📂' : '📁') : '📁'}</span>`;
+    const catCount = DB.srgData.filter(d => d.category_id === cat.category_id).length;
+    html += `<span class="tree-label" style="font-weight:600">${escHtml(displayName)} <span style="font-size:11px;color:#888;font-weight:400">(${catCount})</span></span>`;
+    html += `</div>`;
+
+    if (hasChildren) {
+      html += `<div class="tree-children">`;
+      elems.forEach(elem => {
+        const elemCode = elem.element_id.replace('element_', '');
+        const eActive = currentView === 'cards' && currentFilter && currentFilter.type === 'element' && currentFilter.id === elem.element_id;
+        html += `<div class="tree-child-row">`;
+        html += `<div class="tree-row${eActive ? ' active' : ''}" onclick="filterElement('${elem.element_id}')">`;
+        html += `<span class="tree-toggle"></span>`;
+        html += `<span class="tree-icon">📄</span>`;
+        const elemCount = DB.srgData.filter(d => d.element_id === elem.element_id).length;
+        html += `<span class="tree-label">${elemCode}_${escHtml(elem.element_name)} <span style="font-size:11px;color:#888">(${elemCount})</span></span>`;
+        html += `</div></div>`;
+      });
+      html += `</div>`;
+    }
+    html += `</div>`;
+  });
+
+  // Divider before Bookmark / Statistics
+  html += `<div style="border-top:1px solid #e2e6ea;margin:40px 12px 8px"></div>`;
+
+  // Bookmark menu
+  html += `<div class="tree-node">`;
+  html += `<div class="tree-row" onclick="openBookmarkWindow()">`;
+  html += `<span class="tree-toggle"></span>`;
+  html += `<span class="tree-icon">🔖</span>`;
+  html += `<span class="tree-label" style="font-weight:700">Bookmarks</span>`;
+  html += `</div></div>`;
+
+  // Divider between Bookmark and Statistics
+  html += `<div style="border-top:1px solid #e2e6ea;margin:8px 12px"></div>`;
+
+  // Statistics menu
+  const statActive = currentView === 'statistics' ? ' active' : '';
+  html += `<div class="tree-node">`;
+  html += `<div class="tree-row${statActive}" onclick="showStatisticsView()">`;
+  html += `<span class="tree-toggle"></span>`;
+  html += `<span class="tree-icon">📊</span>`;
+  html += `<span class="tree-label" style="font-weight:700">Statistics</span>`;
+  html += `</div></div>`;
+
+  // Divider before Page Links
+  html += `<div style="border-top:1px solid #e2e6ea;margin:8px 12px"></div>`;
+
+  // ===== Page Links (expandable sub-menu) =====
+  const links = DB.links || [];
+  const hasLinks = links.length > 0;
+  const linksOpen = openCategories['__pageLinks__'];
+  html += `<div class="tree-node${linksOpen ? ' open' : ''}" data-catid="__pageLinks__">`;
+  html += `<div class="tree-row" onclick="toggleCatTree(event,'__pageLinks__')">`;
+  html += `<span class="tree-toggle${hasLinks ? ' has-children' : ''}" onclick="event.stopPropagation();toggleCatTree(event,'__pageLinks__')"></span>`;
+  html += `<span class="tree-icon">🔗</span>`;
+  html += `<span class="tree-label" style="font-weight:700">Page Links</span>`;
+  html += `</div>`;
+  if (hasLinks) {
+    html += `<div class="tree-children">`;
+    links.forEach(link => {
+      const url = link.url || '';
+      const href = url.startsWith('http') ? url : 'https://' + url;
+      html += `<div class="tree-child-row">`;
+      html += `<div class="tree-row" onclick="closeSidebar();window.open('${escHtml(href)}','_blank')" title="${escHtml(url)}">`;
+      html += `<span class="tree-toggle"></span>`;
+      html += `<span class="tree-icon">${link.icon || '🌐'}</span>`;
+      html += `<span class="tree-label">${escHtml(link.site_name)}</span>`;
+      html += `</div></div>`;
+    });
+    html += `</div>`;
+  }
+  html += `</div>`;
+
+  // Divider before Lab Management
+  html += `<div style="border-top:1px solid #e2e6ea;margin:8px 12px"></div>`;
+
+  // ===== Lab Management =====
+  const labOpen = openCategories['category_99'];
+  html += `<div class="tree-node${labOpen ? ' open' : ''}" data-catid="category_99">`;
+  html += `<div class="tree-row" onclick="onCatClick(event,'category_99',true)">`;
+  html += `<span class="tree-toggle has-children" onclick="event.stopPropagation();toggleCatTree(event,'category_99')"></span>`;
+  html += `<span class="tree-icon">⚙️</span>`;
+  html += `<span class="tree-label" style="font-weight:700">Lab Management</span>`;
+  html += `</div>`;
+  html += `<div class="tree-children">`;
+
+  // -- Category 관리 --
+  const catMgmtOpen = openCategories['__catMgmt__'];
+  html += `<div class="tree-child-row"><div class="tree-node${catMgmtOpen ? ' open' : ''}">`;
+  html += `<div class="tree-row" onclick="toggleCatTree(event,'__catMgmt__')">`;
+  html += `<span class="tree-toggle has-children" onclick="event.stopPropagation();toggleCatTree(event,'__catMgmt__')"></span>`;
+  html += `<span class="tree-icon">🏷️</span>`;
+  html += `<span class="tree-label" style="font-weight:600">Category 관리</span>`;
+  html += `</div><div class="tree-children">`;
+  html += `<div class="tree-child-row"><div class="tree-menu-item" onclick="openAddCategoryModal()"><span style="margin-right:4px">➕</span> Category 추가</div></div>`;
+  html += `<div class="tree-child-row"><div class="tree-menu-item" onclick="openEditCategoryModal()"><span style="margin-right:4px">✏️</span> Category 수정</div></div>`;
+  html += `<div class="tree-child-row"><div class="tree-menu-item" onclick="openDeleteCategoryModal()" style="color:#e53e3e"><span style="margin-right:4px">🗑️</span> Category 삭제</div></div>`;
+  html += `</div></div></div>`;
+
+  // -- Element 관리 --
+  const elemMgmtOpen = openCategories['__elemMgmt__'];
+  html += `<div class="tree-child-row"><div class="tree-node${elemMgmtOpen ? ' open' : ''}">`;
+  html += `<div class="tree-row" onclick="toggleCatTree(event,'__elemMgmt__')">`;
+  html += `<span class="tree-toggle has-children" onclick="event.stopPropagation();toggleCatTree(event,'__elemMgmt__')"></span>`;
+  html += `<span class="tree-icon">📑</span>`;
+  html += `<span class="tree-label" style="font-weight:600">Element 관리</span>`;
+  html += `</div><div class="tree-children">`;
+  html += `<div class="tree-child-row"><div class="tree-menu-item" onclick="openAddElementModal('')"><span style="margin-right:4px">➕</span> Element 추가</div></div>`;
+  html += `<div class="tree-child-row"><div class="tree-menu-item" onclick="openEditElementModal()"><span style="margin-right:4px">✏️</span> Element 수정</div></div>`;
+  html += `<div class="tree-child-row"><div class="tree-menu-item" onclick="openDeleteElementModal()" style="color:#e53e3e"><span style="margin-right:4px">🗑️</span> Element 삭제</div></div>`;
+  html += `</div></div></div>`;
+
+  // -- Links Management --
+  const linkMgmtOpen = openCategories['__linkMgmt__'];
+  html += `<div class="tree-child-row"><div class="tree-node${linkMgmtOpen ? ' open' : ''}">`;
+  html += `<div class="tree-row" onclick="toggleCatTree(event,'__linkMgmt__')">`;
+  html += `<span class="tree-toggle has-children" onclick="event.stopPropagation();toggleCatTree(event,'__linkMgmt__')"></span>`;
+  html += `<span class="tree-icon">🔗</span>`;
+  html += `<span class="tree-label" style="font-weight:600">Links Management</span>`;
+  html += `</div><div class="tree-children">`;
+  html += `<div class="tree-child-row"><div class="tree-menu-item" onclick="openReorderLinksModal()"><span style="margin-right:4px">↕️</span> Link 순서 관리</div></div>`;
+  html += `<div class="tree-child-row"><div class="tree-menu-item" onclick="openAddLinkModal()"><span style="margin-right:4px">➕</span> Link 추가</div></div>`;
+  html += `<div class="tree-child-row"><div class="tree-menu-item" onclick="openEditLinkModal()"><span style="margin-right:4px">✏️</span> Link 수정</div></div>`;
+  html += `<div class="tree-child-row"><div class="tree-menu-item" onclick="openDeleteLinkModal()" style="color:#e53e3e"><span style="margin-right:4px">🗑️</span> Link 삭제</div></div>`;
+  html += `</div></div></div>`;
+
+  html += `</div></div>`; // tree-children, tree-node (Lab Management)
+
+  sb.innerHTML = html;
+}
+
+function toggleCatTree(event, catId) {
+  event.stopPropagation();
+  openCategories[catId] = !openCategories[catId];
+  buildSidebar();
+}
+function onCatClick(event, catId, hasChildren) {
+  if (catId === 'category_99' || catId === '__catMgmt__' || catId === '__linkMgmt__' || catId === '__elemMgmt__') {
+    openCategories[catId] = !openCategories[catId];
+    buildSidebar();
+    return;
+  }
+  // If already filtered to this category and it's open, toggle closed
+  if (hasChildren && currentFilter && currentFilter.type === 'category' && currentFilter.id === catId && openCategories[catId]) {
+    openCategories[catId] = false;
+    buildSidebar();
+    return;
+  }
+  if (hasChildren) openCategories[catId] = !openCategories[catId];
+  filterCategory(catId); // guard is inside filterCategory
+}
+
+// ===== Edit guard =====
+function isEditingCard() {
+  // Check if any new card exists or any card is in modify mode
+  const hasNewCard = DB.srgData.some(d => String(d.srg_id).startsWith('NEW_'));
+  const hasModify = Object.keys(modifyModeCards).length > 0;
+  return hasNewCard || hasModify;
+}
+function guardedNavigate(action) {
+  if (isEditingCard()) {
+    showConfirmModal('편집 중', '작성 중인 내용이 있습니다. 이동하시겠습니까?\n변경 사항은 저장되지 않습니다.', '이동', () => {
+      // Discard new cards and modify modes
+      DB.srgData = DB.srgData.filter(d => !String(d.srg_id).startsWith('NEW_'));
+      modifyModeCards = {};
+      document.getElementById('btnNewCard').style.display = '';
+      action();
+    });
+  } else {
+    action();
+  }
+}
+
+// ===== Filters =====
+function filterAll() {
+  guardedNavigate(() => {
+    closeSidebar();
+    currentFilter = null; expandedCardId = null; modifyModeCards = {};
+    showCardsView();
+    buildSidebar();
+  });
+}
+function filterCategory(catId) {
+  guardedNavigate(() => {
+    closeSidebar();
+    currentFilter = { type: 'category', id: catId }; expandedCardId = null; modifyModeCards = {};
+    showCardsView();
+    buildSidebar();
+  });
+}
+function filterElement(elemId) {
+  guardedNavigate(() => {
+    closeSidebar();
+    currentFilter = { type: 'element', id: elemId }; expandedCardId = null; modifyModeCards = {};
+    showCardsView();
+    buildSidebar();
+  });
+}
+
+function getFilteredData() {
+  let data = DB.srgData;
+  if (!currentFilter) return data;
+  if (currentFilter.type === 'category') return data.filter(d => d.category_id === currentFilter.id);
+  if (currentFilter.type === 'element') return data.filter(d => d.element_id === currentFilter.id);
+  return data;
+}
+
+// ===== Breadcrumb =====
+function makeBreadcrumb(d) {
+  // Line 1: Category >> Element
+  const line1 = [];
+  if (d.category_id) {
+    const catCode = String(d.category_id).replace('category_', '');
+    line1.push(`${catCode}_${getCategoryName(d.category_id)}`);
+  }
+  if (d.element_id) {
+    const elemCode = String(d.element_id).replace('element_', '');
+    line1.push(`${elemCode}_${getElementName(d.element_id)}`);
+  }
+  // Line 2: Cat-01 >> Cat-02 >> Cat-03 >> Cat-04
+  const line2 = [];
+  if (d['cat-01']) line2.push(d['cat-01']);
+  if (d['cat-02']) line2.push(d['cat-02']);
+  if (d['cat-03']) line2.push(d['cat-03']);
+  if (d['cat-04']) line2.push(d['cat-04']);
+  let result = '';
+  if (line1.length) result += line1.map(p => `<span>${escHtml(p)}</span>`).join(' &gt;&gt; ');
+  if (line2.length) result += '<br>' + line2.map(p => `<span>${escHtml(p)}</span>`).join(' &gt;&gt; ');
+  return result;
+}
+
+function escHtml(s) { const d = document.createElement('div'); d.textContent = String(s || ''); return d.innerHTML; }
+
+function formatNoteId(srgId) {
+  const m = String(srgId).match(/srg_(\d+)/);
+  if (m) return 'Note ID: ' + m[1];
+  return srgId;
+}
+
+function getCatDropValues(catKey, catId, elemId) {
+  return [...new Set(
+    DB.srgData
+      .filter(d => { if (elemId) return d.element_id === elemId; if (catId) return d.category_id === catId; return false; })
+      .map(d => d[catKey])
+      .filter(v => v && v.trim() !== '')
+  )].sort();
+}
+
+// ===== Render Cards =====
+function renderCards() {
+  snapshotEditingCards();
+  const list = document.getElementById('cardList');
+  const filtered = getFilteredData();
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<p style="color:#a0aec0;padding:40px;text-align:center;font-size:15px">카드가 없습니다.</p>';
+    return;
+  }
+
+  let html = '';
+  filtered.forEach(d => {
+    const id = d.srg_id;
+    const isExpanded = expandedCardId === id;
+    const isNew = String(id).startsWith('NEW_');
+    const isModifyMode = isNew || modifyModeCards[id];
+
+    html += `<div class="card${isExpanded ? ' expanded' : ''}" id="card-${escHtml(id)}">`;
+
+    // Header
+    html += `<div class="card-header">`;
+    html += `<div class="card-left">`;
+    html += `<span class="card-id">${escHtml(formatNoteId(isNew ? d._displayId || id : id))}</span>`;
+    const bc = makeBreadcrumb(d);
+    if (bc) html += `<span class="card-breadcrumb">${bc}</span>`;
+    html += `</div>`;
+
+    if (isNew) {
+      html += `<button class="btn-cancel-new" onclick="cancelNewCard('${escHtml(id)}')">Cancel</button>`;
+    } else if (isModifyMode) {
+      html += `<button class="btn-cancel-new" onclick="cancelModify('${escHtml(id)}')">Cancel</button>`;
+    } else {
+      html += `<button class="btn-open" onclick="toggleCard('${escHtml(id)}')">${isExpanded ? 'Close' : 'Open'}</button>`;
+    }
+
+    // Action buttons right below Close button (visible only when expanded & not new)
+    if (isExpanded && !isNew) {
+      const btnLabel = isModifyMode ? 'Save' : 'Modify';
+      const btnAction = isModifyMode ? `confirmSave('${escHtml(id)}')` : `modifyCard('${escHtml(id)}')`;
+      html += `<div class="card-action-row">`;
+      html += `<button class="btn-act btn-del" onclick="confirmDelete('${escHtml(id)}')">Delete</button>`;
+      html += `<button class="btn-act btn-save" id="btnSave-${escHtml(id)}" onclick="${btnAction}">${btnLabel}</button>`;
+      html += `<button class="btn-act" onclick="confirmPrint('${escHtml(id)}')">Print</button>`;
+      html += `</div>`;
+    }
+    html += `</div>`;
+
+    // Detail
+    html += `<div class="card-detail">`;
+    html += `<div class="detail-body">`;
+
+    const ro = !isModifyMode ? ' readonly' : '';
+    html += `<div class="detail-center">`;
+    html += `<div class="field-group"><textarea class="apa-short" data-field="apa" placeholder="APA"${ro}>${escHtml(d.apa)}</textarea></div>`;
+    html += `<div class="field-group"><textarea class="medium" data-field="context" placeholder="Context"${ro}>${escHtml(d.context)}</textarea></div>`;
+    html += `<div class="field-group"><textarea class="tall" data-field="text" placeholder="Text"${ro}>${escHtml(d.text)}</textarea></div>`;
+    html += `<div class="field-group comment-group"><textarea class="comment-tall" data-field="comment" placeholder="Comment"${ro}>${escHtml(d.comment)}</textarea></div>`;
+    // Close button at bottom of content
+    if (!isNew) {
+      html += `<button class="btn-close-bottom" onclick="toggleCard('${escHtml(id)}')">Close</button>`;
+    }
+    html += `</div>`;
+
+    // Right panel (cat-tree & cat-dropdowns only in modify mode)
+    if (isModifyMode) {
+      html += `<div class="detail-right">`;
+      html += buildCatTree(d, false);
+      html += `<div style="margin-top:12px"></div>`;
+      html += buildCatDropdowns(d, false);
+      if (isNew) {
+        html += `<div class="detail-right-actions">`;
+        html += `<button class="btn-save" id="btnSave-${escHtml(id)}" onclick="confirmSave('${escHtml(id)}')">Save</button>`;
+        html += `</div>`;
+      }
+      html += `</div>`; // detail-right
+    }
+
+    html += `</div>`; // detail-body
+    html += `</div>`; // card-detail
+    html += `</div>`; // card
+  });
+
+  list.innerHTML = html;
+  if (expandedCardId) {
+    const el = document.getElementById('card-' + expandedCardId);
+    if (el) {
+      setTimeout(() => {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setupAutoResize(el);
+      }, 100);
     }
   }
-  if (current) paragraphs.push(current);
-
-  return paragraphs.join('\n\n');
 }
 
-// ===========================
-// OCR: Clear
-// ===========================
-function resetApiKey() {
-  localStorage.removeItem('gcv_api_key');
-  toast('API 키가 초기화되었습니다. 다음 OCR 시 재입력합니다.', 2000);
+// ===== Category tree inside detail (+ button adds element) =====
+function buildCatTree(d, locked) {
+  let html = `<div class="cat-tree${locked ? ' locked' : ''}">`;
+  DB.categories.forEach(cat => {
+    if (cat.category_id === 'category_99') return;
+    const catCode = cat.category_id.replace('category_', '');
+    const isSelected = d.category_id === cat.category_id;
+    html += `<div class="ct-cat${isSelected ? ' ct-cat-selected' : ''}" style="${isSelected ? 'color:#4a7dff' : ''}">`;
+    html += `<span onclick="setCatElem('${d.srg_id}','${cat.category_id}','')">${catCode}_${escHtml(cat.category_name)}</span>`;
+    if (!locked) {
+      html += `<span class="plus-btn" onclick="event.stopPropagation();openAddElementForCategory('${d.srg_id}','${cat.category_id}')" title="새 Element 추가">+</span>`;
+    }
+    html += `</div>`;
+
+    const elems = getElementsForCategory(cat.category_id);
+    elems.forEach(elem => {
+      const elemCode = elem.element_id.replace('element_', '');
+      const eSelected = d.element_id === elem.element_id;
+      html += `<div class="ct-elem${eSelected ? ' selected' : ''}"`;
+      if (!locked) html += ` onclick="setCatElem('${d.srg_id}','${cat.category_id}','${elem.element_id}')"`;
+      html += `>${elemCode}_${escHtml(elem.element_name)}</div>`;
+    });
+  });
+  html += '</div>';
+  return html;
 }
 
-function changeOcrFontSize(delta) {
-  const ta = document.getElementById('ocrResult');
-  let current = parseFloat(window.getComputedStyle(ta).fontSize);
-  let newSize = Math.max(10, Math.min(32, current + delta));
-  ta.style.fontSize = newSize + 'px';
+function buildCatDropdowns(d, locked) {
+  let html = '';
+  for (let i = 1; i <= 4; i++) {
+    const key = 'cat-0' + i;
+    const val = d[key] || '';
+    const options = getCatDropValues(key, d.category_id, d.element_id);
+    html += `<div class="cat-drop-row">`;
+    html += `<select data-catdrop="${key}"${locked ? ' disabled' : ''}>`;
+    html += `<option value="">Cat-0${i}</option>`;
+    options.forEach(opt => { html += `<option value="${escHtml(opt)}"${val === opt ? ' selected' : ''}>${escHtml(opt)}</option>`; });
+    if (val && !options.includes(val)) html += `<option value="${escHtml(val)}" selected>${escHtml(val)}</option>`;
+    html += `</select>`;
+    html += `<span class="plus-btn${locked ? ' locked' : ''}" title="새 항목 추가" onclick="openAddCatItemModal('${d.srg_id}','${key}')">+</span>`;
+    html += `</div>`;
+  }
+  return html;
 }
 
-function clearOcr() {
-  pastedImageData = null;
-  const zone = document.getElementById('pasteZone');
-  document.getElementById('pasteZoneText').style.display = '';
-  document.getElementById('pasteImg').style.display = 'none';
-  document.getElementById('pasteImg').src = '';
-  document.getElementById('btnRemoveImg').style.display = 'none';
-  zone.classList.remove('has-image');
-  document.getElementById('ocrProgress').style.display = 'none';
-  document.getElementById('ocrResultWrap').style.display = 'none';
-  document.getElementById('ocrResult').value = '';
+function setCatElem(srgId, catId, elemId) {
+  const d = DB.srgData.find(x => x.srg_id === srgId);
+  if (!d) return;
+  d.category_id = catId;
+  d.element_id = elemId;
+  renderCards();
 }
 
-// ===========================
-// Utilities
-// ===========================
-function showLoading() { document.getElementById('loadingOverlay').style.display = 'flex'; }
-function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
-let toastTimer;
-function toast(msg, dur) {
-  dur = dur || 1500;
-  const el = document.getElementById('toast');
-  el.textContent = msg; el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), dur);
+function toggleCard(id) {
+  if (expandedCardId === id) { expandedCardId = null; delete modifyModeCards[id]; }
+  else { expandedCardId = id; }
+  renderCards();
+}
+function cancelNewCard(id) {
+  showConfirmModal('작성 취소', '카드 작성을 취소하시겠습니까?', '확인', () => {
+    DB.srgData = DB.srgData.filter(d => d.srg_id !== id);
+    expandedCardId = null;
+    document.getElementById('btnNewCard').style.display = '';
+    renderCards();
+  });
 }
 
-window.addEventListener('DOMContentLoaded', () => { loadBookmarks(); });
+function gatherCardData(srgId) {
+  const cardEl = document.getElementById('card-' + srgId);
+  if (!cardEl) return null;
+  const get = (sel) => { const el = cardEl.querySelector(sel); return el ? el.value : ''; };
+  const d = DB.srgData.find(x => x.srg_id === srgId);
+  const now = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  const dateStr = now.getFullYear() + '.' + pad(now.getMonth()+1) + '.' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+  return {
+    srg_id: srgId, apa: get('[data-field="apa"]'), context: get('[data-field="context"]'),
+    text: get('[data-field="text"]'), comment: get('[data-field="comment"]'),
+    category_id: d ? d.category_id : '', element_id: d ? d.element_id : '',
+    'cat-01': get('[data-catdrop="cat-01"]'), 'cat-02': get('[data-catdrop="cat-02"]'),
+    'cat-03': get('[data-catdrop="cat-03"]'), 'cat-04': get('[data-catdrop="cat-04"]'),
+    date: dateStr
+  };
+}
+
+// Save unsaved form input into DB before re-rendering
+function snapshotEditingCards() {
+  const editingIds = Object.keys(modifyModeCards);
+  // Also include NEW_ cards
+  DB.srgData.forEach(d => {
+    if (String(d.srg_id).startsWith('NEW_') && !editingIds.includes(d.srg_id)) {
+      editingIds.push(d.srg_id);
+    }
+  });
+  editingIds.forEach(srgId => {
+    const cardEl = document.getElementById('card-' + srgId);
+    if (!cardEl) return;
+    const d = DB.srgData.find(x => x.srg_id === srgId);
+    if (!d) return;
+    const get = (sel) => { const el = cardEl.querySelector(sel); return el ? el.value : ''; };
+    d.apa = get('[data-field="apa"]');
+    d.context = get('[data-field="context"]');
+    d.text = get('[data-field="text"]');
+    d.comment = get('[data-field="comment"]');
+    const cat01 = get('[data-catdrop="cat-01"]'); if (cat01) d['cat-01'] = cat01;
+    const cat02 = get('[data-catdrop="cat-02"]'); if (cat02) d['cat-02'] = cat02;
+    const cat03 = get('[data-catdrop="cat-03"]'); if (cat03) d['cat-03'] = cat03;
+    const cat04 = get('[data-catdrop="cat-04"]'); if (cat04) d['cat-04'] = cat04;
+  });
+}
+
+function validateCard(srgId) {
+  const row = gatherCardData(srgId);
+  if (!row) return null;
+  const missing = [];
+  if (!row.apa.trim()) missing.push('APA');
+  if (!row.context.trim()) missing.push('Context');
+  if (!row.text.trim()) missing.push('Text');
+  if (!row.comment.trim()) missing.push('Comment');
+  if (missing.length > 0) { showAlertModal('입력 필요', missing.join(', ') + ' 항목을 입력해 주세요.'); return null; }
+  return row;
+}
+
+function confirmSave(srgId) {
+  const row = validateCard(srgId);
+  if (!row) return;
+  showConfirmModal('저장 확인', '이 카드를 저장하시겠습니까?', '저장', () => doSaveCard(srgId));
+}
+async function doSaveCard(srgId) {
+  const row = gatherCardData(srgId);
+  if (!row) return;
+  showLoading();
+  try {
+    const isNew = srgId.startsWith('NEW_');
+    const action = isNew ? 'create' : 'update';
+    if (isNew) {
+      const d = DB.srgData.find(x => x.srg_id === srgId);
+      row.srg_id = d && d._displayId ? d._displayId : generateNextSrgId();
+    }
+    const res = isNew
+      ? await gasFetch(GAS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action, row }) }, 0)
+      : await gasPost({ action, row });
+    if (res.ok) {
+      const finalId = res.srg_id || row.srg_id;
+      if (isNew) {
+        // Replace temp entry with real one
+        const idx = DB.srgData.findIndex(x => x.srg_id === srgId);
+        if (idx >= 0) {
+          DB.srgData[idx] = { ...row, srg_id: finalId };
+          delete DB.srgData[idx]._displayId;
+        }
+      } else {
+        // Update existing entry
+        const idx = DB.srgData.findIndex(x => x.srg_id === srgId);
+        if (idx >= 0) DB.srgData[idx] = { ...row };
+      }
+      expandedCardId = finalId;
+      delete modifyModeCards[srgId];
+      buildSidebar(); renderCards();
+      toast('저장 완료!');
+    } else { toast('저장 실패: ' + (res.error || ''), 3000); }
+  } catch (e) { toast('오류: ' + e.message, 3000); }
+  hideLoading();
+}
+
+function confirmDelete(srgId) {
+  showConfirmModal('삭제 확인', '이 카드를 삭제하시겠습니까?\n' + formatNoteId(srgId), '삭제', () => doDeleteCard(srgId), 'btn-danger');
+}
+async function doDeleteCard(srgId) {
+  if (srgId.startsWith('NEW_')) {
+    DB.srgData = DB.srgData.filter(d => d.srg_id !== srgId);
+    expandedCardId = null; renderCards(); return;
+  }
+  showLoading();
+  try {
+    const res = await gasPost({ action: 'delete', srg_id: srgId });
+    if (res.ok) {
+      DB.srgData = DB.srgData.filter(d => d.srg_id !== srgId);
+      expandedCardId = null;
+      buildSidebar(); renderCards();
+      toast('삭제 완료!');
+    } else { toast('삭제 실패: ' + (res.error || ''), 3000); }
+  } catch (e) { toast('오류: ' + e.message, 3000); }
+  hideLoading();
+}
+
+function modifyCard(srgId) {
+  showConfirmModal('수정 확인', '이 카드를 수정하시겠습니까?', '수정', () => {
+    modifyModeCards[srgId] = true;
+    renderCards();
+  });
+}
+function cancelModify(srgId) {
+  showConfirmModal('수정 취소', '카드 수정을 취소하시겠습니까?', '확인', () => {
+    delete modifyModeCards[srgId];
+    renderCards();
+  });
+}
+
+function confirmPrint(srgId) {
+  expandedCardId = srgId; renderCards();
+  setTimeout(() => {
+    const card = document.getElementById('card-' + srgId);
+    if (!card) return;
+    // Scroll so card top sits just below the mobile topbar
+    function scrollToCardTop() {
+      const mainEl = document.getElementById('main');
+      const topbar = document.getElementById('mobileTopbar');
+      if (!mainEl) return;
+      const topbarH = topbar ? topbar.offsetHeight : 50;
+      mainEl.scrollTop = card.offsetTop - topbarH;
+    }
+    scrollToCardTop();
+    const textareas = card.querySelectorAll('.detail-center textarea:not(.apa-short)');
+    const mirrors = [];
+    textareas.forEach(ta => {
+      const div = document.createElement('div');
+      div.className = 'print-mirror';
+      div.textContent = ta.value;
+      div.dataset.field = ta.dataset.field;
+      div.style.cssText = 'display:none';
+      ta.parentNode.insertBefore(div, ta.nextSibling);
+      mirrors.push({ ta, div });
+    });
+    const apaTa = card.querySelector('.detail-center textarea.apa-short');
+    const apaGroup = apaTa ? apaTa.closest('.field-group') : null;
+    if (apaGroup) apaGroup.classList.add('print-hide-apa');
+    card.classList.add('print-ready');
+    setTimeout(() => {
+      window.print();
+      mirrors.forEach(m => m.div.remove());
+      card.classList.remove('print-ready');
+      if (apaGroup) apaGroup.classList.remove('print-hide-apa');
+      scrollToCardTop();
+      requestAnimationFrame(scrollToCardTop);
+    }, 200);
+  }, 300);
+}
+
+let newCardCounter = 0;
+let isInitialLoad = true;
+function openNewCard() {
+  newCardCounter++;
+  const tempId = 'NEW_' + newCardCounter;
+  const displayId = generateNextSrgId();
+  DB.srgData.unshift({
+    srg_id: tempId, _displayId: displayId,
+    apa: '', context: '', text: '', comment: '',
+    category_id: currentFilter?.type === 'category' ? currentFilter.id : '',
+    element_id:  currentFilter?.type === 'element' ? currentFilter.id : '',
+    'cat-01': '', 'cat-02': '', 'cat-03': '', 'cat-04': ''
+  });
+  expandedCardId = tempId;
+  document.getElementById('btnNewCard').style.display = 'none';
+  renderCards();
+}
+
+// ===== Auto-resize textareas =====
+function autoResizeTextarea(ta) {
+  const minH = parseInt(window.getComputedStyle(ta).minHeight) || 0;
+  ta.style.minHeight = '0';
+  ta.style.height = 'auto';
+  const scrollH = ta.scrollHeight;
+  ta.style.minHeight = '';
+  ta.style.height = Math.max(minH, scrollH + 2) + 'px';
+}
+
+function setupAutoResize(cardEl) {
+  if (!cardEl) return;
+  const textareas = cardEl.querySelectorAll('.detail-center textarea');
+  textareas.forEach(ta => {
+    autoResizeTextarea(ta);
+    ta.removeEventListener('input', ta._autoResizeHandler);
+    ta._autoResizeHandler = () => { autoResizeTextarea(ta); };
+    ta.addEventListener('input', ta._autoResizeHandler);
+  });
+  scrollCatTreeToSelected(cardEl);
+}
+
+function scrollCatTreeToSelected(cardEl) {
+  if (!cardEl) return;
+  const catTree = cardEl.querySelector('.cat-tree');
+  if (!catTree) return;
+  const selectedCat = catTree.querySelector('.ct-cat-selected');
+  if (selectedCat) {
+    selectedCat.scrollIntoView({ block: 'center', behavior: 'instant' });
+  }
+}
+
+// ===== Resize handler: auto-adjust textarea heights on browser resize =====
+window.addEventListener('resize', (function() {
+  let timer;
+  return function() {
+    clearTimeout(timer);
+    timer = setTimeout(function() {
+      if (!expandedCardId) return;
+      const card = document.getElementById('card-' + expandedCardId);
+      if (!card) return;
+      const textareas = card.querySelectorAll('.detail-center textarea');
+      textareas.forEach(ta => autoResizeTextarea(ta));
+    }, 100);
+  };
+})());
+
+// ===== Auto-load =====
+loadAll();
 </script>
 </body>
 </html>
