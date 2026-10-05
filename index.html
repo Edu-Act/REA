@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="data:,">
-<title>REA Lab - Login</title>
+<title>REA LAB.</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#f0f0f0;color:#333;font-size:14px}
@@ -16,7 +16,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#f0f0f0;color:
   z-index:9999;transition:opacity .4s;
 }
 #loginBox{
-  background:#fff;border-radius:10px;padding:40px 36px 30px;width:360px;
+  background:#fff;border-radius:10px;padding:40px 36px 25px;width:360px;
   box-shadow:0 8px 30px rgba(0,0,0,.25);
   transition:transform .4s,opacity .4s;
   display:flex;flex-direction:column;
@@ -27,12 +27,18 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#f0f0f0;color:
 
 /* ===== Login Button / Progress Bar ===== */
 #loginBtn{
-  width:100%;padding:11px;color:#fff;border:none;border-radius:6px;
+  width:100%;height:40px;padding:0;color:#fff;border:none;border-radius:6px;
   font-size:15px;cursor:pointer;font-weight:600;
   position:relative;overflow:hidden;
   background:#4a7dff;
   transition:background .15s;
 }
+#loginBtn .btn-text{
+  position:relative;z-index:1;user-select:none;
+  font-size:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  display:block;line-height:40px;
+}
+#loginBtn.progress .btn-text{font-size:12px}
 #loginBtn:hover:not(:disabled):not(.progress){background:#3a65d4}
 #loginBtn:disabled:not(.progress){cursor:not-allowed}
 #loginBtn.progress{
@@ -52,9 +58,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#f0f0f0;color:
     #5a8aff 8px, #5a8aff 16px
   );
 }
-#loginBtn .btn-text{position:relative;z-index:1;user-select:none}
-
-#loginError{color:#d32;font-size:13px;text-align:center;margin-top:8px;min-height:18px}
+#loginError{color:#d32;font-size:13px;text-align:center;margin-top:0;min-height:0}
 
 /* ===== Process Steps — smooth reveal ===== */
 #processWrap{
@@ -110,6 +114,81 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#f0f0f0;color:
 }
 .step-label{line-height:1.5}
 
+/* ===== Bookmark Button & Form ===== */
+#bookmarkBtn{
+  width:100%;padding:11px;color:#fff;border:none;border-radius:6px;
+  font-size:15px;cursor:pointer;font-weight:600;
+  background:#7ec8e3;margin-top:6px;
+  max-height:50px;overflow:hidden;
+  transition:background .15s, max-height .35s ease, opacity .3s ease, margin-top .35s ease, padding .35s ease;
+}
+#bookmarkBtn.collapsed{
+  max-height:0;opacity:0;margin-top:0;padding:0;pointer-events:none;
+}
+#bookmarkBtn:hover{background:#5bb3d5}
+#bookmarkBtn.active{background:#5bb3d5}
+
+#bookmarkFormWrap{
+  max-height:0;overflow:hidden;
+  transition:max-height .4s ease;
+}
+#bookmarkForm{
+  padding-top:14px;margin-top:24px;
+  border-top:1px solid #e8ecf1;
+  display:flex;flex-direction:column;gap:10px;
+}
+#bookmarkForm input[type="text"]{
+  width:100%;padding:10px 12px;border:1px solid #ccc;border-radius:6px;font-size:14px;
+  margin-bottom:0;
+}
+#bookmarkForm input[type="text"]::placeholder{color:#aaa}
+.bm-page-row{
+  display:flex;align-items:center;gap:8px;
+}
+.bm-page-row input[type="text"]{flex:1;margin-bottom:0}
+.bm-tilde{color:#999;font-size:16px;font-weight:600;flex-shrink:0}
+#bookmarkMsg{font-size:12.5px;text-align:center;min-height:18px;margin-top:4px}
+.bm-success{color:#38a169}
+.bm-error{color:#e53e3e}
+#bookmarkSubmitBtn{
+  width:100%;padding:10px;color:#fff;border:none;border-radius:6px;
+  font-size:14px;cursor:pointer;font-weight:600;
+  background:#38a169;transition:background .15s;
+  margin-bottom:0;
+}
+#bookmarkSubmitBtn:hover:not(:disabled){background:#2f855a}
+#bookmarkSubmitBtn:disabled{background:#a0aec0;cursor:not-allowed}
+
+/* ===== Numpad Modal ===== */
+#numpadOverlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);
+  z-index:10000;align-items:center;justify-content:center;
+}
+#numpadOverlay.show{display:flex}
+#numpadBox{
+  background:#fff;border-radius:12px;padding:20px;width:260px;
+  box-shadow:0 8px 30px rgba(0,0,0,.3);
+}
+#numpadDisplay{
+  width:100%;padding:10px 12px;border:1px solid #ccc;border-radius:6px;
+  font-size:18px;text-align:center;margin-bottom:12px;
+  background:#f8f9fa;color:#333;
+  min-height:44px;line-height:22px;
+}
+.numpad-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+}
+.numpad-grid button{
+  padding:14px 0;font-size:18px;font-weight:600;border:1px solid #e2e8f0;
+  border-radius:8px;background:#fff;cursor:pointer;color:#333;
+  transition:background .1s;
+}
+.numpad-grid button:hover{background:#f0f4ff}
+.numpad-grid button:active{background:#e2e8f0}
+.numpad-grid .np-back{font-size:14px;color:#e53e3e}
+.numpad-grid .np-confirm{background:#38a169;color:#fff;border-color:#38a169}
+.numpad-grid .np-confirm:hover{background:#2f855a}
+
 /* Fade out */
 .login-fade-out #loginBox{transform:translateY(-20px);opacity:0}
 .login-fade-out{opacity:0}
@@ -119,11 +198,27 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#f0f0f0;color:
 
 <div id="loginOverlay">
   <div id="loginBox">
-    <h2>REA Lab. Lo<a href="https://www.google.com/" target="_blank">g</a>in</h2>
+    <h2>REA LAB.</h2>
     <input type="email" id="loginEmail" placeholder="E-mail" autocomplete="email">
     <input type="password" id="loginPw" placeholder="Password" autocomplete="current-password">
     <button id="loginBtn" onclick="handleBtnClick()"><span class="btn-text">Login</span></button>
     <div id="loginError"></div>
+
+    <button id="bookmarkBtn" onclick="toggleBookmarkForm()">Bookmark</button>
+    <div id="bookmarkFormWrap">
+      <div id="bookmarkForm">
+        <input type="text" id="bmReference" placeholder="Reference">
+        <div class="bm-page-row">
+          <input type="text" id="bmPageFrom" placeholder="From" readonly>
+          <span class="bm-tilde">~</span>
+          <input type="text" id="bmPageTo" placeholder="To" readonly>
+        </div>
+        <input type="text" id="bmSentence" placeholder="Sentence">
+        <input type="text" id="bmComment" placeholder="Comment">
+        <div id="bookmarkMsg"></div>
+        <button id="bookmarkSubmitBtn" onclick="submitBookmark()">Bookmark Save</button>
+      </div>
+    </div>
 
     <div id="processWrap">
       <div id="processArea">
@@ -134,10 +229,32 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#f0f0f0;color:
           <div class="proc-step" id="ps4"><span class="step-dot"></span><span class="step-label">전체 데이터 API 호출</span></div>
           <div class="proc-step" id="ps5"><span class="step-dot"></span><span class="step-label">자료 목록(Category) 수신 및 처리</span></div>
           <div class="proc-step" id="ps6"><span class="step-dot"></span><span class="step-label">Serge Card 자료 수신 및 처리</span></div>
-          <div class="proc-step" id="ps7"><span class="step-dot"></span><span class="step-label">Preload Data 세션에 저장</span></div>
-          <div class="proc-step" id="ps8"><span class="step-dot"></span><span class="step-label">3초 후 메인 페이지로 이동</span></div>
+          <div class="proc-step" id="ps7"><span class="step-dot"></span><span class="step-label">Bookmark 자료 수신</span></div>
+          <div class="proc-step" id="ps8"><span class="step-dot"></span><span class="step-label">Preload Data 세션에 저장</span></div>
+          <div class="proc-step" id="ps9"><span class="step-dot"></span><span class="step-label">3초 후 메인 페이지로 이동</span></div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<div id="numpadOverlay">
+  <div id="numpadBox">
+    <div id="numpadLabel" style="text-align:center;font-size:13px;color:#888;margin-bottom:6px"></div>
+    <div id="numpadDisplay"></div>
+    <div class="numpad-grid">
+      <button onclick="numpadInput('1')">1</button>
+      <button onclick="numpadInput('2')">2</button>
+      <button onclick="numpadInput('3')">3</button>
+      <button onclick="numpadInput('4')">4</button>
+      <button onclick="numpadInput('5')">5</button>
+      <button onclick="numpadInput('6')">6</button>
+      <button onclick="numpadInput('7')">7</button>
+      <button onclick="numpadInput('8')">8</button>
+      <button onclick="numpadInput('9')">9</button>
+      <button class="np-back" onclick="numpadBack()">&larr;</button>
+      <button onclick="numpadInput('0')">0</button>
+      <button class="np-confirm" onclick="numpadConfirm()">OK</button>
     </div>
   </div>
 </div>
@@ -146,7 +263,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#f0f0f0;color:
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbwqh02HRq4fG7XsAYQtHNBqsTxHeEkfDSJ0teBgv8Qqhg3gM8qRrO9Wfdvz4btMBQuygQ/exec';
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
 const mainPage = isMobile ? 'realab_m.html' : 'realab.html';
-const TOTAL_STEPS = 8;
+const TOTAL_STEPS = 9;
 const FETCH_TIMEOUT = 20000; // 20초 타임아웃
 
 let isRunning = false;   // 로그인 진행 중 여부
@@ -309,6 +426,18 @@ async function doLogin() {
   errEl.textContent = '';
   isRunning = true;
 
+  // Bookmark 폼 & 버튼 부드럽게 접기 → 프로세스 영역 펼치기
+  const bmWrap = document.getElementById('bookmarkFormWrap');
+  const bmBtn = document.getElementById('bookmarkBtn');
+  const hadBookmarkOpen = bookmarkFormOpen;
+  bmWrap.style.maxHeight = '0';
+  bookmarkFormOpen = false;
+
+  // 폼 접힘 후 버튼 접힘 → 프로세스 영역 펼침 (순차 애니메이션)
+  await new Promise(r => setTimeout(r, hadBookmarkOpen ? 300 : 0));
+  bmBtn.classList.add('collapsed');
+  await new Promise(r => setTimeout(r, 300));
+
   // 상단 위치 고정 → 아래로만 확장
   lockTop();
   revealProcessArea();
@@ -321,6 +450,7 @@ async function doLogin() {
     setProcessStep(1, true);
     errEl.textContent = '이메일과 비밀번호를 입력하세요.';
     isRunning = false;
+    document.getElementById('bookmarkBtn').classList.remove('collapsed');
     return;
   }
 
@@ -375,20 +505,32 @@ async function doLogin() {
     await wait(350);
     await checkPause();
 
-    // === Step 7: Preload Data 세션에 저장 ===
+    // === Step 7: Bookmark 자료 수신 ===
     setProcessStep(7);
+    try {
+      const bmUrl = BOOKMARK_GAS_URL + '?action=getBookmarks&t=' + Date.now();
+      const bmData = await gasFetch(bmUrl, 1);
+      if (bmData.ok) {
+        sessionStorage.setItem('realab_bookmarks', JSON.stringify(bmData.bookmarks || []));
+      }
+    } catch(e) { /* 북마크 프리로드 실패해도 로그인 진행 */ }
+    await wait(300);
+    await checkPause();
+
+    // === Step 8: Preload Data 세션에 저장 ===
+    setProcessStep(8);
     sessionStorage.setItem('realab_preload', JSON.stringify(data));
     await wait(300);
     await checkPause();
 
-    // === Step 8: 3초 후 메인 페이지로 이동 ===
-    setProcessStep(8);
+    // === Step 9: 3초 후 메인 페이지로 이동 ===
+    setProcessStep(9);
     markAllDone();
-    const stepLabel8 = document.querySelector('#ps8 .step-label');
-    const btnText8 = document.querySelector('#loginBtn .btn-text');
+    const stepLabel9 = document.querySelector('#ps9 .step-label');
+    const btnText9 = document.querySelector('#loginBtn .btn-text');
     for (let sec = 3; sec >= 1; sec--) {
-      if (stepLabel8) stepLabel8.textContent = sec + '초 후 메인 페이지로 이동';
-      if (btnText8) btnText8.textContent = sec + '초 후 메인 페이지로 이동...';
+      if (stepLabel9) stepLabel9.textContent = sec + '초 후 메인 페이지로 이동';
+      if (btnText9) btnText9.textContent = sec + '초 후 메인 페이지로 이동...';
       setBtnProgress(100, null, 'complete');
       await new Promise(r => setTimeout(r, 1000));
     }
@@ -414,11 +556,144 @@ function resetBtn(btn) {
   if (btnText) btnText.textContent = 'Login';
   isPaused = false;
   isRunning = false;
+  // Bookmark 버튼 다시 표시
+  document.getElementById('bookmarkBtn').classList.remove('collapsed');
 }
 
 // Enter key support
 document.getElementById('loginPw').addEventListener('keydown', e => { if (e.key === 'Enter') handleBtnClick(); });
 document.getElementById('loginEmail').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('loginPw').focus(); });
+
+/* ══════════════════════════════════════
+   Bookmark 기능
+   ══════════════════════════════════════ */
+const BOOKMARK_GAS_URL = 'https://script.google.com/macros/s/AKfycbzkKrp51oH_HSPPDhFXFpCFawJgOTO-v6plws-sfURXZvdTNBPGdkscqSN2uBBsfSJa/exec';
+
+let bookmarkFormOpen = false;
+
+function toggleBookmarkForm() {
+  bookmarkFormOpen = !bookmarkFormOpen;
+  const wrap = document.getElementById('bookmarkFormWrap');
+  const btn = document.getElementById('bookmarkBtn');
+  if (bookmarkFormOpen) {
+    wrap.style.maxHeight = '400px';
+    btn.classList.add('active');
+  } else {
+    wrap.style.maxHeight = '0';
+    btn.classList.remove('active');
+  }
+}
+
+function generateTimestampId() {
+  const now = new Date();
+  const pad = (n, len) => String(n).padStart(len || 2, '0');
+  return pad(now.getFullYear(), 4) + pad(now.getMonth() + 1) + pad(now.getDate())
+       + '-' + pad(now.getHours()) + pad(now.getMinutes()) + pad(now.getSeconds());
+}
+
+async function submitBookmark() {
+  const msgEl = document.getElementById('bookmarkMsg');
+  const submitBtn = document.getElementById('bookmarkSubmitBtn');
+  msgEl.textContent = '';
+  msgEl.className = '';
+
+  const reference = document.getElementById('bmReference').value.trim();
+  const pageFrom  = document.getElementById('bmPageFrom').value.trim();
+  const pageTo    = document.getElementById('bmPageTo').value.trim();
+  const sentence  = document.getElementById('bmSentence').value.trim();
+  const comment   = document.getElementById('bmComment').value.trim();
+  const hide      = '1';
+  const id        = generateTimestampId();
+
+  if (!reference && !pageFrom && !pageTo && !sentence && !comment) {
+    msgEl.textContent = '하나 이상의 항목을 입력해주세요.';
+    msgEl.className = 'bm-error';
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Saving...';
+
+  try {
+    const params = new URLSearchParams({
+      action: 'addBookmark',
+      id, hide, reference, pageFrom, pageTo, sentence, comment
+    });
+    const url = BOOKMARK_GAS_URL + '?' + params.toString();
+    const res = await gasFetch(url, 1);
+
+    if (res.ok) {
+      msgEl.textContent = '저장 완료! (' + id + ')';
+      msgEl.className = 'bm-success';
+      // 입력 필드 초기화
+      document.getElementById('bmReference').value = '';
+      document.getElementById('bmPageFrom').value = '';
+      document.getElementById('bmPageTo').value = '';
+      document.getElementById('bmSentence').value = '';
+      document.getElementById('bmComment').value = '';
+    } else {
+      msgEl.textContent = '저장 실패: ' + (res.error || '알 수 없는 오류');
+      msgEl.className = 'bm-error';
+    }
+  } catch (e) {
+    msgEl.textContent = '서버 연결 오류: ' + e.message;
+    msgEl.className = 'bm-error';
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Bookmark Save';
+  }
+}
+
+/* ══════════════════════════════════════
+   Numpad 모달
+   ══════════════════════════════════════ */
+let numpadTarget = null;
+let numpadValue = '';
+
+function updateNumpadDisplay() {
+  const el = document.getElementById('numpadDisplay');
+  if (numpadValue) { el.textContent = numpadValue; }
+  else { el.innerHTML = '&nbsp;'; }
+}
+
+function openNumpad(inputEl) {
+  numpadTarget = inputEl;
+  numpadValue = inputEl.value;
+  updateNumpadDisplay();
+  document.getElementById('numpadLabel').textContent = inputEl.placeholder;
+  document.getElementById('numpadOverlay').classList.add('show');
+}
+
+function numpadInput(ch) {
+  numpadValue += ch;
+  updateNumpadDisplay();
+}
+
+function numpadBack() {
+  numpadValue = numpadValue.slice(0, -1);
+  updateNumpadDisplay();
+}
+
+function numpadConfirm() {
+  if (numpadTarget) numpadTarget.value = numpadValue;
+  closeNumpad();
+}
+
+function closeNumpad() {
+  document.getElementById('numpadOverlay').classList.remove('show');
+  numpadTarget = null;
+  numpadValue = '';
+}
+
+// From, To 입력란에 포커스/터치 시 숫자패드 열기
+document.getElementById('bmPageFrom').addEventListener('focus', function(e) {
+  e.target.blur();
+  openNumpad(e.target);
+});
+document.getElementById('bmPageTo').addEventListener('focus', function(e) {
+  e.target.blur();
+  openNumpad(e.target);
+});
 </script>
 </body>
 </html>

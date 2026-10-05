@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REA LAB. Bookmark</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html {
+  overflow-y: scroll;
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: #f0f2f5;
+  color: #2c3e50;
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  background: #fff;
+  border-bottom: 1px solid #e2e6ea;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.header-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #2c3e50;
+  letter-spacing: -0.5px;
+}
+.header-title span {
+  font-size: 13px;
+  font-weight: 400;
+  color: #7ec8e3;
+  margin-left: 6px;
+}
+.count-label {
+  font-size: 12px;
+  color: #888;
+  background: #f0f2f5;
+  padding: 3px 10px;
+  border-radius: 10px;
+}
+.btn-refresh {
+  background: #4a7dff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s;
+}
+.btn-refresh:hover { background: #3a6ae0; }
+.btn-refresh:disabled { opacity: .5; cursor: not-allowed; }
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+.btn-close {
+  background: #e2e6ea;
+  color: #555;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s;
+}
+.btn-close:hover { background: #d2d6da; }
+
+/* Table */
+.table-wrap {
+  padding: 10px 16px;
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+thead th {
+  background: #f7f8fa;
+  padding: 9px 12px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #555;
+  border-bottom: 2px solid #e2e6ea;
+  white-space: nowrap;
+}
+tbody tr { transition: background .15s; }
+tbody tr:hover { background: #f7f9fc; }
+tbody tr.row-hidden td { color: #bbb; }
+tbody td {
+  padding: 8px 12px;
+  font-size: 13px;
+  border-bottom: 1px solid #f0f1f3;
+  vertical-align: middle;
+  text-align: center;
+  color: #000;
+}
+td.col-id {
+  white-space: nowrap;
+  width: 10%;
+}
+td.col-ref {
+  word-break: break-word;
+  width: 14%;
+}
+td.col-page {
+  white-space: nowrap;
+}
+td.col-sentence {
+  width: 17.5%;
+  word-break: break-word;
+  text-align: left;
+}
+td.col-comment {
+  width: 17.5%;
+  word-break: break-word;
+  text-align: left;
+}
+td.col-confirm {
+  white-space: nowrap;
+}
+
+/* Confirm Checkbox */
+.confirm-cb {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid #aaa;
+  border-radius: 3px;
+  background: #fff;
+  cursor: pointer;
+  position: relative;
+}
+.confirm-cb:checked {
+  background: #fff;
+  border-color: #aaa;
+}
+.confirm-cb:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 12px;
+  font-weight: 700;
+  color: #000;
+  line-height: 1;
+}
+
+/* Loading */
+.loading-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255,255,255,.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+.loading-spinner {
+  width: 32px; height: 32px;
+  border: 3px solid #e2e6ea;
+  border-top: 3px solid #4a7dff;
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Empty */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #a0aec0;
+  font-size: 14px;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2c3e50;
+  color: #fff;
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-size: 13px;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity .3s;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="header-title">REA LAB. <span>Bookmark</span></div>
+    <span class="count-label" id="countLabel">0</span>
+  </div>
+  <div class="header-actions">
+    <button class="btn-refresh" id="btnRefresh" onclick="loadBookmarks(true)">Refresh</button>
+    <button class="btn-close" onclick="window.close()">Close</button>
+  </div>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Reference</th>
+        <th>Page</th>
+        <th>Sentence</th>
+        <th>Comment</th>
+        <th>Confirm</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+  <div class="empty-state" id="emptyState" style="display:none">No bookmarks found.</div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div id="loadingOverlay" class="loading-overlay" style="display:none">
+  <div class="loading-spinner"></div>
+</div>
+
+<script>
+const BOOKMARK_GAS_URL = 'https://script.google.com/macros/s/AKfycbzkKrp51oH_HSPPDhFXFpCFawJgOTO-v6plws-sfURXZvdTNBPGdkscqSN2uBBsfSJa/exec';
+
+let allBookmarks = [];
+
+// ===== Load =====
+async function loadBookmarks(forceRefresh) {
+  const btn = document.getElementById('btnRefresh');
+  btn.disabled = true;
+  showLoading();
+
+  // 프리로드 데이터 확인 (최초 1회만, Refresh 클릭 시에는 서버에서 새로 불러옴)
+  if (!forceRefresh) {
+    try {
+      const cached = sessionStorage.getItem('realab_bookmarks');
+      if (cached) {
+        allBookmarks = JSON.parse(cached);
+        sessionStorage.removeItem('realab_bookmarks'); // 사용 후 삭제
+        renderTable();
+        toast('Loaded ' + allBookmarks.length + ' bookmarks (cached)');
+        btn.disabled = false;
+        hideLoading();
+        return;
+      }
+    } catch(e) {}
+  }
+
+  try {
+    const url = BOOKMARK_GAS_URL + '?action=getBookmarks&t=' + Date.now();
+    const res = await fetch(url);
+    const json = await res.json();
+    if (json.ok) {
+      allBookmarks = json.bookmarks || [];
+      renderTable();
+      toast('Loaded ' + allBookmarks.length + ' bookmarks');
+    } else {
+      toast('Error: ' + (json.error || 'unknown'), 3000);
+    }
+  } catch(e) {
+    toast('Network error: ' + e.message, 3000);
+  }
+  btn.disabled = false;
+  hideLoading();
+}
+
+// ===== Render =====
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  const emptyEl = document.getElementById('emptyState');
+  const countEl = document.getElementById('countLabel');
+
+  countEl.textContent = allBookmarks.length;
+
+  if (allBookmarks.length === 0) {
+    tbody.innerHTML = '';
+    emptyEl.style.display = '';
+    return;
+  }
+  emptyEl.style.display = 'none';
+
+  // 정렬: 체크 안 된 것(hide=1, visible) → ID 오름차순, 체크된 것(hide≠1, hidden) → confirm_date 오름차순
+  const sorted = [...allBookmarks].sort((a, b) => {
+    const aHidden = String(a.hide) !== '1';
+    const bHidden = String(b.hide) !== '1';
+    if (aHidden !== bHidden) return aHidden ? 1 : -1;
+    if (!aHidden) {
+      return String(a.id).localeCompare(String(b.id));
+    } else {
+      return String(a.confirm_date || '').localeCompare(String(b.confirm_date || ''));
+    }
+  });
+
+  let html = '';
+  sorted.forEach((b, idx) => {
+    // hide 값: 1 = visible, 0(또는 빈값) = hidden
+    const isHidden = String(b.hide) !== '1';
+    const rowClass = isHidden ? ' class="row-hidden"' : '';
+    const pageStr = b.page_from ? (b.page_to ? b.page_from + ' ~ ' + b.page_to : String(b.page_from)) : '';
+
+    html += '<tr' + rowClass + '>';
+    html += '<td class="col-id">' + esc(b.id) + '</td>';
+    html += '<td class="col-ref">' + esc(b.reference) + '</td>';
+    html += '<td class="col-page">' + esc(pageStr) + '</td>';
+    html += '<td class="col-sentence">' + esc(b.sentence) + '</td>';
+    html += '<td class="col-comment">' + esc(b.comment) + '</td>';
+    html += '<td class="col-confirm">';
+    html += '<input type="checkbox" class="confirm-cb"' + (isHidden ? ' checked' : '') + ' onchange="toggleHide(\'' + esc(b.id) + '\', this.checked)" title="체크 시 숨김">';
+    html += '</td>';
+    html += '</tr>';
+  });
+  tbody.innerHTML = html;
+}
+
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = String(s || '');
+  return d.innerHTML;
+}
+
+// ===== Toggle Hide =====
+function generateTimestampId() {
+  const now = new Date();
+  const y = now.getFullYear();
+  const mo = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  const h = String(now.getHours()).padStart(2, '0');
+  const mi = String(now.getMinutes()).padStart(2, '0');
+  const s = String(now.getSeconds()).padStart(2, '0');
+  return y + mo + d + '-' + h + mi + s;
+}
+
+async function toggleHide(id, isNowChecked) {
+  // checked = 숨김(0), unchecked = 보임(1)
+  const newHide = isNowChecked ? '0' : '1';
+  const confirmDate = isNowChecked ? generateTimestampId() : '';
+  showLoading();
+  try {
+    const url = BOOKMARK_GAS_URL + '?action=updateBookmarkHide&id=' + encodeURIComponent(id) + '&hide=' + encodeURIComponent(newHide) + '&confirm_date=' + encodeURIComponent(confirmDate) + '&t=' + Date.now();
+    const res = await fetch(url);
+    const json = await res.json();
+    if (json.ok) {
+      const bm = allBookmarks.find(b => String(b.id) === String(id));
+      if (bm) { bm.hide = newHide; bm.confirm_date = confirmDate; }
+      renderTable();
+      toast(isNowChecked ? 'Hidden' : 'Visible');
+    } else {
+      toast('Error: ' + (json.error || ''), 3000);
+    }
+  } catch(e) {
+    toast('Network error: ' + e.message, 3000);
+  }
+  hideLoading();
+}
+
+// ===== Utilities =====
+function showLoading() { document.getElementById('loadingOverlay').style.display = 'flex'; }
+function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
+
+let toastTimer;
+function toast(msg, dur) {
+  dur = dur || 1500;
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), dur);
+}
+
+// ===== Init =====
+window.addEventListener('DOMContentLoaded', () => {
+  loadBookmarks();
+});
+</script>
+</body>
+</html>
