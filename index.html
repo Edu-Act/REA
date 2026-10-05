@@ -135,7 +135,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#f0f0f0;color:
           <div class="proc-step" id="ps5"><span class="step-dot"></span><span class="step-label">자료 목록(Category) 수신 및 처리</span></div>
           <div class="proc-step" id="ps6"><span class="step-dot"></span><span class="step-label">Serge Card 자료 수신 및 처리</span></div>
           <div class="proc-step" id="ps7"><span class="step-dot"></span><span class="step-label">Preload Data 세션에 저장</span></div>
-          <div class="proc-step" id="ps8"><span class="step-dot"></span><span class="step-label">메인 페이지 화면 준비 완료</span></div>
+          <div class="proc-step" id="ps8"><span class="step-dot"></span><span class="step-label">3초 후 메인 페이지로 이동</span></div>
         </div>
       </div>
     </div>
@@ -381,14 +381,17 @@ async function doLogin() {
     await wait(300);
     await checkPause();
 
-    // === Step 8: 메인 페이지 화면 준비 완료 ===
+    // === Step 8: 3초 후 메인 페이지로 이동 ===
     setProcessStep(8);
-    await wait(300);
     markAllDone();
-    setProcessStep(TOTAL_STEPS + 1);
-
-    // 1초 대기 후 리다이렉트
-    await new Promise(r => setTimeout(r, 1000));
+    const stepLabel8 = document.querySelector('#ps8 .step-label');
+    const btnText8 = document.querySelector('#loginBtn .btn-text');
+    for (let sec = 3; sec >= 1; sec--) {
+      if (stepLabel8) stepLabel8.textContent = sec + '초 후 메인 페이지로 이동';
+      if (btnText8) btnText8.textContent = sec + '초 후 메인 페이지로 이동...';
+      setBtnProgress(100, null, 'complete');
+      await new Promise(r => setTimeout(r, 1000));
+    }
 
     document.getElementById('loginOverlay').classList.add('login-fade-out');
     setTimeout(() => { window.location.href = mainPage; }, 400);
