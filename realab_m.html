@@ -171,6 +171,35 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .modal-btns .btn-danger:hover{background:#c53030}
 
 
+/* ===== STATISTICS VIEW (mobile) ===== */
+.statistics-view{display:flex;flex-direction:column;min-height:calc(100vh - 58px);overflow:hidden}
+.statistics-left{padding:16px;overflow-y:auto;border-bottom:1px solid #e2e6ea}
+.statistics-right{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden}
+.statistics-right-header{padding:16px 16px 0 16px;flex-shrink:0}
+.statistics-right-body{flex:1;overflow-y:auto;padding:0 16px 16px 16px}
+.statistics-left h3{font-size:15px;font-weight:700;color:#2d3748;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #4a7dff}
+.statistics-right-header h3{font-size:15px;font-weight:700;color:#2d3748;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid #4a7dff}
+.stat-tree{border:1px solid #d2d8e0;border-radius:8px;padding:8px;background:#fff}
+.stat-tree .st-cat{font-weight:700;font-size:13px;padding:5px 8px;display:flex;align-items:baseline;gap:6px;border-radius:4px;color:#2d3748;cursor:pointer;transition:background .12s}
+.stat-tree .st-cat:hover{background:#f0f4f8}
+.stat-tree .st-cat .st-leader{flex:1;border-bottom:1px dotted #c0c8d0;min-width:12px;margin:0 4px;align-self:baseline;position:relative;top:-3px}
+.stat-tree .st-cat .st-count{flex-shrink:0;font-size:11px;font-weight:600;color:#fff;background:#4a7dff;border-radius:10px;padding:1px 8px;min-width:22px;text-align:center}
+.stat-tree .st-elem{padding:4px 8px 4px 28px;font-size:12px;color:#555;display:flex;align-items:baseline;gap:6px;border-radius:4px;transition:background .12s}
+.stat-tree .st-elem:hover{background:#f0f4f8}
+.stat-tree .st-elem .st-leader{flex:1;border-bottom:1px dotted #d2d8e0;min-width:12px;margin:0 4px;align-self:baseline;position:relative;top:-3px}
+.stat-tree .st-elem .st-count{flex-shrink:0;font-size:11px;font-weight:500;color:#4a7dff;background:#edf2f7;border-radius:10px;padding:1px 7px;min-width:20px;text-align:center}
+.stat-tree .st-children{display:none}
+.stat-tree .st-node.open>.st-children{display:block}
+.stat-tree .st-toggle{width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:#a0aec0;flex-shrink:0;transition:transform .15s}
+.stat-tree .st-node.open>.st-cat>.st-toggle{transform:rotate(90deg)}
+.apa-list{list-style:none;padding:0;margin:0}
+.apa-list li{padding:8px 10px;font-size:13px;line-height:1.7;color:#2d3748;border-bottom:1px solid #f0f2f5;padding-left:4em;text-indent:-4em;word-break:break-word}
+.apa-list li:last-child{border-bottom:none}
+.apa-list li.apa-highlight{font-weight:700;background:#f0f4ff}
+.st-name{cursor:pointer;border-radius:3px;padding:1px 3px;transition:background .12s,color .12s}
+.st-name:hover{background:#e8eef6;color:#4a7dff}
+.st-name.st-name-active{background:#4a7dff;color:#fff;border-radius:4px}
+
 /* ===== LOADING OVERLAY ===== */
 #loadingOverlay{position:fixed;inset:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9998}
 .loading-content{text-align:center}
@@ -278,6 +307,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
   <div class="main" id="main">
     <button class="btn-new-card" id="btnNewCard" onclick="openNewCard()">+ 새 카드 추가</button>
     <div id="cardList"></div>
+    <div id="statisticsView" style="display:none"></div>
   </div>
 
 </div>
@@ -581,9 +611,158 @@ function showCardsView() {
   currentView = 'cards';
   document.getElementById('btnNewCard').style.display = '';
   document.getElementById('cardList').style.display = '';
+  document.getElementById('statisticsView').style.display = 'none';
   renderCards();
 }
-// showLinksView removed — links are now shown as sidebar sub-menu items
+function openBookmarkWindow() {
+  closeSidebar();
+  window.open('bookmark.html', 'BookmarkViewer', 'width=' + screen.availWidth + ',height=' + Math.round(screen.availHeight * 0.7) + ',left=0,top=0,resizable=yes,scrollbars=yes');
+}
+
+function showStatisticsView() {
+  guardedNavigate(() => {
+    closeSidebar();
+    currentView = 'statistics';
+    currentFilter = null;
+    expandedCardId = null;
+    modifyModeCards = {};
+    document.getElementById('btnNewCard').style.display = 'none';
+    document.getElementById('cardList').style.display = 'none';
+    document.getElementById('statisticsView').style.display = '';
+    renderStatistics();
+    buildSidebar();
+  });
+}
+
+function formatApa(raw) {
+  let s = escHtml(raw);
+  s = s.replace(/((?:\(\d{4}[a-z]?\)\.\s|(?:Ed|Eds)\.\)\.\s))([A-Z][^.]+?)(\.|\s\()/g, function(m, pre, title, after) {
+    return pre + '<i>' + title + '</i>' + after;
+  });
+  s = s.replace(/((?:\(\d{4}[a-z]?\)\.\s))([가-힣][^.]+?)(\.)/g, function(m, pre, title, after) {
+    return pre + '<b>' + title + '</b>' + after;
+  });
+  s = s.replace(/(\.\s)([A-Z][A-Za-z\s&:]+),\s(\d+)(\(\d+\))?/g, function(m, dot, journal, vol, issue) {
+    return dot + '<i>' + journal + ', ' + vol + '</i>' + (issue || '');
+  });
+  s = s.replace(/(\.\s)([가-힣][가-힣\s&]+),\s(\d+)(\(\d+\))?/g, function(m, dot, journal, vol, issue) {
+    return dot + '<i>' + journal + ', ' + vol + '</i>' + (issue || '');
+  });
+  return s;
+}
+
+function renderStatistics() {
+  const container = document.getElementById('statisticsView');
+
+  let leftHtml = '<h3>📂 Card Statistics</h3>';
+  leftHtml += '<div class="stat-tree">';
+
+  const otherCat = DB.categories.find(c => c.category_id === 'category_99');
+  const regularCats = DB.categories.filter(c => c.category_id !== 'category_99');
+  const orderedCats = otherCat ? [otherCat, ...regularCats] : regularCats;
+
+  orderedCats.forEach(cat => {
+    const catCode = cat.category_id.replace('category_', '');
+    const displayName = catCode + '_' + cat.category_name;
+    const elems = getElementsForCategory(cat.category_id);
+    const catCount = DB.srgData.filter(d => d.category_id === cat.category_id).length;
+    const hasChildren = elems.length > 0;
+
+    leftHtml += '<div class="st-node open">';
+    leftHtml += '<div class="st-cat" onclick="this.parentElement.classList.toggle(\'open\')">';
+    if (hasChildren) {
+      leftHtml += '<span class="st-toggle">▶</span>';
+    } else {
+      leftHtml += '<span class="st-toggle" style="visibility:hidden">▶</span>';
+    }
+    leftHtml += '<span class="st-name" onclick="event.stopPropagation();highlightApaByFilter(\'category\',\'' + cat.category_id + '\',this)">' + escHtml(displayName) + '</span>';
+    if (catCount > 0) {
+      leftHtml += '<span class="st-leader"></span>';
+      leftHtml += '<span class="st-count">' + catCount + '건</span>';
+    }
+    leftHtml += '</div>';
+
+    if (hasChildren) {
+      leftHtml += '<div class="st-children">';
+      elems.forEach(elem => {
+        const elemCode = elem.element_id.replace('element_', '');
+        const elemCount = DB.srgData.filter(d => d.element_id === elem.element_id).length;
+        leftHtml += '<div class="st-elem">';
+        leftHtml += '<span class="st-name" onclick="highlightApaByFilter(\'element\',\'' + elem.element_id + '\',this)">' + elemCode + '_' + escHtml(elem.element_name) + '</span>';
+        if (elemCount > 0) {
+          leftHtml += '<span class="st-leader"></span>';
+          leftHtml += '<span class="st-count">' + elemCount + '건</span>';
+        }
+        leftHtml += '</div>';
+      });
+      leftHtml += '</div>';
+    }
+    leftHtml += '</div>';
+  });
+
+  leftHtml += '</div>';
+
+  const apaSet = new Set();
+  DB.srgData.forEach(d => {
+    const apa = (d.apa || '').trim();
+    if (apa) apaSet.add(apa);
+  });
+  const apaList = [...apaSet].sort((a, b) => a.localeCompare(b, 'ko'));
+
+  let rightHeaderHtml = '<h3>📚 참고문헌 (APA)</h3>';
+
+  let rightBodyHtml = '<ul class="apa-list" id="statApaList">';
+  apaList.forEach((apa, idx) => {
+    rightBodyHtml += '<li data-apa="' + escHtml(apa) + '">' + formatApa(apa) + '</li>';
+  });
+  if (apaList.length === 0) {
+    rightBodyHtml += '<li style="color:#a0aec0;text-indent:0;padding-left:12px">참고문헌이 없습니다.</li>';
+  }
+  rightBodyHtml += '</ul>';
+
+  container.innerHTML = '<div class="statistics-view">' +
+    '<div class="statistics-left">' + leftHtml + '</div>' +
+    '<div class="statistics-right">' +
+      '<div class="statistics-right-header">' + rightHeaderHtml + '</div>' +
+      '<div class="statistics-right-body">' + rightBodyHtml + '</div>' +
+    '</div>' +
+    '</div>';
+}
+
+function highlightApaByFilter(type, id, clickedEl) {
+  const allNames = document.querySelectorAll('.stat-tree .st-name');
+  const wasActive = clickedEl.classList.contains('st-name-active');
+  allNames.forEach(n => n.classList.remove('st-name-active'));
+
+  const list = document.getElementById('statApaList');
+  if (!list) return;
+  const items = list.querySelectorAll('li[data-apa]');
+
+  if (wasActive) {
+    items.forEach(li => li.classList.remove('apa-highlight'));
+    return;
+  }
+
+  clickedEl.classList.add('st-name-active');
+
+  const matchingApas = new Set();
+  DB.srgData.forEach(d => {
+    const match = type === 'category' ? d.category_id === id : d.element_id === id;
+    if (match) {
+      const apa = (d.apa || '').trim();
+      if (apa) matchingApas.add(apa);
+    }
+  });
+
+  items.forEach(li => {
+    const apaVal = li.getAttribute('data-apa');
+    if (matchingApas.has(apaVal)) {
+      li.classList.add('apa-highlight');
+    } else {
+      li.classList.remove('apa-highlight');
+    }
+  });
+}
 
 // ===== Helpers =====
 function getCategoryName(catId) {
@@ -1327,8 +1506,31 @@ function buildSidebar() {
     html += `</div>`;
   });
 
-  // Divider before Page Links
+  // Divider before Bookmark / Statistics
   html += `<div style="border-top:1px solid #e2e6ea;margin:40px 12px 8px"></div>`;
+
+  // Bookmark menu
+  html += `<div class="tree-node">`;
+  html += `<div class="tree-row" onclick="openBookmarkWindow()">`;
+  html += `<span class="tree-toggle"></span>`;
+  html += `<span class="tree-icon">🔖</span>`;
+  html += `<span class="tree-label" style="font-weight:700">Bookmark</span>`;
+  html += `</div></div>`;
+
+  // Divider between Bookmark and Statistics
+  html += `<div style="border-top:1px solid #e2e6ea;margin:8px 12px"></div>`;
+
+  // Statistics menu
+  const statActive = currentView === 'statistics' ? ' active' : '';
+  html += `<div class="tree-node">`;
+  html += `<div class="tree-row${statActive}" onclick="showStatisticsView()">`;
+  html += `<span class="tree-toggle"></span>`;
+  html += `<span class="tree-icon">📊</span>`;
+  html += `<span class="tree-label" style="font-weight:700">Statistics</span>`;
+  html += `</div></div>`;
+
+  // Divider before Page Links
+  html += `<div style="border-top:1px solid #e2e6ea;margin:8px 12px"></div>`;
 
   // ===== Page Links (expandable sub-menu) =====
   const links = DB.links || [];
