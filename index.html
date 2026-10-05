@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="data:,">
+<link rel="preconnect" href="https://script.google.com" crossorigin>
+<link rel="dns-prefetch" href="https://script.google.com">
+<link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
+<link rel="dns-prefetch" href="https://script.googleusercontent.com">
 <title>REA LAB.</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -213,7 +217,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#f0f0f0;color:
           <span class="bm-tilde">~</span>
           <input type="text" id="bmPageTo" placeholder="To" readonly>
         </div>
-        <input type="text" id="bmSentence" placeholder="Sentence">
+        <input type="text" id="bmSentence" placeholder="Sentence" style="margin-bottom:10px">
         <input type="text" id="bmComment" placeholder="Comment">
         <div id="bookmarkMsg"></div>
         <button id="bookmarkSubmitBtn" onclick="submitBookmark()">Bookmark Save</button>
@@ -229,7 +233,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#f0f0f0;color:
           <div class="proc-step" id="ps4"><span class="step-dot"></span><span class="step-label">전체 데이터 API 호출</span></div>
           <div class="proc-step" id="ps5"><span class="step-dot"></span><span class="step-label">자료 목록(Category) 수신 및 처리</span></div>
           <div class="proc-step" id="ps6"><span class="step-dot"></span><span class="step-label">Serge Card 자료 수신 및 처리</span></div>
-          <div class="proc-step" id="ps7"><span class="step-dot"></span><span class="step-label">Bookmark 자료 수신</span></div>
+          <div class="proc-step" id="ps7"><span class="step-dot"></span><span class="step-label">Bookmark 자료 수신 및 처리</span></div>
           <div class="proc-step" id="ps8"><span class="step-dot"></span><span class="step-label">Preload Data 세션에 저장</span></div>
           <div class="proc-step" id="ps9"><span class="step-dot"></span><span class="step-label">3초 후 메인 페이지로 이동</span></div>
         </div>
@@ -570,6 +574,7 @@ document.getElementById('loginEmail').addEventListener('keydown', e => { if (e.k
 const BOOKMARK_GAS_URL = 'https://script.google.com/macros/s/AKfycbzkKrp51oH_HSPPDhFXFpCFawJgOTO-v6plws-sfURXZvdTNBPGdkscqSN2uBBsfSJa/exec';
 
 let bookmarkFormOpen = false;
+let isBookmarkSubmitting = false;
 
 function toggleBookmarkForm() {
   bookmarkFormOpen = !bookmarkFormOpen;
@@ -578,6 +583,11 @@ function toggleBookmarkForm() {
   if (bookmarkFormOpen) {
     wrap.style.maxHeight = '400px';
     btn.classList.add('active');
+    // 이전 Reference 자동 채우기
+    try {
+      const lastRef = localStorage.getItem('bm_last_reference');
+      if (lastRef) document.getElementById('bmReference').value = lastRef;
+    } catch(e) {}
   } else {
     wrap.style.maxHeight = '0';
     btn.classList.remove('active');
@@ -592,6 +602,7 @@ function generateTimestampId() {
 }
 
 async function submitBookmark() {
+  if (isBookmarkSubmitting) return;
   const msgEl = document.getElementById('bookmarkMsg');
   const submitBtn = document.getElementById('bookmarkSubmitBtn');
   msgEl.textContent = '';
@@ -611,36 +622,51 @@ async function submitBookmark() {
     return;
   }
 
-  submitBtn.disabled = true;
-  submitBtn.textContent = 'Saving...';
+  isBookmarkSubmitting = true;
+
+  // ── Optimistic UI: 즉시 성공 표시 & 입력 필드 초기화 ──
+  msgEl.textContent = '저장 완료! (' + id + ')';
+  msgEl.className = 'bm-success';
+  // Reference 값 저장 후 초기화
+  try { localStorage.setItem('bm_last_reference', reference); } catch(e) {}
+  document.getElementById('bmReference').value = '';
+  document.getElementById('bmPageFrom').value = '';
+  document.getElementById('bmPageTo').value = '';
+  document.getElementById('bmSentence').value = '';
+  document.getElementById('bmComment').value = '';
+
+  // 2초 후 메시지 자동 숨김
+  const msgTimer = setTimeout(() => {
+    msgEl.textContent = '';
+    msgEl.className = '';
+  }, 2000);
+
+  // 즉시 다음 입력 가능
+  isBookmarkSubmitting = false;
+
+  // ── 백그라운드 서버 전송 (사용자 대기 없음) ──
+  const params = new URLSearchParams({
+    action: 'addBookmark',
+    id, hide, reference, pageFrom, pageTo, sentence, comment
+  });
+  const url = BOOKMARK_GAS_URL + '?' + params.toString();
 
   try {
-    const params = new URLSearchParams({
-      action: 'addBookmark',
-      id, hide, reference, pageFrom, pageTo, sentence, comment
-    });
-    const url = BOOKMARK_GAS_URL + '?' + params.toString();
-    const res = await gasFetch(url, 1);
-
-    if (res.ok) {
-      msgEl.textContent = '저장 완료! (' + id + ')';
-      msgEl.className = 'bm-success';
-      // 입력 필드 초기화
-      document.getElementById('bmReference').value = '';
-      document.getElementById('bmPageFrom').value = '';
-      document.getElementById('bmPageTo').value = '';
-      document.getElementById('bmSentence').value = '';
-      document.getElementById('bmComment').value = '';
-    } else {
-      msgEl.textContent = '저장 실패: ' + (res.error || '알 수 없는 오류');
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
+    const r = await fetch(url, { signal: controller.signal, keepalive: true });
+    clearTimeout(timer);
+    const text = await r.text();
+    const res = JSON.parse(text);
+    if (!res.ok) {
+      clearTimeout(msgTimer);
+      msgEl.textContent = '저장 실패: ' + (res.error || '알 수 없는 오류') + ' — 다시 시도해주세요.';
       msgEl.className = 'bm-error';
     }
   } catch (e) {
-    msgEl.textContent = '서버 연결 오류: ' + e.message;
+    clearTimeout(msgTimer);
+    msgEl.textContent = '서버 연결 오류 — 다시 시도해주세요.';
     msgEl.className = 'bm-error';
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Bookmark Save';
   }
 }
 

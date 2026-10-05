@@ -81,6 +81,18 @@ body {
   transition: background .2s;
 }
 .btn-close:hover { background: #d2d6da; }
+.btn-sheet {
+  background: #34a853;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s;
+}
+.btn-sheet:hover { background: #2d9249; }
 
 /* Table */
 .table-wrap {
@@ -97,7 +109,7 @@ table {
 }
 thead th {
   background: #f7f8fa;
-  padding: 9px 12px;
+  padding: 11px 12px;
   text-align: center;
   font-size: 13px;
   font-weight: 700;
@@ -105,11 +117,11 @@ thead th {
   border-bottom: 2px solid #e2e6ea;
   white-space: nowrap;
 }
-tbody tr { transition: background .15s; }
+tbody tr { transition: background .15s; line-height: 1.8; }
 tbody tr:hover { background: #f7f9fc; }
 tbody tr.row-hidden td { color: #bbb; }
 tbody td {
-  padding: 8px 12px;
+  padding: 10px 12px;
   font-size: 13px;
   border-bottom: 1px solid #f0f1f3;
   vertical-align: middle;
@@ -126,9 +138,10 @@ td.col-ref {
 }
 td.col-page {
   white-space: nowrap;
+  width: 8%;
 }
 td.col-sentence {
-  width: 17.5%;
+  width: 40%;
   word-break: break-word;
   text-align: left;
 }
@@ -139,6 +152,7 @@ td.col-comment {
 }
 td.col-confirm {
   white-space: nowrap;
+  width: 5%;
 }
 
 /* Confirm Checkbox */
@@ -224,6 +238,7 @@ td.col-confirm {
     <span class="count-label" id="countLabel">0</span>
   </div>
   <div class="header-actions">
+    <button class="btn-sheet" onclick="window.open('https://docs.google.com/spreadsheets/d/1LmJe56gYTHnNSk7RCgBYRcVhL2o9cSvcJFklCrfQRVQ/edit?gid=0#gid=0','_blank')">Sheet</button>
     <button class="btn-refresh" id="btnRefresh" onclick="loadBookmarks(true)">Refresh</button>
     <button class="btn-close" onclick="window.close()">Close</button>
   </div>
