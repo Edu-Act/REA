@@ -51,10 +51,10 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .btn-new-card:active{transform:translateY(0)}
 
 /* ===== CARD (collapsed) ===== */
-.card{background:#fff;border:1px solid #e2e6ea;border-radius:10px;margin-bottom:12px;overflow:hidden;transition:all .25s ease;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.card{background:#eceef1;border:1px solid #e2e6ea;border-radius:10px;margin-bottom:12px;overflow:hidden;transition:all .25s ease;box-shadow:0 1px 4px rgba(0,0,0,.06);position:relative;z-index:1}
 .card:hover{box-shadow:0 3px 12px rgba(0,0,0,.1);border-color:#cdd3da}
-.card.expanded{box-shadow:0 4px 20px rgba(0,0,0,.12);border-color:#b0bac5}
-.card-header{display:flex;align-items:flex-start;padding:16px 20px;gap:14px;cursor:default}
+.card.expanded{box-shadow:0 4px 20px rgba(0,0,0,.12);border-color:#b0bac5;background:#fff}
+.card-header{display:flex;align-items:flex-start;padding:20px 20px;gap:14px;cursor:default}
 .card-left{display:flex;align-items:baseline;gap:18px;flex:1;min-width:0;flex-wrap:wrap}
 .card-id{font-weight:400;font-size:15px;color:#2c3e50;flex-shrink:0;letter-spacing:-.3px}
 .card-breadcrumb{font-size:15px;color:#5a6a7a;word-break:break-word;line-height:1.5}
