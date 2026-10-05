@@ -1673,11 +1673,21 @@ function filterElement(elemId) {
   });
 }
 
+function getSrgNum(d) {
+  const m = String(d.srg_id).match(/srg_(\d+)/);
+  return m ? parseInt(m[1], 10) : 0;
+}
 function getFilteredData() {
-  let data = DB.srgData;
-  if (!currentFilter) return data;
-  if (currentFilter.type === 'category') return data.filter(d => d.category_id === currentFilter.id);
-  if (currentFilter.type === 'element') return data.filter(d => d.element_id === currentFilter.id);
+  let data = [...DB.srgData];
+  if (!currentFilter) {
+    // All Notes: note id 내림차순
+    data.sort((a, b) => getSrgNum(b) - getSrgNum(a));
+    return data;
+  }
+  if (currentFilter.type === 'category') data = data.filter(d => d.category_id === currentFilter.id);
+  else if (currentFilter.type === 'element') data = data.filter(d => d.element_id === currentFilter.id);
+  // Category/Element: note id 오름차순
+  data.sort((a, b) => getSrgNum(a) - getSrgNum(b));
   return data;
 }
 
@@ -2069,6 +2079,7 @@ async function doSaveCard(srgId) {
       await new Promise(r => setTimeout(r, 150));
       expandedCardId = finalId;
       delete modifyModeCards[srgId];
+      document.getElementById('btnNewCardWrap').style.display = '';
       buildSidebar(); renderCards();
       toast('저장 완료!');
     } else { toast('저장 실패: ' + (res.error || ''), 3000); }
