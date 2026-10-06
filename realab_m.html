@@ -62,10 +62,10 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .btn-new-card:active{transform:translateY(0)}
 
 /* ===== CARD (collapsed) ===== */
-.card{background:#fff;border:1px solid #e2e6ea;border-radius:10px;margin-bottom:12px;overflow:hidden;transition:all .25s ease;box-shadow:0 1px 4px rgba(0,0,0,.06);scroll-margin-top:58px}
+.card{background:#eceef1;border:1px solid #e2e6ea;border-radius:10px;margin-bottom:12px;overflow:hidden;transition:all .25s ease;box-shadow:0 1px 4px rgba(0,0,0,.06);scroll-margin-top:58px;position:relative;z-index:1}
 .card:hover{box-shadow:0 3px 12px rgba(0,0,0,.1);border-color:#cdd3da}
-.card.expanded{box-shadow:0 4px 20px rgba(0,0,0,.12);border-color:#b0bac5}
-.card-header{display:flex;flex-direction:column;align-items:flex-start;padding:12px 14px;gap:8px;cursor:default}
+.card.expanded{box-shadow:0 4px 20px rgba(0,0,0,.12);border-color:#b0bac5;background:#fff}
+.card-header{display:flex;flex-direction:column;align-items:flex-start;padding:16px 14px;gap:8px;cursor:default}
 .card-left{display:flex;flex-direction:column;gap:4px;width:100%;min-width:0}
 .card-id{font-weight:400;font-size:13px;color:#2c3e50;letter-spacing:-.3px}
 .card-breadcrumb{font-size:13px;color:#5a6a7a;word-break:break-word;line-height:1.5}
@@ -215,6 +215,36 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .loading-step.active .step-icon{animation:pulse .8s ease infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
+/* ===== BOOKMARK VIEW ===== */
+.bm-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.bm-header-left{display:flex;align-items:center;gap:8px}
+.bm-header-title{font-size:15px;font-weight:700;color:#2c3e50}
+.bm-header-title span{font-size:12px;font-weight:400;color:#7ec8e3;margin-left:4px}
+.bm-count{font-size:11px;color:#888;background:#f0f2f5;padding:2px 8px;border-radius:10px}
+.bm-header-actions{display:flex;gap:6px}
+.bm-btn{border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:background .2s}
+.bm-btn-sheet{background:#34a853;color:#fff}
+.bm-btn-sheet:hover{background:#2d9249}
+.bm-btn-refresh{background:#4a7dff;color:#fff}
+.bm-btn-refresh:hover{background:#3a6ae0}
+.bm-btn-refresh:disabled{opacity:.5;cursor:not-allowed}
+.bm-card{background:#fff;border:1px solid #e2e6ea;border-radius:10px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:all .2s ease}
+.bm-card.bm-row-hidden{opacity:.55}
+.bm-card-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;gap:8px;cursor:pointer}
+.bm-card-header-left{flex:1;min-width:0}
+.bm-card-id{font-size:13px;font-weight:700;color:#2c3e50;letter-spacing:-.3px}
+.bm-card-ref{font-size:12px;color:#5a6a7a;margin-top:2px;word-break:break-word;line-height:1.4}
+.bm-card-page{font-size:11px;color:#888;background:#f0f2f5;padding:2px 8px;border-radius:8px;white-space:nowrap;flex-shrink:0}
+.bm-card-body{display:none;border-top:1px solid #f0f1f3;padding:10px 14px 14px}
+.bm-card.bm-expanded .bm-card-body{display:block}
+.bm-field-label{font-size:11px;font-weight:700;color:#718096;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;margin-top:10px}
+.bm-field-label:first-child{margin-top:0}
+.bm-field-text{font-size:13px;color:#2c3e50;line-height:1.7;word-break:break-word;text-align:justify}
+.bm-confirm-wrap{display:flex;align-items:center;gap:6px;font-size:12px;color:#888}
+.bm-confirm-cb{-webkit-appearance:none;-moz-appearance:none;appearance:none;width:18px;height:18px;border:1.5px solid #aaa;border-radius:4px;background:#fff;cursor:pointer;position:relative}
+.bm-confirm-cb:checked{background:#fff;border-color:#aaa}
+.bm-confirm-cb:checked::after{content:'\2713';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:13px;font-weight:700;color:#000;line-height:1}
+
 /* ===== TOAST ===== */
 .toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);padding:12px 24px;background:#2d3748;color:#fff;border-radius:10px;font-size:14px;font-weight:500;z-index:9999;opacity:0;transition:opacity .3s;box-shadow:0 4px 14px rgba(0,0,0,.2);max-width:calc(100% - 32px)}
 .toast.show{opacity:1}
@@ -289,7 +319,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 </div>
 
 <!-- ===== SIDEBAR BACKDROP ===== -->
-<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()" ontouchend="closeSidebar()"></div>
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
 
 <!-- ===== SIDEBAR DRAWER ===== -->
 <div class="sidebar" id="sidebarDrawer">
@@ -308,6 +338,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
     <button class="btn-new-card" id="btnNewCard" onclick="openNewCard()">+ 새 카드 추가</button>
     <div id="cardList"></div>
     <div id="statisticsView" style="display:none"></div>
+    <div id="bookmarkView" style="display:none"></div>
   </div>
 
 </div>
@@ -483,11 +514,9 @@ function openSidebar() {
   setTimeout(() => { sidebarBusy = false; }, 350);
 }
 function closeSidebar() {
-  if (sidebarBusy) return;
-  sidebarBusy = true;
   document.getElementById('sidebarDrawer').classList.remove('open');
   document.getElementById('sidebarBackdrop').classList.remove('open');
-  setTimeout(() => { sidebarBusy = false; }, 350);
+  sidebarBusy = false;
 }
 
 // ===== Toast =====
@@ -593,6 +622,8 @@ async function loadAll() {
         return l;
       });
       setLoadStep(4);
+      // Load bookmarks in parallel (don't block main UI)
+      bmLoadBookmarks(false, true);
       buildSidebar();
       renderCards();
       document.getElementById('appLayout').style.display = 'block';
@@ -612,11 +643,23 @@ function showCardsView() {
   document.getElementById('btnNewCard').style.display = '';
   document.getElementById('cardList').style.display = '';
   document.getElementById('statisticsView').style.display = 'none';
+  document.getElementById('bookmarkView').style.display = 'none';
   renderCards();
 }
-function openBookmarkWindow() {
-  closeSidebar();
-  window.open('bookmark.html', 'BookmarkViewer', 'width=' + screen.availWidth + ',height=' + Math.round(screen.availHeight * 0.7) + ',left=0,top=0,resizable=yes,scrollbars=yes');
+function showBookmarkView() {
+  guardedNavigate(() => {
+    closeSidebar();
+    currentView = 'bookmark';
+    currentFilter = null;
+    expandedCardId = null;
+    modifyModeCards = {};
+    document.getElementById('btnNewCard').style.display = 'none';
+    document.getElementById('cardList').style.display = 'none';
+    document.getElementById('statisticsView').style.display = 'none';
+    document.getElementById('bookmarkView').style.display = '';
+    buildSidebar();
+    bmLoadBookmarks();
+  });
 }
 
 function showStatisticsView() {
@@ -629,6 +672,7 @@ function showStatisticsView() {
     document.getElementById('btnNewCard').style.display = 'none';
     document.getElementById('cardList').style.display = 'none';
     document.getElementById('statisticsView').style.display = '';
+    document.getElementById('bookmarkView').style.display = 'none';
     renderStatistics();
     buildSidebar();
   });
@@ -1510,8 +1554,9 @@ function buildSidebar() {
   html += `<div style="border-top:1px solid #e2e6ea;margin:40px 12px 8px"></div>`;
 
   // Bookmark menu
+  const bmActive = currentView === 'bookmark' ? ' active' : '';
   html += `<div class="tree-node">`;
-  html += `<div class="tree-row" onclick="openBookmarkWindow()">`;
+  html += `<div class="tree-row${bmActive}" onclick="showBookmarkView()">`;
   html += `<span class="tree-toggle"></span>`;
   html += `<span class="tree-icon">🔖</span>`;
   html += `<span class="tree-label" style="font-weight:700">Bookmarks</span>`;
@@ -1627,14 +1672,9 @@ function onCatClick(event, catId, hasChildren) {
     buildSidebar();
     return;
   }
-  // If already filtered to this category and it's open, toggle closed
-  if (hasChildren && currentFilter && currentFilter.type === 'category' && currentFilter.id === catId && openCategories[catId]) {
-    openCategories[catId] = false;
-    buildSidebar();
-    return;
-  }
-  if (hasChildren) openCategories[catId] = !openCategories[catId];
-  filterCategory(catId); // guard is inside filterCategory
+  // Category click only toggles children visibility, does not filter
+  openCategories[catId] = !openCategories[catId];
+  buildSidebar();
 }
 
 // ===== Edit guard =====
@@ -1684,11 +1724,19 @@ function filterElement(elemId) {
   });
 }
 
+function getSrgNum(d) {
+  const m = String(d.srg_id).match(/srg_(\d+)/);
+  return m ? parseInt(m[1], 10) : 0;
+}
 function getFilteredData() {
-  let data = DB.srgData;
-  if (!currentFilter) return data;
-  if (currentFilter.type === 'category') return data.filter(d => d.category_id === currentFilter.id);
-  if (currentFilter.type === 'element') return data.filter(d => d.element_id === currentFilter.id);
+  let data = [...DB.srgData];
+  if (!currentFilter) {
+    data.sort((a, b) => getSrgNum(b) - getSrgNum(a));
+    return data;
+  }
+  if (currentFilter.type === 'category') data = data.filter(d => d.category_id === currentFilter.id);
+  else if (currentFilter.type === 'element') data = data.filter(d => d.element_id === currentFilter.id);
+  data.sort((a, b) => getSrgNum(a) - getSrgNum(b));
   return data;
 }
 
@@ -1986,6 +2034,7 @@ async function doSaveCard(srgId) {
       }
       expandedCardId = finalId;
       delete modifyModeCards[srgId];
+      document.getElementById('btnNewCard').style.display = '';
       buildSidebar(); renderCards();
       toast('저장 완료!');
     } else { toast('저장 실패: ' + (res.error || ''), 3000); }
@@ -2131,6 +2180,99 @@ window.addEventListener('resize', (function() {
     }, 100);
   };
 })());
+
+// ===== Bookmark integrated view =====
+const BOOKMARK_GAS_URL = 'https://script.google.com/macros/s/AKfycbzkKrp51oH_HSPPDhFXFpCFawJgOTO-v6plws-sfURXZvdTNBPGdkscqSN2uBBsfSJa/exec';
+let bmAllBookmarks = [];
+let bmExpandedId = null;
+let bmLoaded = false;
+
+async function bmLoadBookmarks(forceRefresh, silent) {
+  if (bmLoaded && !forceRefresh) { if (currentView === 'bookmark') bmRenderCards(); return; }
+  if (!silent) showLoading();
+  try {
+    const url = BOOKMARK_GAS_URL + '?action=getBookmarks&t=' + Date.now();
+    const res = await fetch(url);
+    const json = await res.json();
+    if (json.ok) { bmAllBookmarks = json.bookmarks || []; bmLoaded = true; if (currentView === 'bookmark') bmRenderCards(); if (!silent) toast('Loaded ' + bmAllBookmarks.length + ' bookmarks'); }
+    else { if (!silent) toast('Error: ' + (json.error || 'unknown'), 3000); }
+  } catch(e) { if (!silent) toast('Network error: ' + e.message, 3000); }
+  if (!silent) hideLoading();
+}
+
+function bmRenderCards() {
+  const container = document.getElementById('bookmarkView');
+  if (bmAllBookmarks.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:40px 20px;color:#a0aec0;font-size:14px">No bookmarks found.</div>';
+    return;
+  }
+  const sorted = [...bmAllBookmarks].sort((a, b) => {
+    const aH = String(a.hide) !== '1', bH = String(b.hide) !== '1';
+    if (aH !== bH) return aH ? 1 : -1;
+    return !aH ? String(a.id).localeCompare(String(b.id)) : String(a.confirm_date||'').localeCompare(String(b.confirm_date||''));
+  });
+  let html = '<div class="bm-header">';
+  html += '<div class="bm-header-left"><div class="bm-header-title">Bookmark <span>List</span></div><span class="bm-count">' + bmAllBookmarks.length + '</span></div>';
+  html += '<div class="bm-header-actions">';
+  html += '<button class="bm-btn bm-btn-refresh" id="bmBtnRefresh" onclick="bmLoadBookmarks(true)">Refresh</button>';
+  html += '</div></div>';
+  sorted.forEach((b) => {
+    const isHidden = String(b.hide) !== '1';
+    const hiddenCls = isHidden ? ' bm-row-hidden' : '';
+    const expandedCls = (bmExpandedId === b.id) ? ' bm-expanded' : '';
+    const ps = b.page_from ? (b.page_to ? b.page_from + ' ~ ' + b.page_to : String(b.page_from)) : '';
+    html += '<div class="bm-card' + hiddenCls + expandedCls + '" data-bmid="' + escHtml(b.id) + '">';
+    html += '<div class="bm-card-header" onclick="bmToggleCard(\'' + escHtml(b.id) + '\')">';
+    html += '<div class="bm-card-header-left">';
+    html += '<div class="bm-card-id">' + escHtml(b.id) + '</div>';
+    html += '<div class="bm-card-ref">' + escHtml(b.reference) + '</div>';
+    html += '</div>';
+    if (ps) html += '<div class="bm-card-page">p.' + escHtml(ps) + '</div>';
+    html += '</div>';
+    html += '<div class="bm-card-body">';
+    if (b.sentence) { html += '<div class="bm-field-label">Sentence</div><div class="bm-field-text">' + escHtml(b.sentence) + '</div>'; }
+    if (b.comment) { html += '<div class="bm-field-label">Comment</div><div class="bm-field-text">' + escHtml(b.comment) + '</div>'; }
+    html += '<div style="margin-top:12px;display:flex;justify-content:flex-end">';
+    html += '<label class="bm-confirm-wrap"><input type="checkbox" class="bm-confirm-cb"' + (isHidden ? ' checked' : '') + ' onchange="event.stopPropagation(); bmToggleHide(\'' + escHtml(b.id) + '\', this.checked)" title="체크 시 숨김"> Confirm</label>';
+    html += '</div></div></div>';
+  });
+  container.innerHTML = html;
+}
+
+function bmToggleCard(id) {
+  bmExpandedId = (bmExpandedId === id) ? null : id;
+  bmRenderCards();
+  if (bmExpandedId) {
+    setTimeout(() => {
+      const el = document.querySelector('.bm-card[data-bmid="' + bmExpandedId + '"]');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 50);
+  }
+}
+
+function bmGenerateTimestampId() {
+  const n = new Date();
+  const p = (v) => String(v).padStart(2,'0');
+  return n.getFullYear() + p(n.getMonth()+1) + p(n.getDate()) + '-' + p(n.getHours()) + p(n.getMinutes()) + p(n.getSeconds());
+}
+
+async function bmToggleHide(id, isNowChecked) {
+  const newHide = isNowChecked ? '0' : '1';
+  const cd = isNowChecked ? bmGenerateTimestampId() : '';
+  showLoading();
+  try {
+    const url = BOOKMARK_GAS_URL + '?action=updateBookmarkHide&id=' + encodeURIComponent(id) + '&hide=' + encodeURIComponent(newHide) + '&confirm_date=' + encodeURIComponent(cd) + '&t=' + Date.now();
+    const res = await fetch(url);
+    const json = await res.json();
+    if (json.ok) {
+      const bm = bmAllBookmarks.find(b => String(b.id) === String(id));
+      if (bm) { bm.hide = newHide; bm.confirm_date = cd; }
+      bmRenderCards();
+      toast(isNowChecked ? 'Hidden' : 'Visible');
+    } else { toast('Error: ' + (json.error||''), 3000); }
+  } catch(e) { toast('Network error: ' + e.message, 3000); }
+  hideLoading();
+}
 
 // ===== Auto-load =====
 loadAll();

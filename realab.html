@@ -51,9 +51,9 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .btn-new-card:active{transform:translateY(0)}
 
 /* ===== CARD (collapsed) ===== */
-.card{background:#eceef1;border:1px solid #e2e6ea;border-radius:10px;margin-bottom:12px;overflow:hidden;transition:all .25s ease;box-shadow:0 1px 4px rgba(0,0,0,.06);position:relative;z-index:1}
-.card:hover{box-shadow:0 3px 12px rgba(0,0,0,.1);border-color:#cdd3da}
-.card.expanded{box-shadow:0 4px 20px rgba(0,0,0,.12);border-color:#b0bac5;background:#fff}
+.card{background:#fff;border:2px solid #a0aab5;border-radius:10px;margin-bottom:12px;overflow:hidden;transition:all .25s ease;box-shadow:0 1px 4px rgba(0,0,0,.06);position:relative;z-index:1}
+.card:hover{box-shadow:0 3px 12px rgba(0,0,0,.1);border-color:#8090a0}
+.card.expanded{box-shadow:0 4px 20px rgba(0,0,0,.12);border-color:#6b7b8d;background:#fff}
 .card-header{display:flex;align-items:flex-start;padding:20px 20px;gap:14px;cursor:default}
 .card-left{display:flex;align-items:baseline;gap:18px;flex:1;min-width:0;flex-wrap:wrap}
 .card-id{font-weight:400;font-size:15px;color:#2c3e50;flex-shrink:0;letter-spacing:-.3px}
@@ -1965,9 +1965,38 @@ function setCatElem(srgId, catId, elemId) {
 }
 
 function toggleCard(id) {
-  if (expandedCardId === id) { expandedCardId = null; delete modifyModeCards[id]; }
-  else { expandedCardId = id; }
-  renderCards();
+  const prevId = expandedCardId;
+
+  if (prevId === id) {
+    // Close current card
+    expandedCardId = null;
+    delete modifyModeCards[id];
+    const card = document.getElementById('card-' + id);
+    if (card) {
+      card.classList.remove('expanded');
+      const btn = card.querySelector('.btn-open');
+      if (btn) btn.textContent = 'Open';
+    }
+  } else {
+    // Close previously expanded card (if any)
+    if (prevId) {
+      const prevCard = document.getElementById('card-' + prevId);
+      if (prevCard) {
+        prevCard.classList.remove('expanded');
+        const btn = prevCard.querySelector('.btn-open');
+        if (btn) btn.textContent = 'Open';
+      }
+      delete modifyModeCards[prevId];
+    }
+    // Open new card
+    expandedCardId = id;
+    const card = document.getElementById('card-' + id);
+    if (card) {
+      card.classList.add('expanded');
+      const btn = card.querySelector('.btn-open');
+      if (btn) btn.textContent = 'Close';
+    }
+  }
 }
 function cancelNewCard(id) {
   showConfirmModal('작성 취소', '카드 작성을 취소하시겠습니까?', '확인', () => {
