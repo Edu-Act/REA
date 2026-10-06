@@ -167,6 +167,8 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .modal-btns .btn-cancel:hover{background:#e2e8f0}
 .modal-btns .btn-confirm{background:#4a7dff;color:#fff}
 .modal-btns .btn-confirm:hover{background:#3a65d4}
+.modal-btns .btn-confirm-delete{background:#e53e3e;color:#fff}
+.modal-btns .btn-confirm-delete:hover{background:#c53030}
 .modal-btns .btn-danger{background:#e53e3e;color:#fff}
 .modal-btns .btn-danger:hover{background:#c53030}
 
@@ -223,27 +225,64 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .bm-count{font-size:11px;color:#888;background:#f0f2f5;padding:2px 8px;border-radius:10px}
 .bm-header-actions{display:flex;gap:6px}
 .bm-btn{border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:background .2s}
-.bm-btn-sheet{background:#34a853;color:#fff}
-.bm-btn-sheet:hover{background:#2d9249}
 .bm-btn-refresh{background:#4a7dff;color:#fff}
 .bm-btn-refresh:hover{background:#3a6ae0}
 .bm-btn-refresh:disabled{opacity:.5;cursor:not-allowed}
-.bm-card{background:#fff;border:1px solid #e2e6ea;border-radius:10px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:all .2s ease}
-.bm-card.bm-row-hidden{opacity:.55}
-.bm-card-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;gap:8px;cursor:pointer}
-.bm-card-header-left{flex:1;min-width:0}
+.bm-card{background:#fff;border:1px solid #e2e6ea;border-radius:10px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.bm-card.bm-row-hidden{opacity:.35}
+.bm-card-top{display:flex;align-items:center;justify-content:space-between;padding:12px 14px 8px;gap:8px}
+.bm-card-top-left{flex:1;min-width:0}
 .bm-card-id{font-size:13px;font-weight:700;color:#2c3e50;letter-spacing:-.3px}
 .bm-card-ref{font-size:12px;color:#5a6a7a;margin-top:2px;word-break:break-word;line-height:1.4}
-.bm-card-page{font-size:11px;color:#888;background:#f0f2f5;padding:2px 8px;border-radius:8px;white-space:nowrap;flex-shrink:0}
-.bm-card-body{display:none;border-top:1px solid #f0f1f3;padding:10px 14px 14px}
-.bm-card.bm-expanded .bm-card-body{display:block}
+.bm-card-top-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.bm-card-page{font-size:13px;color:#555;background:#f0f2f5;padding:3px 10px;border-radius:8px;white-space:nowrap;font-weight:600}
+.bm-card-body{border-top:1px solid #f0f1f3;padding:10px 14px 6px}
 .bm-field-label{font-size:11px;font-weight:700;color:#718096;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;margin-top:10px}
 .bm-field-label:first-child{margin-top:0}
 .bm-field-text{font-size:13px;color:#2c3e50;line-height:1.7;word-break:break-word;text-align:justify}
-.bm-confirm-wrap{display:flex;align-items:center;gap:6px;font-size:12px;color:#888}
+.bm-card-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:6px 14px 12px}
+.bm-confirm-wrap{display:flex;align-items:center;gap:5px;font-size:12px;color:#888}
 .bm-confirm-cb{-webkit-appearance:none;-moz-appearance:none;appearance:none;width:18px;height:18px;border:1.5px solid #aaa;border-radius:4px;background:#fff;cursor:pointer;position:relative}
 .bm-confirm-cb:checked{background:#fff;border-color:#aaa}
 .bm-confirm-cb:checked::after{content:'\2713';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:13px;font-weight:700;color:#000;line-height:1}
+.bm-action-btn{border:1px solid #d2d8e0;background:#fff;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;color:#4a5568}
+.bm-action-btn:hover{background:#f0f4f8;border-color:#a0aab5}
+.bm-action-btn.bm-delete{color:#4a5568;border-color:#d2d8e0}
+.bm-action-btn.bm-delete:hover{background:#f0f4f8;border-color:#a0aab5}
+.bm-edit-field{margin-bottom:10px}
+.bm-edit-field label{display:block;font-size:13px;font-weight:600;color:#555;margin-bottom:4px}
+.bm-edit-field input,.bm-edit-field textarea{width:100%;padding:10px 12px;border:1px solid #d2d8e0;border-radius:8px;font-size:14px;font-family:inherit;transition:border-color .15s}
+.bm-edit-field input:focus,.bm-edit-field textarea:focus{outline:none;border-color:#4a7dff;box-shadow:0 0 0 3px rgba(74,125,255,.12)}
+.bm-edit-field textarea{resize:vertical;min-height:60px;line-height:1.6}
+.bm-page-row{display:flex;align-items:center;gap:8px}
+.bm-page-row input{flex:1}
+.bm-tilde{color:#999;font-size:16px;font-weight:600;flex-shrink:0}
+
+/* ===== NUMPAD MODAL ===== */
+#bmNumpadOverlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);
+  z-index:10001;align-items:center;justify-content:center;
+}
+#bmNumpadOverlay.show{display:flex}
+#bmNumpadBox{
+  background:#fff;border-radius:12px;padding:20px;width:260px;
+  box-shadow:0 8px 30px rgba(0,0,0,.3);
+}
+#bmNumpadDisplay{
+  width:100%;padding:10px 12px;border:1px solid #ccc;border-radius:6px;
+  font-size:18px;text-align:center;margin-bottom:12px;
+  background:#f8f9fa;color:#333;min-height:44px;line-height:22px;
+}
+.bm-numpad-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.bm-numpad-grid button{
+  padding:14px 0;font-size:18px;font-weight:600;border:1px solid #e2e8f0;
+  border-radius:8px;background:#fff;cursor:pointer;color:#333;transition:background .1s;
+}
+.bm-numpad-grid button:hover{background:#f0f4ff}
+.bm-numpad-grid button:active{background:#e2e8f0}
+.bm-numpad-grid .bm-np-back{font-size:14px;color:#e53e3e}
+.bm-numpad-grid .bm-np-confirm{background:#38a169;color:#fff;border-color:#38a169}
+.bm-numpad-grid .bm-np-confirm:hover{background:#2f855a}
 
 /* ===== TOAST ===== */
 .toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);padding:12px 24px;background:#2d3748;color:#fff;border-radius:10px;font-size:14px;font-weight:500;z-index:9999;opacity:0;transition:opacity .3s;box-shadow:0 4px 14px rgba(0,0,0,.2);max-width:calc(100% - 32px)}
@@ -365,8 +404,8 @@ let currentView = 'cards';
 
 // ===== Logout =====
 function doLogout() {
-  closeSidebar();
   showConfirmModal('로그아웃', '로그아웃 하시겠습니까?', '로그아웃', () => {
+    closeSidebar();
     const LOGOUT_STEPS = [
       '사용자 인증 정보 해제',
       'Preload 캐시 데이터 삭제',
@@ -564,14 +603,34 @@ function setLoadStep(n) {
   }
 }
 
-// ===== GAS fetch helpers (with retry) =====
+// ===== JSONP helper (CORS-safe for GAS) =====
+let _jsonpId = 0;
+function jsonpGet(url) {
+  return new Promise((resolve, reject) => {
+    const cbName = '__jsonp_' + (++_jsonpId) + '_' + Date.now();
+    const sep = url.includes('?') ? '&' : '?';
+    const script = document.createElement('script');
+    const cleanup = () => { delete window[cbName]; if (script.parentNode) script.parentNode.removeChild(script); };
+    window[cbName] = (data) => { cleanup(); resolve(data); };
+    script.src = url + sep + 'callback=' + cbName;
+    script.onerror = () => { cleanup(); reject(new Error('Network error (JSONP)')); };
+    document.head.appendChild(script);
+  });
+}
+
+// ===== GAS fetch helpers (with retry, JSONP for GET) =====
 async function gasFetch(url, options, retries = 2) {
+  const isGet = !options || !options.method || options.method === 'GET';
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      const r = await fetch(url, options);
-      const text = await r.text();
-      try { return JSON.parse(text); }
-      catch(_) { throw new Error('서버 응답 파싱 오류'); }
+      if (isGet) {
+        return await jsonpGet(url);
+      } else {
+        const r = await fetch(url, options);
+        const text = await r.text();
+        try { return JSON.parse(text); }
+        catch(_) { throw new Error('서버 응답 파싱 오류'); }
+      }
     } catch(e) {
       if (attempt < retries) { await new Promise(r => setTimeout(r, 800)); continue; }
       throw e;
@@ -2184,7 +2243,6 @@ window.addEventListener('resize', (function() {
 // ===== Bookmark integrated view =====
 const BOOKMARK_GAS_URL = 'https://script.google.com/macros/s/AKfycbzkKrp51oH_HSPPDhFXFpCFawJgOTO-v6plws-sfURXZvdTNBPGdkscqSN2uBBsfSJa/exec';
 let bmAllBookmarks = [];
-let bmExpandedId = null;
 let bmLoaded = false;
 
 async function bmLoadBookmarks(forceRefresh, silent) {
@@ -2192,8 +2250,7 @@ async function bmLoadBookmarks(forceRefresh, silent) {
   if (!silent) showLoading();
   try {
     const url = BOOKMARK_GAS_URL + '?action=getBookmarks&t=' + Date.now();
-    const res = await fetch(url);
-    const json = await res.json();
+    const json = await jsonpGet(url);
     if (json.ok) { bmAllBookmarks = json.bookmarks || []; bmLoaded = true; if (currentView === 'bookmark') bmRenderCards(); if (!silent) toast('Loaded ' + bmAllBookmarks.length + ' bookmarks'); }
     else { if (!silent) toast('Error: ' + (json.error || 'unknown'), 3000); }
   } catch(e) { if (!silent) toast('Network error: ' + e.message, 3000); }
@@ -2219,35 +2276,36 @@ function bmRenderCards() {
   sorted.forEach((b) => {
     const isHidden = String(b.hide) !== '1';
     const hiddenCls = isHidden ? ' bm-row-hidden' : '';
-    const expandedCls = (bmExpandedId === b.id) ? ' bm-expanded' : '';
     const ps = b.page_from ? (b.page_to ? b.page_from + ' ~ ' + b.page_to : String(b.page_from)) : '';
-    html += '<div class="bm-card' + hiddenCls + expandedCls + '" data-bmid="' + escHtml(b.id) + '">';
-    html += '<div class="bm-card-header" onclick="bmToggleCard(\'' + escHtml(b.id) + '\')">';
-    html += '<div class="bm-card-header-left">';
+    html += '<div class="bm-card' + hiddenCls + '" data-bmid="' + escHtml(b.id) + '">';
+
+    // Top row: ID, reference, page number
+    html += '<div class="bm-card-top">';
+    html += '<div class="bm-card-top-left">';
     html += '<div class="bm-card-id">' + escHtml(b.id) + '</div>';
     html += '<div class="bm-card-ref">' + escHtml(b.reference) + '</div>';
     html += '</div>';
+    html += '<div class="bm-card-top-right">';
     if (ps) html += '<div class="bm-card-page">p.' + escHtml(ps) + '</div>';
+    html += '<label class="bm-confirm-wrap"><input type="checkbox" class="bm-confirm-cb"' + (isHidden ? ' checked' : '') + ' onchange="event.stopPropagation(); bmToggleHide(\'' + escHtml(b.id) + '\', this.checked)" title="체크 시 숨김"> Confirm</label>';
     html += '</div>';
+    html += '</div>';
+
+    // Body: sentence and comment (always visible)
     html += '<div class="bm-card-body">';
     if (b.sentence) { html += '<div class="bm-field-label">Sentence</div><div class="bm-field-text">' + escHtml(b.sentence) + '</div>'; }
     if (b.comment) { html += '<div class="bm-field-label">Comment</div><div class="bm-field-text">' + escHtml(b.comment) + '</div>'; }
-    html += '<div style="margin-top:12px;display:flex;justify-content:flex-end">';
-    html += '<label class="bm-confirm-wrap"><input type="checkbox" class="bm-confirm-cb"' + (isHidden ? ' checked' : '') + ' onchange="event.stopPropagation(); bmToggleHide(\'' + escHtml(b.id) + '\', this.checked)" title="체크 시 숨김"> Confirm</label>';
-    html += '</div></div></div>';
+    html += '</div>';
+
+    // Actions: edit button, delete button
+    html += '<div class="bm-card-actions">';
+    html += '<button class="bm-action-btn" onclick="bmEditBookmark(\'' + escHtml(b.id) + '\')">수정</button>';
+    html += '<button class="bm-action-btn bm-delete" onclick="bmDeleteBookmark(\'' + escHtml(b.id) + '\')">삭제</button>';
+    html += '</div>';
+
+    html += '</div>';
   });
   container.innerHTML = html;
-}
-
-function bmToggleCard(id) {
-  bmExpandedId = (bmExpandedId === id) ? null : id;
-  bmRenderCards();
-  if (bmExpandedId) {
-    setTimeout(() => {
-      const el = document.querySelector('.bm-card[data-bmid="' + bmExpandedId + '"]');
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, 50);
-  }
 }
 
 function bmGenerateTimestampId() {
@@ -2262,8 +2320,7 @@ async function bmToggleHide(id, isNowChecked) {
   showLoading();
   try {
     const url = BOOKMARK_GAS_URL + '?action=updateBookmarkHide&id=' + encodeURIComponent(id) + '&hide=' + encodeURIComponent(newHide) + '&confirm_date=' + encodeURIComponent(cd) + '&t=' + Date.now();
-    const res = await fetch(url);
-    const json = await res.json();
+    const json = await jsonpGet(url);
     if (json.ok) {
       const bm = bmAllBookmarks.find(b => String(b.id) === String(id));
       if (bm) { bm.hide = newHide; bm.confirm_date = cd; }
@@ -2274,8 +2331,170 @@ async function bmToggleHide(id, isNowChecked) {
   hideLoading();
 }
 
+function bmDeleteBookmark(id) {
+  const bm = bmAllBookmarks.find(b => String(b.id) === String(id));
+  if (!bm) return;
+  showConfirmModal('삭제 확인', '이 북마크를 삭제하시겠습니까?\n\nID: ' + id, '삭제', async () => {
+    showLoading();
+    try {
+      const url = BOOKMARK_GAS_URL + '?action=deleteBookmark&id=' + encodeURIComponent(id) + '&t=' + Date.now();
+      const json = await jsonpGet(url);
+      if (json.ok) {
+        bmAllBookmarks = bmAllBookmarks.filter(b => String(b.id) !== String(id));
+        bmRenderCards();
+        toast('삭제되었습니다.');
+      } else { toast('Error: ' + (json.error||''), 3000); }
+    } catch(e) { toast('Network error: ' + e.message, 3000); }
+    hideLoading();
+  }, 'btn-confirm-delete');
+}
+
+function bmEditBookmark(id) {
+  const bm = bmAllBookmarks.find(b => String(b.id) === String(id));
+  if (!bm) return;
+  showConfirmModal('수정 확인', '이 북마크를 수정하시겠습니까?\n\nID: ' + id, '수정', () => {
+    bmShowEditModal(bm);
+  });
+}
+
+function bmShowEditModal(bm) {
+  const html = `
+    <div class="modal-overlay">
+      <div class="modal-box" style="width:92%;max-width:500px">
+        <h3>북마크 수정</h3>
+        <div style="padding:4px 0 8px">
+          <div class="bm-edit-field">
+            <label>Reference</label>
+            <input type="text" id="bmEditRef" value="${escHtml(bm.reference || '')}" placeholder="Reference">
+          </div>
+          <div class="bm-edit-field">
+            <label>Page</label>
+            <div class="bm-page-row">
+              <input type="text" id="bmEditPageFrom" value="${escHtml(bm.page_from || '')}" placeholder="From" data-label="Page From" readonly onclick="bmOpenNumpad(this)">
+              <span class="bm-tilde">~</span>
+              <input type="text" id="bmEditPageTo" value="${escHtml(bm.page_to || '')}" placeholder="To" data-label="Page To" readonly onclick="bmOpenNumpad(this)">
+            </div>
+          </div>
+          <div class="bm-edit-field">
+            <label>Sentence</label>
+            <textarea id="bmEditSentence" rows="3" placeholder="Sentence">${escHtml(bm.sentence || '')}</textarea>
+          </div>
+          <div class="bm-edit-field">
+            <label>Comment</label>
+            <textarea id="bmEditComment" rows="3" placeholder="Comment">${escHtml(bm.comment || '')}</textarea>
+          </div>
+        </div>
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">취소</button>
+          <button class="btn-confirm" id="bmEditSaveBtn">저장</button>
+        </div>
+      </div>
+    </div>`;
+  showModal(html);
+  document.getElementById('bmEditSaveBtn').addEventListener('click', () => {
+    bmSaveEdit(bm.id);
+  });
+}
+
+async function bmSaveEdit(id) {
+  const ref = document.getElementById('bmEditRef').value.trim();
+  const pageFrom = document.getElementById('bmEditPageFrom').value.trim();
+  const pageTo = document.getElementById('bmEditPageTo').value.trim();
+  const sentence = document.getElementById('bmEditSentence').value.trim();
+  const comment = document.getElementById('bmEditComment').value.trim();
+  closeModal();
+  showLoading();
+  try {
+    const params = new URLSearchParams();
+    params.set('action', 'updateBookmark');
+    params.set('id', id);
+    params.set('reference', ref);
+    params.set('page_from', pageFrom);
+    params.set('page_to', pageTo);
+    params.set('sentence', sentence);
+    params.set('comment', comment);
+    params.set('t', Date.now());
+    const url = BOOKMARK_GAS_URL + '?' + params.toString();
+    const json = await jsonpGet(url);
+    if (json.ok) {
+      const bm = bmAllBookmarks.find(b => String(b.id) === String(id));
+      if (bm) {
+        bm.reference = ref;
+        bm.page_from = pageFrom;
+        bm.page_to = pageTo;
+        bm.sentence = sentence;
+        bm.comment = comment;
+      }
+      bmRenderCards();
+      toast('수정되었습니다.');
+    } else { toast('Error: ' + (json.error||''), 3000); }
+  } catch(e) { toast('Network error: ' + e.message, 3000); }
+  hideLoading();
+}
+
+// ===== Bookmark Numpad =====
+let bmNumpadTarget = null;
+let bmNumpadValue = '';
+
+function bmUpdateNumpadDisplay() {
+  const el = document.getElementById('bmNumpadDisplay');
+  if (bmNumpadValue) { el.textContent = bmNumpadValue; }
+  else { el.innerHTML = '&nbsp;'; }
+}
+
+function bmOpenNumpad(inputEl) {
+  bmNumpadTarget = inputEl;
+  bmNumpadValue = inputEl.value;
+  bmUpdateNumpadDisplay();
+  document.getElementById('bmNumpadLabel').textContent = inputEl.placeholder || inputEl.dataset.label || 'Page';
+  document.getElementById('bmNumpadOverlay').classList.add('show');
+}
+
+function bmNumpadInput(ch) {
+  bmNumpadValue += ch;
+  bmUpdateNumpadDisplay();
+}
+
+function bmNumpadBack() {
+  bmNumpadValue = bmNumpadValue.slice(0, -1);
+  bmUpdateNumpadDisplay();
+}
+
+function bmNumpadConfirm() {
+  if (bmNumpadTarget) bmNumpadTarget.value = bmNumpadValue;
+  bmCloseNumpad();
+}
+
+function bmCloseNumpad() {
+  document.getElementById('bmNumpadOverlay').classList.remove('show');
+  bmNumpadTarget = null;
+  bmNumpadValue = '';
+}
+
 // ===== Auto-load =====
 loadAll();
 </script>
+
+<div id="bmNumpadOverlay">
+  <div id="bmNumpadBox">
+    <div id="bmNumpadLabel" style="text-align:center;font-size:13px;color:#888;margin-bottom:6px"></div>
+    <div id="bmNumpadDisplay">&nbsp;</div>
+    <div class="bm-numpad-grid">
+      <button onclick="bmNumpadInput('1')">1</button>
+      <button onclick="bmNumpadInput('2')">2</button>
+      <button onclick="bmNumpadInput('3')">3</button>
+      <button onclick="bmNumpadInput('4')">4</button>
+      <button onclick="bmNumpadInput('5')">5</button>
+      <button onclick="bmNumpadInput('6')">6</button>
+      <button onclick="bmNumpadInput('7')">7</button>
+      <button onclick="bmNumpadInput('8')">8</button>
+      <button onclick="bmNumpadInput('9')">9</button>
+      <button class="bm-np-back" onclick="bmNumpadBack()">&larr;</button>
+      <button onclick="bmNumpadInput('0')">0</button>
+      <button class="bm-np-confirm" onclick="bmNumpadConfirm()">OK</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
