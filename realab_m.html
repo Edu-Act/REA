@@ -6,20 +6,16 @@
 <link rel="icon" href="data:,">
 <title>REA Lab</title>
 <style>
-/* ===== RESET & BASE ===== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#333;font-size:14px;-webkit-text-size-adjust:100%;overscroll-behavior:none}
 
-/* ===== LAYOUT ===== */
 .layout{display:block;overflow:hidden}
 
-/* ===== MOBILE TOP BAR ===== */
 .mobile-topbar{position:fixed;top:0;left:0;right:0;height:50px;background:#fff;border-bottom:1px solid #e2e6ea;display:flex;align-items:center;justify-content:space-between;padding:0 12px;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .hamburger-btn{background:none;border:none;font-size:24px;cursor:pointer;color:#4a5568;padding:4px 8px;border-radius:6px}
 .hamburger-btn:active{background:#e2e8f0}
 .topbar-title{font-size:18px;font-weight:800;color:#2c3e50;letter-spacing:-.5px}
 
-/* ===== SIDEBAR DRAWER ===== */
 .sidebar{position:fixed;top:0;left:0;bottom:0;width:280px;background:#fafbfc;z-index:200;transform:translateX(-100%);transition:transform .3s ease;display:flex;flex-direction:column;box-shadow:4px 0 20px rgba(0,0,0,.15)}
 .sidebar.open{transform:translateX(0)}
 .sidebar-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:199;display:none}
@@ -53,15 +49,12 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .tree-menu-item{display:flex;align-items:center;padding:4px 8px 4px 12px;margin:2px 4px;border-radius:5px;cursor:pointer;color:#4a7dff;font-size:12px;font-weight:600;transition:background .12s}
 .tree-menu-item:hover{background:#e4ecf7}
 
-/* ===== MAIN AREA ===== */
 .main{width:100%;overflow-y:scroll;padding:58px 12px 60px 12px;background:#fff;height:100vh}
 
-/* ===== NEW CARD BUTTON ===== */
 .btn-new-card{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px 16px;background:linear-gradient(135deg,#8e9aaf 0%,#6b7b8d 100%);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:16px;transition:transform .1s,box-shadow .2s;box-shadow:0 2px 8px rgba(107,123,141,.3);scroll-margin-top:58px}
 .btn-new-card:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(107,123,141,.4)}
 .btn-new-card:active{transform:translateY(0)}
 
-/* ===== CARD (collapsed) ===== */
 .card{background:#eceef1;border:1px solid #e2e6ea;border-radius:10px;margin-bottom:12px;overflow:hidden;transition:all .25s ease;box-shadow:0 1px 4px rgba(0,0,0,.06);scroll-margin-top:58px;position:relative;z-index:1}
 .card:hover{box-shadow:0 3px 12px rgba(0,0,0,.1);border-color:#cdd3da}
 .card.expanded{box-shadow:0 4px 20px rgba(0,0,0,.12);border-color:#b0bac5;background:#fff}
@@ -76,12 +69,10 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .btn-cancel-new{width:100%;align-self:stretch;padding:8px 24px;border:1px solid #e53e3e;background:#fff;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;white-space:nowrap;color:#e53e3e;transition:all .15s;margin-top:8px}
 .btn-cancel-new:hover{background:#fff5f5;border-color:#c53030}
 
-/* ===== CARD (expanded detail) ===== */
 .card-detail{display:none;border-top:1px solid #e8ecf0;background:#f8f9fb;padding:0}
 .card.expanded .card-detail{display:block}
 .detail-body{display:flex;flex-direction:column;min-height:auto;align-items:stretch}
 
-/* detail center */
 .detail-center{flex:1;padding:14px;display:flex;flex-direction:column;gap:14px;overflow-y:visible;width:100%}
 .field-group label{display:block;font-weight:700;font-size:12px;color:#718096;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
 .field-group input,.field-group textarea{width:100%;border:1px solid #d2d8e0;border-radius:8px;padding:10px 14px;font-size:13px;font-family:inherit;resize:vertical;background:#fff;line-height:1.6;transition:border-color .15s,box-shadow .15s;scrollbar-width:none;-ms-overflow-style:none;text-align:justify;overflow:hidden}
@@ -94,11 +85,9 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .field-group.comment-group{display:flex;flex-direction:column}
 .field-group.comment-group textarea{min-height:150px}
 
-/* detail right panel */
 .detail-right{width:100%;min-width:auto;padding:16px;overflow-y:auto;background:#f8f9fb;display:flex;flex-direction:column;border-top:1px solid #e2e6ea}
 .detail-right h4{font-size:11px;color:#a0aec0;margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px;font-weight:700}
 
-/* category / element selector */
 .cat-tree{margin-bottom:14px;overflow-y:scroll;border:1px solid #d2d8e0;border-radius:8px;padding:8px;background:#fff;min-height:180px;max-height:200px}
 .cat-tree .ct-cat{font-weight:700;font-size:13px;cursor:pointer;padding:4px 6px;display:flex;align-items:center;gap:4px;border-radius:4px;transition:background .12s}
 .cat-tree .ct-cat:hover{background:#f0f4f8}
@@ -111,7 +100,6 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .cat-tree.locked::-webkit-scrollbar{display:none}
 .cat-tree.locked .ct-cat,.cat-tree.locked .ct-elem{cursor:default}
 
-/* cat dropdowns */
 .cat-drop-row{display:flex;align-items:center;gap:6px;margin-bottom:8px}
 .cat-drop-row select{flex:1;padding:6px 10px;border:1px solid #d2d8e0;border-radius:6px;font-size:12px;background:#fff;transition:border-color .15s}
 .cat-drop-row select:focus{border-color:#4a7dff;outline:none}
@@ -120,7 +108,6 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .cat-drop-row .plus-btn:hover{background:#e8eef6;border-color:#4a7dff;color:#4a7dff}
 .cat-drop-row .plus-btn.locked{pointer-events:none;opacity:.4}
 
-/* action buttons */
 .detail-right-actions{display:flex;gap:0;margin-top:16px;padding-top:14px;border-top:1px solid #e2e6ea;justify-content:space-between}
 .detail-right-actions button{flex:1;padding:12px 0;border:1px solid #c0c8d0;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;background:#fff;text-align:center;transition:all .15s}
 .detail-right-actions button:not(:last-child){margin-right:6px}
@@ -130,12 +117,10 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .detail-right-actions .btn-save{color:#fff;background:linear-gradient(135deg,#667eea,#5a67d8);border-color:transparent}
 .detail-right-actions .btn-save:hover{background:linear-gradient(135deg,#5a67d8,#4c51bf)}
 
-/* ===== CLOSE BUTTON AT BOTTOM ===== */
 .btn-close-bottom{width:100%;padding:10px 0;border:1px solid #c0c8d0;background:#fff;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;color:#4a5568;transition:all .15s;margin-top:8px}
 .btn-close-bottom:hover{background:#f0f4f8;border-color:#a0aab5;color:#2d3748}
 .btn-close-bottom:active{background:#e2e8f0}
 
-/* ===== CARD ACTION ROW (below Close button) ===== */
 .card-action-row{display:flex;gap:6px;width:100%;margin-top:4px}
 .card-action-row .btn-act{flex:1;padding:8px 0;border:1px solid #c0c8d0;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;background:#fff;text-align:center;transition:all .15s}
 .card-action-row .btn-act:hover{background:#f0f4f8}
@@ -144,12 +129,10 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .card-action-row .btn-save{color:#fff;background:linear-gradient(135deg,#667eea,#5a67d8);border-color:transparent}
 .card-action-row .btn-save:hover{background:linear-gradient(135deg,#5a67d8,#4c51bf)}
 
-/* ===== CARD TOP CLOSE ===== */
 .card-top-bar{display:flex;justify-content:flex-end;padding:8px 14px 0 14px}
 .btn-close-top{background:none;border:none;font-size:18px;cursor:pointer;color:#a0aec0;padding:2px 8px;border-radius:5px;transition:all .12s}
 .btn-close-top:hover{background:#e2e8f0;color:#4a5568}
 
-/* ===== MODAL ===== */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(2px)}
 .modal-box{background:#fff;border-radius:14px;padding:24px 20px;width:calc(100% - 32px);max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
 .modal-box.wide{width:calc(100% - 32px);max-width:680px}
@@ -172,8 +155,6 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .modal-btns .btn-danger{background:#e53e3e;color:#fff}
 .modal-btns .btn-danger:hover{background:#c53030}
 
-
-/* ===== STATISTICS VIEW (mobile) ===== */
 .statistics-view{display:flex;flex-direction:column;min-height:calc(100vh - 58px);overflow:hidden}
 .statistics-left{padding:16px;overflow-y:auto;border-bottom:1px solid #e2e6ea}
 .statistics-right{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden}
@@ -202,7 +183,6 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .st-name:hover{background:#e8eef6;color:#4a7dff}
 .st-name.st-name-active{background:#4a7dff;color:#fff;border-radius:4px}
 
-/* ===== LOADING OVERLAY ===== */
 #loadingOverlay{position:fixed;inset:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9998}
 .loading-content{text-align:center}
 .loading-logo{font-size:32px;font-weight:800;color:#4a7dff;margin-bottom:24px;letter-spacing:-1px}
@@ -217,7 +197,6 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .loading-step.active .step-icon{animation:pulse .8s ease infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-/* ===== BOOKMARK VIEW ===== */
 .bm-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .bm-header-left{display:flex;align-items:center;gap:8px}
 .bm-header-title{font-size:15px;font-weight:700;color:#2c3e50}
@@ -258,7 +237,6 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .bm-page-row input{flex:1}
 .bm-tilde{color:#999;font-size:16px;font-weight:600;flex-shrink:0}
 
-/* ===== NUMPAD MODAL ===== */
 #bmNumpadOverlay{
   display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);
   z-index:10001;align-items:center;justify-content:center;
@@ -284,11 +262,9 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .bm-numpad-grid .bm-np-confirm{background:#38a169;color:#fff;border-color:#38a169}
 .bm-numpad-grid .bm-np-confirm:hover{background:#2f855a}
 
-/* ===== TOAST ===== */
 .toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);padding:12px 24px;background:#2d3748;color:#fff;border-radius:10px;font-size:14px;font-weight:500;z-index:9999;opacity:0;transition:opacity .3s;box-shadow:0 4px 14px rgba(0,0,0,.2);max-width:calc(100% - 32px)}
 .toast.show{opacity:1}
 
-/* ===== PRINT ===== */
 @page{size:letter;margin:20mm 15mm 15mm 15mm}
 @media print{
   .sidebar,.btn-open,.btn-cancel-new,.detail-right-actions,.btn-new-card,.toast,.card-top-bar,.mobile-topbar,.sidebar-backdrop,.card-date-wrap,.card-action-row,.btn-close-bottom{display:none!important}
@@ -330,7 +306,6 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 </head>
 <body>
 
-<!-- ===== LOADING ===== -->
 <div id="loadingOverlay" style="display:none">
   <div class="loading-content">
     <div class="loading-logo">REA Lab</div>
@@ -344,23 +319,18 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
   </div>
 </div>
 
-<!-- ===== TOAST ===== -->
 <div class="toast" id="toast"></div>
 
-<!-- ===== MODAL CONTAINER ===== -->
 <div id="modalContainer"></div>
 
-<!-- ===== MOBILE TOP BAR ===== -->
 <div class="mobile-topbar" id="mobileTopbar" style="display:none">
   <button class="hamburger-btn" onclick="openSidebar()">☰</button>
   <span class="topbar-title">REA LAB.</span>
   <span style="width:40px"></span>
 </div>
 
-<!-- ===== SIDEBAR BACKDROP ===== -->
 <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
 
-<!-- ===== SIDEBAR DRAWER ===== -->
 <div class="sidebar" id="sidebarDrawer">
   <div class="sidebar-close-row"><button class="btn-sidebar-close" onclick="closeSidebar()">✕</button></div>
   <div class="sidebar-top" id="sidebar"></div>
@@ -369,10 +339,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
   </div>
 </div>
 
-<!-- ===== APP ===== -->
 <div class="layout" id="appLayout" style="display:none">
-
-  <!-- MAIN -->
   <div class="main" id="main">
     <button class="btn-new-card" id="btnNewCard" onclick="openNewCard()">+ 새 카드 추가</button>
     <div id="cardList"></div>
@@ -384,8 +351,6 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbwqh02HRq4fG7XsAYQtHNBqsTxHeEkfDSJ0teBgv8Qqhg3gM8qRrO9Wfdvz4btMBQuygQ/exec';
-
-// ===== Session check =====
 let currentUser = null;
 (function() {
   try {
@@ -395,14 +360,12 @@ let currentUser = null;
   } catch(e) { window.location.replace('index.html'); }
 })();
 
-// ===== State =====
 let DB = { categories: [], elements: [], srgData: [], users: [], links: [] };
 let currentFilter = null;
 let expandedCardId = null;
 let modifyModeCards = {};
 let currentView = 'cards';
 
-// ===== Logout =====
 function doLogout() {
   showConfirmModal('로그아웃', '로그아웃 하시겠습니까?', '로그아웃', () => {
     closeSidebar();
@@ -435,7 +398,6 @@ function doLogout() {
       </div>`;
     document.getElementById('modalContainer').innerHTML = html;
 
-    // CSS for step states (injected once)
     if (!document.getElementById('logoutStepStyles')) {
       const style = document.createElement('style');
       style.id = 'logoutStepStyles';
@@ -501,7 +463,6 @@ function doLogout() {
       try { sessionStorage.clear(); } catch(e) {}
       await delay(350);
 
-      // Step 8: 3초 카운트다운
       for (let i = 1; i <= 7; i++) {
         const el = document.getElementById('lo' + i);
         const dot = el ? el.querySelector('.lo-dot') : null;
@@ -543,7 +504,6 @@ function doLogout() {
   });
 }
 
-// ===== Sidebar toggle =====
 let sidebarBusy = false;
 function openSidebar() {
   if (sidebarBusy) return;
@@ -558,7 +518,6 @@ function closeSidebar() {
   sidebarBusy = false;
 }
 
-// ===== Toast =====
 function toast(msg, ms = 2000) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -566,7 +525,6 @@ function toast(msg, ms = 2000) {
   setTimeout(() => t.classList.remove('show'), ms);
 }
 
-// ===== Loading with steps =====
 function showLoading() {
   const ov = document.getElementById('loadingOverlay');
   if (isInitialLoad) {
@@ -580,7 +538,6 @@ function showLoading() {
 function hideLoading() {
   document.getElementById('loadingOverlay').style.display = 'none';
   isInitialLoad = false;
-  // reset steps
   for (let i = 1; i <= 4; i++) {
     const el = document.getElementById('ls' + i);
     el.className = 'loading-step';
@@ -603,7 +560,6 @@ function setLoadStep(n) {
   }
 }
 
-// ===== JSONP helper (CORS-safe for GAS) =====
 let _jsonpId = 0;
 function jsonpGet(url) {
   return new Promise((resolve, reject) => {
@@ -618,7 +574,6 @@ function jsonpGet(url) {
   });
 }
 
-// ===== GAS fetch helpers (with retry, JSONP for GET) =====
 async function gasFetch(url, options, retries = 2) {
   const isGet = !options || !options.method || options.method === 'GET';
   for (let attempt = 0; attempt <= retries; attempt++) {
@@ -649,13 +604,11 @@ async function gasPost(body) {
   });
 }
 
-// ===== Load all data =====
 async function loadAll() {
   showLoading();
   try {
     let res = null;
 
-    // Check for pre-loaded data from login page
     try {
       const preload = sessionStorage.getItem('realab_preload');
       if (preload) {
@@ -664,7 +617,6 @@ async function loadAll() {
       }
     } catch(_) {}
 
-    // If no pre-loaded data, fetch from server
     if (!res) {
       setLoadStep(1);
       setLoadStep(2);
@@ -675,13 +627,11 @@ async function loadAll() {
     if (res.ok) {
       DB = res;
       if (!DB.links) DB.links = [];
-      // Normalize "no." header to "no" (sheet header has period)
       DB.links = DB.links.map(l => {
         if (l['no.'] !== undefined && l.no === undefined) { l.no = l['no.']; }
         return l;
       });
       setLoadStep(4);
-      // Load bookmarks in parallel (don't block main UI)
       bmLoadBookmarks(false, true);
       buildSidebar();
       renderCards();
@@ -696,7 +646,6 @@ async function loadAll() {
   hideLoading();
 }
 
-// ===== Switch view =====
 function showCardsView() {
   currentView = 'cards';
   document.getElementById('btnNewCard').style.display = '';
@@ -867,7 +816,6 @@ function highlightApaByFilter(type, id, clickedEl) {
   });
 }
 
-// ===== Helpers =====
 function getCategoryName(catId) {
   const c = DB.categories.find(c => c.category_id === catId);
   return c ? c.category_name : catId;
@@ -918,10 +866,8 @@ function generateNextLinkNo() {
   return String(maxNum + 1);
 }
 
-// ===== Modal helpers =====
 function showModal(html) {
   document.getElementById('modalContainer').innerHTML = html;
-  // Setup drag-safe overlay dismiss (click only, not drag)
   const overlay = document.querySelector('#modalContainer .modal-overlay');
   if (overlay) {
     let overlayMouseDownTarget = null;
@@ -931,7 +877,6 @@ function showModal(html) {
       overlayMouseDownTarget = null;
     });
   }
-  // Setup draggable modal from h3
   const box = document.querySelector('#modalContainer .modal-box');
   const h3 = box ? box.querySelector('h3') : null;
   if (box && h3) {
@@ -989,7 +934,6 @@ function showAlertModal(title, message) {
   showModal(html);
 }
 
-// ===== Add Category Modal =====
 function openAddCategoryModal() {
   const nextId = generateNextCategoryId();
   const html = `
@@ -1017,7 +961,6 @@ async function doAddCategory() {
   try {
     const res = await gasPost({ action: 'addCategory', category_id: catId, category_name: catName });
     if (res.ok) {
-      // Insert before category_99
       const idx = DB.categories.findIndex(c => c.category_id === 'category_99');
       const newCat = { category_id: catId, category_name: catName };
       if (idx >= 0) DB.categories.splice(idx, 0, newCat); else DB.categories.push(newCat);
@@ -1028,7 +971,6 @@ async function doAddCategory() {
   hideLoading();
 }
 
-// ===== Edit Category Modal =====
 function openEditCategoryModal() {
   let optionsHtml = '';
   DB.categories.forEach(c => {
@@ -1077,7 +1019,6 @@ async function doEditCategory() {
   hideLoading();
 }
 
-// ===== Delete Category Modal =====
 function openDeleteCategoryModal() {
   let optionsHtml = '';
   DB.categories.forEach(c => {
@@ -1123,7 +1064,6 @@ async function doDeleteCategory() {
   }, 'btn-danger');
 }
 
-// ===== Add Element Modal (from sidebar or cat-tree + button) =====
 function openAddElementModal(preselectedCatId) {
   let catOptions = '';
   DB.categories.forEach(c => {
@@ -1178,7 +1118,6 @@ async function doAddElement() {
   hideLoading();
 }
 
-// ===== Edit Element Modal =====
 function openEditElementModal() {
   let optionsHtml = '';
   [...DB.elements].sort((a, b) => a.element_id.localeCompare(b.element_id)).forEach(e => {
@@ -1226,7 +1165,6 @@ async function doEditElement() {
   hideLoading();
 }
 
-// ===== Delete Element Modal =====
 function openDeleteElementModal() {
   let optionsHtml = '';
   [...DB.elements].sort((a, b) => a.element_id.localeCompare(b.element_id)).forEach(e => {
@@ -1271,12 +1209,10 @@ async function doDeleteElement() {
   }, 'btn-danger');
 }
 
-// ===== Add Element from cat-tree + button =====
 function openAddElementForCategory(srgId, catId) {
   openAddElementModal(catId);
 }
 
-// ===== Link Icon Options =====
 const LINK_ICONS = [
   { value: '🌐', label: '인터넷 사이트' },
   { value: '📊', label: '구글 시트' },
@@ -1315,7 +1251,6 @@ function renderIconSelector(containerId, selectedIcon) {
   container.appendChild(wrap);
 }
 
-// ===== Link Modals =====
 function openAddLinkModal() {
   const nextNo = generateNextLinkNo();
   const html = '<div class="modal-overlay"><div class="modal-box">' +
@@ -1448,11 +1383,9 @@ async function doDeleteLink() {
   }, 'btn-danger');
 }
 
-// ===== Reorder Links Modal =====
 function openReorderLinksModal() {
   const links = DB.links || [];
   if (links.length === 0) { showAlertModal('알림', '등록된 Link가 없습니다.'); return; }
-  // Clone links for reorder
   window._reorderLinks = links.map(l => ({ no: l.no, site_name: l.site_name, url: l.url, icon: l.icon || '' }));
   renderReorderModal();
 }
@@ -1501,7 +1434,6 @@ async function doReorderLinks() {
   hideLoading();
 }
 
-// ===== Add Cat-0x item Modal =====
 function openAddCatItemModal(srgId, catKey) {
   const d = DB.srgData.find(x => x.srg_id === srgId);
   if (!d) return;
@@ -1532,7 +1464,6 @@ async function doAddCatItem(srgId, catKey, catId, elemId) {
   try {
     const res = await gasPost({ action: 'addCatItem', catKey, value: val, category_id: catId, element_id: elemId });
     if (res.ok) {
-      // Update local: find matching card or add value to current card
       const card = DB.srgData.find(d => d.srg_id === srgId);
       if (card) {
         const existing = (card[catKey] || '').trim();
@@ -1545,21 +1476,17 @@ async function doAddCatItem(srgId, catKey, catId, elemId) {
   hideLoading();
 }
 
-// ===== Sidebar (Explorer Tree) =====
 let openCategories = {};
 
 function buildSidebar() {
   const sb = document.getElementById('sidebar');
   let html = '';
 
-  // REA LAB. title (clickable for reload)
   html += `<div style="padding:16px 14px 2px;font-size:22px;color:#2c3e50;text-align:center;font-weight:800;letter-spacing:-0.5px;cursor:pointer" onclick="location.reload(true)" title="새로고침">REA LAB.</div>`;
-  // Email under REA LAB.
   const emailAddr = currentUser ? currentUser.email : '';
   html += `<div style="font-size:12.5px;color:#999;text-align:center;padding:0 14px 4px;word-break:break-all">${escHtml(emailAddr)}</div>`;
   html += `<div style="border-top:1px solid #e2e6ea;margin:4px 12px 4px"></div>`;
 
-  // See All Cards
   const allActive = currentView === 'cards' && !currentFilter ? ' active' : '';
   html += `<div class="tree-node">`;
   html += `<div class="tree-row${allActive}" onclick="filterAll()">`;
@@ -1568,7 +1495,6 @@ function buildSidebar() {
   html += `<span class="tree-label" style="font-weight:700">All Notes <span style="font-size:11px;color:#888;font-weight:400">(${DB.srgData.length})</span></span>`;
   html += `</div></div>`;
 
-  // Regular categories
   DB.categories.forEach(cat => {
     if (cat.category_id === 'category_99') return;
     const catCode = cat.category_id.replace('category_', '');
@@ -1609,10 +1535,8 @@ function buildSidebar() {
     html += `</div>`;
   });
 
-  // Divider before Bookmark / Statistics
   html += `<div style="border-top:1px solid #e2e6ea;margin:40px 12px 8px"></div>`;
 
-  // Bookmark menu
   const bmActive = currentView === 'bookmark' ? ' active' : '';
   html += `<div class="tree-node">`;
   html += `<div class="tree-row${bmActive}" onclick="showBookmarkView()">`;
@@ -1621,10 +1545,8 @@ function buildSidebar() {
   html += `<span class="tree-label" style="font-weight:700">Bookmarks</span>`;
   html += `</div></div>`;
 
-  // Divider between Bookmark and Statistics
   html += `<div style="border-top:1px solid #e2e6ea;margin:8px 12px"></div>`;
 
-  // Statistics menu
   const statActive = currentView === 'statistics' ? ' active' : '';
   html += `<div class="tree-node">`;
   html += `<div class="tree-row${statActive}" onclick="showStatisticsView()">`;
@@ -1633,10 +1555,8 @@ function buildSidebar() {
   html += `<span class="tree-label" style="font-weight:700">Statistics</span>`;
   html += `</div></div>`;
 
-  // Divider before Page Links
   html += `<div style="border-top:1px solid #e2e6ea;margin:8px 12px"></div>`;
 
-  // ===== Page Links (expandable sub-menu) =====
   const links = DB.links || [];
   const hasLinks = links.length > 0;
   const linksOpen = openCategories['__pageLinks__'];
@@ -1662,10 +1582,8 @@ function buildSidebar() {
   }
   html += `</div>`;
 
-  // Divider before Lab Management
   html += `<div style="border-top:1px solid #e2e6ea;margin:8px 12px"></div>`;
 
-  // ===== Lab Management =====
   const labOpen = openCategories['category_99'];
   html += `<div class="tree-node${labOpen ? ' open' : ''}" data-catid="category_99">`;
   html += `<div class="tree-row" onclick="onCatClick(event,'category_99',true)">`;
@@ -1675,7 +1593,6 @@ function buildSidebar() {
   html += `</div>`;
   html += `<div class="tree-children">`;
 
-  // -- Category 관리 --
   const catMgmtOpen = openCategories['__catMgmt__'];
   html += `<div class="tree-child-row"><div class="tree-node${catMgmtOpen ? ' open' : ''}">`;
   html += `<div class="tree-row" onclick="toggleCatTree(event,'__catMgmt__')">`;
@@ -1688,7 +1605,6 @@ function buildSidebar() {
   html += `<div class="tree-child-row"><div class="tree-menu-item" onclick="openDeleteCategoryModal()" style="color:#e53e3e"><span style="margin-right:4px">🗑️</span> Category 삭제</div></div>`;
   html += `</div></div></div>`;
 
-  // -- Element 관리 --
   const elemMgmtOpen = openCategories['__elemMgmt__'];
   html += `<div class="tree-child-row"><div class="tree-node${elemMgmtOpen ? ' open' : ''}">`;
   html += `<div class="tree-row" onclick="toggleCatTree(event,'__elemMgmt__')">`;
@@ -1701,7 +1617,6 @@ function buildSidebar() {
   html += `<div class="tree-child-row"><div class="tree-menu-item" onclick="openDeleteElementModal()" style="color:#e53e3e"><span style="margin-right:4px">🗑️</span> Element 삭제</div></div>`;
   html += `</div></div></div>`;
 
-  // -- Links Management --
   const linkMgmtOpen = openCategories['__linkMgmt__'];
   html += `<div class="tree-child-row"><div class="tree-node${linkMgmtOpen ? ' open' : ''}">`;
   html += `<div class="tree-row" onclick="toggleCatTree(event,'__linkMgmt__')">`;
@@ -1715,7 +1630,7 @@ function buildSidebar() {
   html += `<div class="tree-child-row"><div class="tree-menu-item" onclick="openDeleteLinkModal()" style="color:#e53e3e"><span style="margin-right:4px">🗑️</span> Link 삭제</div></div>`;
   html += `</div></div></div>`;
 
-  html += `</div></div>`; // tree-children, tree-node (Lab Management)
+  html += `</div></div>`;
 
   sb.innerHTML = html;
 }
@@ -1731,14 +1646,11 @@ function onCatClick(event, catId, hasChildren) {
     buildSidebar();
     return;
   }
-  // Category click only toggles children visibility, does not filter
   openCategories[catId] = !openCategories[catId];
   buildSidebar();
 }
 
-// ===== Edit guard =====
 function isEditingCard() {
-  // Check if any new card exists or any card is in modify mode
   const hasNewCard = DB.srgData.some(d => String(d.srg_id).startsWith('NEW_'));
   const hasModify = Object.keys(modifyModeCards).length > 0;
   return hasNewCard || hasModify;
@@ -1746,7 +1658,6 @@ function isEditingCard() {
 function guardedNavigate(action) {
   if (isEditingCard()) {
     showConfirmModal('편집 중', '작성 중인 내용이 있습니다. 이동하시겠습니까?\n변경 사항은 저장되지 않습니다.', '이동', () => {
-      // Discard new cards and modify modes
       DB.srgData = DB.srgData.filter(d => !String(d.srg_id).startsWith('NEW_'));
       modifyModeCards = {};
       document.getElementById('btnNewCard').style.display = '';
@@ -1757,7 +1668,6 @@ function guardedNavigate(action) {
   }
 }
 
-// ===== Filters =====
 function filterAll() {
   guardedNavigate(() => {
     closeSidebar();
@@ -1799,9 +1709,7 @@ function getFilteredData() {
   return data;
 }
 
-// ===== Breadcrumb =====
 function makeBreadcrumb(d) {
-  // Line 1: Category >> Element
   const line1 = [];
   if (d.category_id) {
     const catCode = String(d.category_id).replace('category_', '');
@@ -1811,7 +1719,6 @@ function makeBreadcrumb(d) {
     const elemCode = String(d.element_id).replace('element_', '');
     line1.push(`${elemCode}_${getElementName(d.element_id)}`);
   }
-  // Line 2: Cat-01 >> Cat-02 >> Cat-03 >> Cat-04
   const line2 = [];
   if (d['cat-01']) line2.push(d['cat-01']);
   if (d['cat-02']) line2.push(d['cat-02']);
@@ -1840,7 +1747,6 @@ function getCatDropValues(catKey, catId, elemId) {
   )].sort();
 }
 
-// ===== Render Cards =====
 function renderCards() {
   snapshotEditingCards();
   const list = document.getElementById('cardList');
@@ -1860,7 +1766,6 @@ function renderCards() {
 
     html += `<div class="card${isExpanded ? ' expanded' : ''}" id="card-${escHtml(id)}">`;
 
-    // Header
     html += `<div class="card-header">`;
     html += `<div class="card-left">`;
     html += `<span class="card-id">${escHtml(formatNoteId(isNew ? d._displayId || id : id))}</span>`;
@@ -1876,7 +1781,6 @@ function renderCards() {
       html += `<button class="btn-open" onclick="toggleCard('${escHtml(id)}')">${isExpanded ? 'Close' : 'Open'}</button>`;
     }
 
-    // Action buttons right below Close button (visible only when expanded & not new)
     if (isExpanded && !isNew) {
       const btnLabel = isModifyMode ? 'Save' : 'Modify';
       const btnAction = isModifyMode ? `confirmSave('${escHtml(id)}')` : `modifyCard('${escHtml(id)}')`;
@@ -1888,7 +1792,6 @@ function renderCards() {
     }
     html += `</div>`;
 
-    // Detail
     html += `<div class="card-detail">`;
     html += `<div class="detail-body">`;
 
@@ -1898,13 +1801,11 @@ function renderCards() {
     html += `<div class="field-group"><textarea class="medium" data-field="context" placeholder="Context"${ro}>${escHtml(d.context)}</textarea></div>`;
     html += `<div class="field-group"><textarea class="tall" data-field="text" placeholder="Text"${ro}>${escHtml(d.text)}</textarea></div>`;
     html += `<div class="field-group comment-group"><textarea class="comment-tall" data-field="comment" placeholder="Comment"${ro}>${escHtml(d.comment)}</textarea></div>`;
-    // Close button at bottom of content
     if (!isNew) {
       html += `<button class="btn-close-bottom" onclick="toggleCard('${escHtml(id)}')">Close</button>`;
     }
     html += `</div>`;
 
-    // Right panel (cat-tree & cat-dropdowns only in modify mode)
     if (isModifyMode) {
       html += `<div class="detail-right">`;
       html += buildCatTree(d, false);
@@ -1915,12 +1816,12 @@ function renderCards() {
         html += `<button class="btn-save" id="btnSave-${escHtml(id)}" onclick="confirmSave('${escHtml(id)}')">Save</button>`;
         html += `</div>`;
       }
-      html += `</div>`; // detail-right
+      html += `</div>`;
     }
 
-    html += `</div>`; // detail-body
-    html += `</div>`; // card-detail
-    html += `</div>`; // card
+    html += `</div>`;
+    html += `</div>`;
+    html += `</div>`;
   });
 
   list.innerHTML = html;
@@ -1935,7 +1836,6 @@ function renderCards() {
   }
 }
 
-// ===== Category tree inside detail (+ button adds element) =====
 function buildCatTree(d, locked) {
   let html = `<div class="cat-tree${locked ? ' locked' : ''}">`;
   DB.categories.forEach(cat => {
@@ -2020,10 +1920,8 @@ function gatherCardData(srgId) {
   };
 }
 
-// Save unsaved form input into DB before re-rendering
 function snapshotEditingCards() {
   const editingIds = Object.keys(modifyModeCards);
-  // Also include NEW_ cards
   DB.srgData.forEach(d => {
     if (String(d.srg_id).startsWith('NEW_') && !editingIds.includes(d.srg_id)) {
       editingIds.push(d.srg_id);
@@ -2080,14 +1978,12 @@ async function doSaveCard(srgId) {
     if (res.ok) {
       const finalId = res.srg_id || row.srg_id;
       if (isNew) {
-        // Replace temp entry with real one
         const idx = DB.srgData.findIndex(x => x.srg_id === srgId);
         if (idx >= 0) {
           DB.srgData[idx] = { ...row, srg_id: finalId };
           delete DB.srgData[idx]._displayId;
         }
       } else {
-        // Update existing entry
         const idx = DB.srgData.findIndex(x => x.srg_id === srgId);
         if (idx >= 0) DB.srgData[idx] = { ...row };
       }
@@ -2140,7 +2036,6 @@ function confirmPrint(srgId) {
   setTimeout(() => {
     const card = document.getElementById('card-' + srgId);
     if (!card) return;
-    // Scroll so card top sits just below the mobile topbar
     function scrollToCardTop() {
       const mainEl = document.getElementById('main');
       const topbar = document.getElementById('mobileTopbar');
@@ -2193,7 +2088,6 @@ function openNewCard() {
   renderCards();
 }
 
-// ===== Auto-resize textareas =====
 function autoResizeTextarea(ta) {
   const minH = parseInt(window.getComputedStyle(ta).minHeight) || 0;
   ta.style.minHeight = '0';
@@ -2225,7 +2119,6 @@ function scrollCatTreeToSelected(cardEl) {
   }
 }
 
-// ===== Resize handler: auto-adjust textarea heights on browser resize =====
 window.addEventListener('resize', (function() {
   let timer;
   return function() {
@@ -2240,7 +2133,6 @@ window.addEventListener('resize', (function() {
   };
 })());
 
-// ===== Bookmark integrated view =====
 const BOOKMARK_GAS_URL = 'https://script.google.com/macros/s/AKfycbzkKrp51oH_HSPPDhFXFpCFawJgOTO-v6plws-sfURXZvdTNBPGdkscqSN2uBBsfSJa/exec';
 let bmAllBookmarks = [];
 let bmLoaded = false;
@@ -2279,7 +2171,6 @@ function bmRenderCards() {
     const ps = b.page_from ? (b.page_to ? b.page_from + ' ~ ' + b.page_to : String(b.page_from)) : '';
     html += '<div class="bm-card' + hiddenCls + '" data-bmid="' + escHtml(b.id) + '">';
 
-    // Top row: ID, reference, page number
     html += '<div class="bm-card-top">';
     html += '<div class="bm-card-top-left">';
     html += '<div class="bm-card-id">' + escHtml(b.id) + '</div>';
@@ -2291,13 +2182,11 @@ function bmRenderCards() {
     html += '</div>';
     html += '</div>';
 
-    // Body: sentence and comment (always visible)
     html += '<div class="bm-card-body">';
     if (b.sentence) { html += '<div class="bm-field-label">Sentence</div><div class="bm-field-text">' + escHtml(b.sentence) + '</div>'; }
     if (b.comment) { html += '<div class="bm-field-label">Comment</div><div class="bm-field-text">' + escHtml(b.comment) + '</div>'; }
     html += '</div>';
 
-    // Actions: edit button, delete button
     html += '<div class="bm-card-actions">';
     html += '<button class="bm-action-btn" onclick="bmEditBookmark(\'' + escHtml(b.id) + '\')">수정</button>';
     html += '<button class="bm-action-btn bm-delete" onclick="bmDeleteBookmark(\'' + escHtml(b.id) + '\')">삭제</button>';
@@ -2432,7 +2321,6 @@ async function bmSaveEdit(id) {
   hideLoading();
 }
 
-// ===== Bookmark Numpad =====
 let bmNumpadTarget = null;
 let bmNumpadValue = '';
 
@@ -2471,7 +2359,6 @@ function bmCloseNumpad() {
   bmNumpadValue = '';
 }
 
-// ===== Auto-load =====
 loadAll();
 </script>
 

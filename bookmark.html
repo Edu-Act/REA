@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>REA LAB. Bookmark</title>
-<!-- Google Cloud Vision API for OCR -->
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 html { overflow-y: scroll; }
@@ -15,7 +14,6 @@ body {
   min-height: 100vh;
 }
 
-/* Header */
 .header {
   background: #fff;
   border-bottom: 1px solid #e2e6ea;
@@ -40,12 +38,10 @@ body {
 .btn-sheet { background: #34a853; color: #fff; border: none; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .2s; }
 .btn-sheet:hover { background: #2d9249; }
 
-/* ===== Two-Panel Layout ===== */
 .main-container { display: flex; height: calc(100vh - 49px); }
 .panel-left { width: 50%; overflow-y: auto; border-right: 1px solid #e2e6ea; }
 .panel-right { width: 50%; overflow: hidden; display: flex; flex-direction: column; }
 
-/* ===== Left Panel: Table ===== */
 .table-wrap { padding: 10px 16px; overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
 thead th { background: #f7f8fa; padding: 11px 12px; text-align: center; font-size: 13px; font-weight: 700; color: #555; border-bottom: 2px solid #e2e6ea; white-space: nowrap; }
@@ -63,7 +59,6 @@ td.col-sentence { width: 27%; word-break: break-word; text-align: left; }
 td.col-comment { width: 27%; word-break: break-word; text-align: left; }
 td.col-confirm { white-space: nowrap; width: 5%; }
 
-/* Confirm Checkbox */
 .confirm-cb {
   -webkit-appearance: none; -moz-appearance: none; appearance: none;
   width: 16px; height: 16px; border: 1.5px solid #aaa; border-radius: 3px;
@@ -75,7 +70,6 @@ td.col-confirm { white-space: nowrap; width: 5%; }
   transform: translate(-50%, -50%); font-size: 12px; font-weight: 700; color: #000; line-height: 1;
 }
 
-/* ===== Right Panel: OCR ===== */
 .ocr-panel {
   display: flex; flex-direction: column; height: 100%; padding: 16px; gap: 12px;
 }
@@ -87,7 +81,6 @@ td.col-confirm { white-space: nowrap; width: 5%; }
 .btn-ocr-reset { background: #e2e6ea; color: #555; border: none; border-radius: 6px; padding: 5px 12px; font-size: 12px; font-weight: 600; cursor: pointer; transition: background .2s; }
 .btn-ocr-reset:hover { background: #d2d6da; }
 
-/* Paste zone — 고정 높이, 스크롤 */
 .paste-zone {
   border: 2px dashed #c8cdd3; border-radius: 10px; background: #fafbfc;
   height: 45%; min-height: 160px; flex-shrink: 0;
@@ -114,7 +107,6 @@ td.col-confirm { white-space: nowrap; width: 5%; }
 }
 .paste-zone .btn-remove-img:hover { background: rgba(0,0,0,.7); }
 
-/* Progress */
 .ocr-progress {
   display: none; background: #fff; border-radius: 8px; padding: 14px 16px;
   box-shadow: 0 1px 3px rgba(0,0,0,.06); flex-shrink: 0;
@@ -122,7 +114,6 @@ td.col-confirm { white-space: nowrap; width: 5%; }
 .ocr-progress-bar { width: 100%; height: 6px; background: #e2e6ea; border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
 .ocr-progress-fill { height: 100%; background: #4a7dff; border-radius: 3px; width: 0%; transition: width .3s; }
 
-/* Result text — 나머지 공간, 스크롤 */
 .ocr-result-wrap {
   flex: 1; display: none; flex-direction: column; min-height: 0;
 }
@@ -134,7 +125,6 @@ td.col-confirm { white-space: nowrap; width: 5%; }
 }
 .ocr-result:focus { border-color: #4a7dff; }
 
-/* Loading overlay */
 .loading-overlay {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
   background: rgba(255,255,255,.7); display: flex; align-items: center; justify-content: center; z-index: 999;
@@ -144,7 +134,6 @@ td.col-confirm { white-space: nowrap; width: 5%; }
 
 .empty-state { text-align: center; padding: 40px 20px; color: #a0aec0; font-size: 14px; }
 
-/* Toast */
 .toast {
   position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
   background: #2c3e50; color: #fff; padding: 8px 20px; border-radius: 6px;
@@ -168,7 +157,6 @@ td.col-confirm { white-space: nowrap; width: 5%; }
 </div>
 
 <div class="main-container">
-  <!-- Left Panel -->
   <div class="panel-left">
     <div class="table-wrap">
       <table>
@@ -179,7 +167,6 @@ td.col-confirm { white-space: nowrap; width: 5%; }
     </div>
   </div>
 
-  <!-- Right Panel: OCR -->
   <div class="panel-right">
     <div class="ocr-panel">
       <div class="ocr-header">
@@ -221,9 +208,6 @@ const BOOKMARK_GAS_URL = 'https://script.google.com/macros/s/AKfycbzkKrp51oH_HSP
 let allBookmarks = [];
 let pastedImageData = null;
 
-// ===========================
-// Bookmark
-// ===========================
 async function loadBookmarks(forceRefresh) {
   const btn = document.getElementById('btnRefresh');
   btn.disabled = true;
@@ -307,9 +291,6 @@ async function toggleHide(id, isNowChecked) {
   hideLoading();
 }
 
-// ===========================
-// OCR: Click to paste
-// ===========================
 async function pasteFromClipboard() {
   if (pastedImageData) return;
   try {
@@ -328,7 +309,6 @@ async function pasteFromClipboard() {
   }
 }
 
-// Ctrl+V
 document.addEventListener('paste', (e) => {
   const items = e.clipboardData && e.clipboardData.items;
   if (!items) return;
@@ -346,7 +326,6 @@ function loadImageBlob(blob) {
   reader.onload = (ev) => {
     pastedImageData = ev.target.result;
     showPastedImage(pastedImageData);
-    // 자동으로 OCR 시작
     runOcr();
   };
   reader.readAsDataURL(blob);
@@ -364,13 +343,6 @@ function showPastedImage(imgUrl) {
   document.getElementById('ocrProgress').style.display = 'none';
 }
 
-// ===========================
-// OCR: 이미지 전처리 (그레이스케일 + 대비 강화 + 이진화)
-// ===========================
-// ===========================
-// Google Cloud Vision API 설정
-// ===========================
-// API 키는 localStorage에 저장 (코드에 노출하지 않음)
 function getVisionApiKey() {
   return localStorage.getItem('gcv_api_key') || '';
 }
@@ -378,13 +350,9 @@ function setVisionApiKey(key) {
   localStorage.setItem('gcv_api_key', key.trim());
 }
 
-// ===========================
-// OCR: Run Google Cloud Vision API (자동 실행)
-// ===========================
 async function runOcr() {
   if (!pastedImageData) return;
 
-  // API 키 확인
   let apiKey = getVisionApiKey();
   if (!apiKey) {
     apiKey = prompt('Google Cloud Vision API 키를 입력하세요.\n(한 번 입력하면 브라우저에 저장됩니다)');
@@ -405,14 +373,12 @@ async function runOcr() {
   progressFill.style.width = '30%';
 
   try {
-    // base64 데이터 추출 (data:image/...;base64, 접두사 제거)
     const base64Data = pastedImageData.split(',')[1];
 
     progressFill.style.width = '50%';
 
     const visionUrl = 'https://vision.googleapis.com/v1/images:annotate?key=' + apiKey;
 
-    // Google Cloud Vision API 호출
     const response = await fetch(visionUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -467,10 +433,6 @@ async function runOcr() {
   }
 }
 
-/**
- * 후처리: 이미지 줄바꿈을 자연스러운 문단으로 합치기
- * Vision API는 원본 이미지의 줄바꿈을 그대로 반환하므로, 문단 내 줄을 합친다.
- */
 function mergeLines(raw) {
   const lines = raw.split('\n');
   const paragraphs = [];
@@ -487,12 +449,10 @@ function mergeLines(raw) {
       current = line;
     } else {
       const lastChar = current.charAt(current.length - 1);
-      // 문장 끝 부호로 끝나면 새 문단
       if (/[.?!。]$/.test(current) && /^[A-Z가-힣「\[]/.test(line)) {
         paragraphs.push(current);
         current = line;
       } else {
-        // 같은 문단 내 줄 합치기
         current += ' ' + line;
       }
     }
@@ -502,9 +462,6 @@ function mergeLines(raw) {
   return paragraphs.join('\n\n');
 }
 
-// ===========================
-// OCR: Clear
-// ===========================
 function resetApiKey() {
   localStorage.removeItem('gcv_api_key');
   toast('API 키가 초기화되었습니다. 다음 OCR 시 재입력합니다.', 2000);
@@ -530,9 +487,6 @@ function clearOcr() {
   document.getElementById('ocrResult').value = '';
 }
 
-// ===========================
-// Utilities
-// ===========================
 function showLoading() { document.getElementById('loadingOverlay').style.display = 'flex'; }
 function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
 let toastTimer;
