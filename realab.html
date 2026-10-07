@@ -93,7 +93,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .cat-tree.locked .ct-cat,.cat-tree.locked .ct-elem{cursor:default}
 
 .cat-drop-row{display:flex;align-items:center;gap:6px;margin-bottom:8px}
-.cat-drop-row select{flex:1;padding:6px 10px;border:1px solid #d2d8e0;border-radius:6px;font-size:12px;background:#fff;transition:border-color .15s}
+.cat-drop-row select{flex:1;min-width:0;padding:6px 10px;border:1px solid #d2d8e0;border-radius:6px;font-size:12px;background:#fff;transition:border-color .15s;overflow:hidden;text-overflow:ellipsis}
 .cat-drop-row select:focus{border-color:#4a7dff;outline:none}
 .cat-drop-row select:disabled{background:#f1f3f5;color:#999;cursor:not-allowed}
 .cat-drop-row .plus-btn{width:24px;height:24px;border:1px solid #c0c8d0;border-radius:5px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:#555;flex-shrink:0;transition:all .12s}
@@ -273,7 +273,7 @@ let currentUser = null;
 
 let DB = { categories: [], elements: [], srgData: [], users: [], links: [] };
 let currentFilter = null;
-let expandedCardId = null;
+let expandedCardIds = new Set();
 let modifyModeCards = {};
 let currentView = 'cards';
 
@@ -558,7 +558,7 @@ function showStatisticsView() {
   guardedNavigate(() => {
     currentView = 'statistics';
     currentFilter = null;
-    expandedCardId = null;
+    expandedCardIds.clear();
     modifyModeCards = {};
     document.getElementById('btnNewCardWrap').style.display = 'none';
     document.getElementById('cardList').style.display = 'none';
@@ -1559,21 +1559,21 @@ function guardedNavigate(action) {
 
 function filterAll() {
   guardedNavigate(() => {
-    currentFilter = null; expandedCardId = null; modifyModeCards = {};
+    currentFilter = null; expandedCardIds.clear(); modifyModeCards = {};
     showCardsView();
     buildSidebar();
   });
 }
 function filterCategory(catId) {
   guardedNavigate(() => {
-    currentFilter = { type: 'category', id: catId }; expandedCardId = null; modifyModeCards = {};
+    currentFilter = { type: 'category', id: catId }; expandedCardIds.clear(); modifyModeCards = {};
     showCardsView();
     buildSidebar();
   });
 }
 function filterElement(elemId) {
   guardedNavigate(() => {
-    currentFilter = { type: 'element', id: elemId }; expandedCardId = null; modifyModeCards = {};
+    currentFilter = { type: 'element', id: elemId }; expandedCardIds.clear(); modifyModeCards = {};
     showCardsView();
     buildSidebar();
   });
@@ -1656,7 +1656,7 @@ function renderCards() {
   let html = '';
   filtered.forEach(d => {
     const id = d.srg_id;
-    const isExpanded = expandedCardId === id;
+    const isExpanded = expandedCardIds.has(id);
     const isNew = String(id).startsWith('NEW_');
     const isModifyMode = isNew || modifyModeCards[id];
 
@@ -1722,14 +1722,14 @@ function renderCards() {
   });
 
   list.innerHTML = html;
-  if (expandedCardId) {
-    const el = document.getElementById('card-' + expandedCardId);
+  expandedCardIds.forEach(eid => {
+    const el = document.getElementById('card-' + eid);
     if (el) {
       setTimeout(() => {
         setupAutoResize(el);
       }, 50);
     }
-  }
+  });
 }
 
 function buildCatTree(d, locked) {
@@ -1876,10 +1876,8 @@ function setCatElem(srgId, catId, elemId) {
 }
 
 function toggleCard(id) {
-  const prevId = expandedCardId;
-
-  if (prevId === id) {
-    expandedCardId = null;
+  if (expandedCardIds.has(id)) {
+    expandedCardIds.delete(id);
     delete modifyModeCards[id];
     const card = document.getElementById('card-' + id);
     if (card) {
@@ -1888,16 +1886,7 @@ function toggleCard(id) {
       if (btn) btn.textContent = 'Open';
     }
   } else {
-    if (prevId) {
-      const prevCard = document.getElementById('card-' + prevId);
-      if (prevCard) {
-        prevCard.classList.remove('expanded');
-        const btn = prevCard.querySelector('.btn-open');
-        if (btn) btn.textContent = 'Open';
-      }
-      delete modifyModeCards[prevId];
-    }
-    expandedCardId = id;
+    expandedCardIds.add(id);
     const card = document.getElementById('card-' + id);
     if (card) {
       card.classList.add('expanded');
@@ -1909,7 +1898,7 @@ function toggleCard(id) {
 function cancelNewCard(id) {
   showConfirmModal('작성 취소', '노트 작성을 취소하시겠습니까?', '확인', () => {
     DB.srgData = DB.srgData.filter(d => d.srg_id !== id);
-    expandedCardId = null;
+    expandedCardIds.delete(id);
     document.getElementById('btnNewCard').disabled = false;
     document.getElementById('btnNewCard').textContent = '+ 새 노트 추가';
     renderCards();
@@ -2011,7 +2000,8 @@ async function doSaveCard(srgId) {
       }
       updateLoadingMsg('화면 갱신 중...');
       await new Promise(r => setTimeout(r, 150));
-      expandedCardId = finalId;
+      expandedCardIds.delete(srgId);
+      expandedCardIds.add(finalId);
       delete modifyModeCards[srgId];
       document.getElementById('btnNewCard').disabled = false;
       document.getElementById('btnNewCard').textContent = '+ 새 노트 추가';
@@ -2028,14 +2018,14 @@ function confirmDelete(srgId) {
 async function doDeleteCard(srgId) {
   if (srgId.startsWith('NEW_')) {
     DB.srgData = DB.srgData.filter(d => d.srg_id !== srgId);
-    expandedCardId = null; renderCards(); return;
+    expandedCardIds.delete(srgId); renderCards(); return;
   }
   showLoading('삭제 중...');
   try {
     const res = await gasPost({ action: 'delete', srg_id: srgId });
     if (res.ok) {
       DB.srgData = DB.srgData.filter(d => d.srg_id !== srgId);
-      expandedCardId = null;
+      expandedCardIds.delete(srgId);
       buildSidebar(); renderCards();
       toast('삭제 완료!');
     } else { toast('삭제 실패: ' + (res.error || ''), 3000); }
@@ -2057,7 +2047,7 @@ function cancelModify(srgId) {
 }
 
 function confirmPrint(srgId) {
-  expandedCardId = srgId; renderCards();
+  expandedCardIds.add(srgId); renderCards();
   setTimeout(() => {
     const card = document.getElementById('card-' + srgId);
     if (!card) return;
@@ -2109,7 +2099,7 @@ function openNewCard() {
     element_id:  currentFilter?.type === 'element' ? currentFilter.id : '',
     'cat-01': '', 'cat-02': '', 'cat-03': '', 'cat-04': ''
   });
-  expandedCardId = tempId;
+  expandedCardIds.add(tempId);
   const btn = document.getElementById('btnNewCard');
   btn.disabled = true;
   btn.textContent = '새 노트 작성 중...';
@@ -2144,12 +2134,14 @@ window.addEventListener('resize', (function() {
   return function() {
     clearTimeout(timer);
     timer = setTimeout(function() {
-      if (!expandedCardId) return;
-      const card = document.getElementById('card-' + expandedCardId);
-      if (!card) return;
-      const textareas = card.querySelectorAll('.detail-center textarea');
-      textareas.forEach(ta => autoResizeTextarea(ta));
-      syncRightPanel(card);
+      if (expandedCardIds.size === 0) return;
+      expandedCardIds.forEach(eid => {
+        const card = document.getElementById('card-' + eid);
+        if (!card) return;
+        const textareas = card.querySelectorAll('.detail-center textarea');
+        textareas.forEach(ta => autoResizeTextarea(ta));
+        syncRightPanel(card);
+      });
     }, 100);
   };
 })());
