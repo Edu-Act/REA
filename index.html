@@ -182,6 +182,9 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#f0f0f0;color:
   padding:14px 0;font-size:18px;font-weight:600;border:1px solid #e2e8f0;
   border-radius:8px;background:#fff;cursor:pointer;color:#333;
   transition:background .1s;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;-webkit-user-select:none;
 }
 .numpad-grid button:hover{background:#f0f4ff}
 .numpad-grid button:active{background:#e2e8f0}
@@ -242,18 +245,18 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#f0f0f0;color:
     <div id="numpadLabel" style="text-align:center;font-size:13px;color:#888;margin-bottom:6px"></div>
     <div id="numpadDisplay"></div>
     <div class="numpad-grid">
-      <button onclick="numpadInput('1')">1</button>
-      <button onclick="numpadInput('2')">2</button>
-      <button onclick="numpadInput('3')">3</button>
-      <button onclick="numpadInput('4')">4</button>
-      <button onclick="numpadInput('5')">5</button>
-      <button onclick="numpadInput('6')">6</button>
-      <button onclick="numpadInput('7')">7</button>
-      <button onclick="numpadInput('8')">8</button>
-      <button onclick="numpadInput('9')">9</button>
-      <button class="np-back" onclick="numpadBack()">&larr;</button>
-      <button onclick="numpadInput('0')">0</button>
-      <button class="np-confirm" onclick="numpadConfirm()">OK</button>
+      <button data-np="1">1</button>
+      <button data-np="2">2</button>
+      <button data-np="3">3</button>
+      <button data-np="4">4</button>
+      <button data-np="5">5</button>
+      <button data-np="6">6</button>
+      <button data-np="7">7</button>
+      <button data-np="8">8</button>
+      <button data-np="9">9</button>
+      <button class="np-back" data-np="back">&larr;</button>
+      <button data-np="0">0</button>
+      <button class="np-confirm" data-np="ok">OK</button>
     </div>
   </div>
 </div>
@@ -673,6 +676,50 @@ document.getElementById('bmPageTo').addEventListener('focus', function(e) {
   e.target.blur();
   openNumpad(e.target);
 });
+
+/* ── Numpad: fast touch + click via event delegation ── */
+(function() {
+  const grid = document.querySelector('.numpad-grid');
+  if (!grid) return;
+
+  function handleBtn(btn) {
+    if (!btn || !btn.dataset.np) return;
+    const v = btn.dataset.np;
+    if (v === 'back') numpadBack();
+    else if (v === 'ok') numpadConfirm();
+    else numpadInput(v);
+  }
+
+  /* touchend fires ~300ms faster than click on mobile */
+  let touchHandled = false;
+  grid.addEventListener('touchend', function(e) {
+    const btn = e.target.closest('button[data-np]');
+    if (!btn) return;
+    e.preventDefault();          // suppress the delayed click
+    touchHandled = true;
+    btn.style.background = '';   // visual feedback reset
+    handleBtn(btn);
+  }, { passive: false });
+
+  /* visual press feedback on touchstart */
+  grid.addEventListener('touchstart', function(e) {
+    const btn = e.target.closest('button[data-np]');
+    if (btn && !btn.classList.contains('np-confirm')) {
+      btn.style.background = '#e2e8f0';
+    }
+  }, { passive: true });
+
+  /* fallback click for desktop / non-touch */
+  grid.addEventListener('click', function(e) {
+    if (touchHandled) { touchHandled = false; return; }
+    handleBtn(e.target.closest('button[data-np]'));
+  });
+
+  /* close numpad when tapping overlay background */
+  document.getElementById('numpadOverlay').addEventListener('touchend', function(e) {
+    if (e.target === this) { e.preventDefault(); closeNumpad(); }
+  }, { passive: false });
+})();
 </script>
 </body>
 </html>
