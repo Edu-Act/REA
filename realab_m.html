@@ -54,6 +54,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .btn-new-card{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px 16px;background:linear-gradient(135deg,#8e9aaf 0%,#6b7b8d 100%);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:16px;transition:transform .1s,box-shadow .2s;box-shadow:0 2px 8px rgba(107,123,141,.3);scroll-margin-top:58px}
 .btn-new-card:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(107,123,141,.4)}
 .btn-new-card:active{transform:translateY(0)}
+.btn-new-card:disabled{background:linear-gradient(135deg,#c5cad3 0%,#b0b8c1 100%);cursor:not-allowed;opacity:.5;transform:none;box-shadow:0 1px 4px rgba(107,123,141,.15)}
 
 .card{background:#eceef1;border:1px solid #e2e6ea;border-radius:10px;margin-bottom:12px;overflow:hidden;transition:all .25s ease;box-shadow:0 1px 4px rgba(0,0,0,.06);scroll-margin-top:58px;position:relative;z-index:1}
 .card:hover{box-shadow:0 3px 12px rgba(0,0,0,.1);border-color:#cdd3da}
@@ -313,7 +314,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
     <div class="loading-steps">
       <div class="loading-step" id="ls1"><span class="step-icon">○</span> 서버 연결 중</div>
       <div class="loading-step" id="ls2"><span class="step-icon">○</span> 카테고리 불러오는 중</div>
-      <div class="loading-step" id="ls3"><span class="step-icon">○</span> 카드 데이터 로딩 중</div>
+      <div class="loading-step" id="ls3"><span class="step-icon">○</span> 노트 데이터 로딩 중</div>
       <div class="loading-step" id="ls4"><span class="step-icon">○</span> 화면 구성 중</div>
     </div>
   </div>
@@ -341,7 +342,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 
 <div class="layout" id="appLayout" style="display:none">
   <div class="main" id="main">
-    <button class="btn-new-card" id="btnNewCard" onclick="openNewCard()">+ 새 카드 추가</button>
+    <button class="btn-new-card" id="btnNewCard" onclick="openNewCard()">+ 새 노트 추가</button>
     <div id="cardList"></div>
     <div id="statisticsView" style="display:none"></div>
     <div id="bookmarkView" style="display:none"></div>
@@ -374,7 +375,7 @@ function doLogout() {
       'Preload 캐시 데이터 삭제',
       '카테고리 데이터 정리',
       'Element 데이터 정리',
-      'Serge Card 데이터 정리',
+      'Serge Note 데이터 정리',
       '링크 데이터 정리',
       '세션 스토리지 초기화',
       '3초 후 로그인 페이지로 이동'
@@ -649,6 +650,7 @@ async function loadAll() {
 function showCardsView() {
   currentView = 'cards';
   document.getElementById('btnNewCard').style.display = '';
+  document.getElementById('btnNewCard').disabled = false;
   document.getElementById('cardList').style.display = '';
   document.getElementById('statisticsView').style.display = 'none';
   document.getElementById('bookmarkView').style.display = 'none';
@@ -706,7 +708,7 @@ function formatApa(raw) {
 function renderStatistics() {
   const container = document.getElementById('statisticsView');
 
-  let leftHtml = '<h3>📂 Card Statistics</h3>';
+  let leftHtml = '<h3>📂 Note Statistics</h3>';
   leftHtml += '<div class="stat-tree">';
 
   const otherCat = DB.categories.find(c => c.category_id === 'category_99');
@@ -1179,7 +1181,7 @@ function openDeleteElementModal() {
         <select id="modalDelElemSelect">
           <option value="">-- 선택 --</option>${optionsHtml}
         </select>
-        <p style="color:#e53e3e;margin-top:12px;font-size:13px">⚠ 삭제하면 해당 element의 카드 데이터가 영향을 받을 수 있습니다.</p>
+        <p style="color:#e53e3e;margin-top:12px;font-size:13px">⚠ 삭제하면 해당 element의 노트 데이터가 영향을 받을 수 있습니다.</p>
         <div class="modal-btns">
           <button class="btn-cancel" onclick="closeModal()">취소</button>
           <button class="btn-danger" onclick="doDeleteElement()">삭제</button>
@@ -1660,7 +1662,7 @@ function guardedNavigate(action) {
     showConfirmModal('편집 중', '작성 중인 내용이 있습니다. 이동하시겠습니까?\n변경 사항은 저장되지 않습니다.', '이동', () => {
       DB.srgData = DB.srgData.filter(d => !String(d.srg_id).startsWith('NEW_'));
       modifyModeCards = {};
-      document.getElementById('btnNewCard').style.display = '';
+      document.getElementById('btnNewCard').disabled = false;
       action();
     });
   } else {
@@ -1700,12 +1702,22 @@ function getSrgNum(d) {
 function getFilteredData() {
   let data = [...DB.srgData];
   if (!currentFilter) {
-    data.sort((a, b) => getSrgNum(b) - getSrgNum(a));
+    data.sort((a, b) => {
+      const aNew = String(a.srg_id).startsWith('NEW_') ? 1 : 0;
+      const bNew = String(b.srg_id).startsWith('NEW_') ? 1 : 0;
+      if (aNew !== bNew) return bNew - aNew;
+      return getSrgNum(b) - getSrgNum(a);
+    });
     return data;
   }
   if (currentFilter.type === 'category') data = data.filter(d => d.category_id === currentFilter.id);
   else if (currentFilter.type === 'element') data = data.filter(d => d.element_id === currentFilter.id);
-  data.sort((a, b) => getSrgNum(a) - getSrgNum(b));
+  data.sort((a, b) => {
+    const aNew = String(a.srg_id).startsWith('NEW_') ? 1 : 0;
+    const bNew = String(b.srg_id).startsWith('NEW_') ? 1 : 0;
+    if (aNew !== bNew) return bNew - aNew;
+    return getSrgNum(a) - getSrgNum(b);
+  });
   return data;
 }
 
@@ -1753,7 +1765,7 @@ function renderCards() {
   const filtered = getFilteredData();
 
   if (filtered.length === 0) {
-    list.innerHTML = '<p style="color:#a0aec0;padding:40px;text-align:center;font-size:15px">카드가 없습니다.</p>';
+    list.innerHTML = '<p style="color:#a0aec0;padding:40px;text-align:center;font-size:15px">노트가 없습니다.</p>';
     return;
   }
 
@@ -1802,6 +1814,15 @@ function renderCards() {
     html += `<div class="field-group"><textarea class="tall" data-field="text" placeholder="Text"${ro}>${escHtml(d.text)}</textarea></div>`;
     html += `<div class="field-group comment-group"><textarea class="comment-tall" data-field="comment" placeholder="Comment"${ro}>${escHtml(d.comment)}</textarea></div>`;
     if (!isNew) {
+      if (isExpanded) {
+        const btnLabel2 = isModifyMode ? 'Save' : 'Modify';
+        const btnAction2 = isModifyMode ? `confirmSave('${escHtml(id)}')` : `modifyCard('${escHtml(id)}')`;
+        html += `<div class="card-action-row" style="margin-top:12px;">`;
+        html += `<button class="btn-act btn-del" onclick="confirmDelete('${escHtml(id)}')">Delete</button>`;
+        html += `<button class="btn-act btn-save" onclick="${btnAction2}">${btnLabel2}</button>`;
+        html += `<button class="btn-act" onclick="confirmPrint('${escHtml(id)}')">Print</button>`;
+        html += `</div>`;
+      }
       html += `<button class="btn-close-bottom" onclick="toggleCard('${escHtml(id)}')">Close</button>`;
     }
     html += `</div>`;
@@ -1829,7 +1850,6 @@ function renderCards() {
     const el = document.getElementById('card-' + expandedCardId);
     if (el) {
       setTimeout(() => {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         setupAutoResize(el);
       }, 100);
     }
@@ -1894,10 +1914,10 @@ function toggleCard(id) {
   renderCards();
 }
 function cancelNewCard(id) {
-  showConfirmModal('작성 취소', '카드 작성을 취소하시겠습니까?', '확인', () => {
+  showConfirmModal('작성 취소', '노트 작성을 취소하시겠습니까?', '확인', () => {
     DB.srgData = DB.srgData.filter(d => d.srg_id !== id);
     expandedCardId = null;
-    document.getElementById('btnNewCard').style.display = '';
+    document.getElementById('btnNewCard').disabled = false;
     renderCards();
   });
 }
@@ -1959,7 +1979,7 @@ function validateCard(srgId) {
 function confirmSave(srgId) {
   const row = validateCard(srgId);
   if (!row) return;
-  showConfirmModal('저장 확인', '이 카드를 저장하시겠습니까?', '저장', () => doSaveCard(srgId));
+  showConfirmModal('저장 확인', '이 노트를 저장하시겠습니까?', '저장', () => doSaveCard(srgId));
 }
 async function doSaveCard(srgId) {
   const row = gatherCardData(srgId);
@@ -1989,7 +2009,7 @@ async function doSaveCard(srgId) {
       }
       expandedCardId = finalId;
       delete modifyModeCards[srgId];
-      document.getElementById('btnNewCard').style.display = '';
+      document.getElementById('btnNewCard').disabled = false;
       buildSidebar(); renderCards();
       toast('저장 완료!');
     } else { toast('저장 실패: ' + (res.error || ''), 3000); }
@@ -1998,7 +2018,7 @@ async function doSaveCard(srgId) {
 }
 
 function confirmDelete(srgId) {
-  showConfirmModal('삭제 확인', '이 카드를 삭제하시겠습니까?\n' + formatNoteId(srgId), '삭제', () => doDeleteCard(srgId), 'btn-danger');
+  showConfirmModal('삭제 확인', '이 노트를 삭제하시겠습니까?\n' + formatNoteId(srgId), '삭제', () => doDeleteCard(srgId), 'btn-danger');
 }
 async function doDeleteCard(srgId) {
   if (srgId.startsWith('NEW_')) {
@@ -2019,13 +2039,13 @@ async function doDeleteCard(srgId) {
 }
 
 function modifyCard(srgId) {
-  showConfirmModal('수정 확인', '이 카드를 수정하시겠습니까?', '수정', () => {
+  showConfirmModal('수정 확인', '이 노트를 수정하시겠습니까?', '수정', () => {
     modifyModeCards[srgId] = true;
     renderCards();
   });
 }
 function cancelModify(srgId) {
-  showConfirmModal('수정 취소', '카드 수정을 취소하시겠습니까?', '확인', () => {
+  showConfirmModal('수정 취소', '노트 수정을 취소하시겠습니까?', '확인', () => {
     delete modifyModeCards[srgId];
     renderCards();
   });
@@ -2084,17 +2104,20 @@ function openNewCard() {
     'cat-01': '', 'cat-02': '', 'cat-03': '', 'cat-04': ''
   });
   expandedCardId = tempId;
-  document.getElementById('btnNewCard').style.display = 'none';
+  document.getElementById('btnNewCard').disabled = true;
   renderCards();
 }
 
 function autoResizeTextarea(ta) {
+  const mainEl = document.getElementById('main');
+  const savedScroll = mainEl ? mainEl.scrollTop : 0;
   const minH = parseInt(window.getComputedStyle(ta).minHeight) || 0;
   ta.style.minHeight = '0';
   ta.style.height = 'auto';
   const scrollH = ta.scrollHeight;
   ta.style.minHeight = '';
   ta.style.height = Math.max(minH, scrollH + 2) + 'px';
+  if (mainEl) mainEl.scrollTop = savedScroll;
 }
 
 function setupAutoResize(cardEl) {
@@ -2115,7 +2138,11 @@ function scrollCatTreeToSelected(cardEl) {
   if (!catTree) return;
   const selectedCat = catTree.querySelector('.ct-cat-selected');
   if (selectedCat) {
-    selectedCat.scrollIntoView({ block: 'center', behavior: 'instant' });
+    const treeTop = catTree.scrollTop;
+    const treeH = catTree.clientHeight;
+    const elTop = selectedCat.offsetTop - catTree.offsetTop;
+    const elH = selectedCat.offsetHeight;
+    catTree.scrollTop = elTop - (treeH / 2) + (elH / 2);
   }
 }
 
