@@ -63,19 +63,19 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 
 .card-detail{display:none;border-top:1px solid #e8ecf0;background:#f8f9fb;padding:0}
 .card.expanded .card-detail{display:block}
-.detail-body{display:flex;flex:1;min-height:520px}
+.detail-body{display:flex;flex:1;align-items:flex-start}
 
 .detail-center{flex:1;padding:18px 22px;display:flex;flex-direction:column;gap:14px;overflow-y:auto}
 .field-group label{display:block;font-weight:700;font-size:12px;color:#718096;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
-.field-group input,.field-group textarea{width:100%;border:1px solid #d2d8e0;border-radius:8px;padding:10px 14px;font-size:15px;font-family:inherit;resize:vertical;background:#fff;line-height:1.6;transition:border-color .15s,box-shadow .15s;scrollbar-width:none;-ms-overflow-style:none;text-align:justify;overflow:hidden}
+.field-group input,.field-group textarea{width:100%;border:1px solid #d2d8e0;border-radius:8px;padding:10px 14px;font-size:15px;font-family:inherit;resize:vertical;background:#fff;line-height:1.6;transition:border-color .15s,box-shadow .15s;scrollbar-width:none;-ms-overflow-style:none;text-align:justify;overflow-y:auto;overflow-x:hidden}
 .field-group textarea::-webkit-scrollbar{display:none}
 .field-group input:focus,.field-group textarea:focus{outline:none;border-color:#4a7dff;box-shadow:0 0 0 3px rgba(74,125,255,.12)}
 .field-group input:read-only,.field-group textarea:read-only{background:#f1f3f5;color:#000;border-color:#e2e6ea}
 .field-group textarea.tall{min-height:268px}
 .field-group textarea.apa-short{min-height:52px}
 .field-group textarea.medium{min-height:72px}
-.field-group.comment-group{flex:1;display:flex;flex-direction:column}
-.field-group.comment-group textarea{flex:1;min-height:120px}
+.field-group.comment-group{display:flex;flex-direction:column}
+.field-group.comment-group textarea{min-height:120px}
 
 .detail-right{width:280px;min-width:280px;padding:16px;overflow-y:auto;background:#f8f9fb;display:flex;flex-direction:column}
 .detail-right h4{font-size:11px;color:#a0aec0;margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px;font-weight:700}
@@ -476,10 +476,19 @@ function setLoadStep(n) {
 async function gasFetch(url, options, retries = 2) {
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      const r = await fetch(url, options);
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 30000);
+      const r = await fetch(url, { ...options, signal: ctrl.signal });
+      clearTimeout(timer);
       const text = await r.text();
-      try { return JSON.parse(text); }
+      let json;
+      try { json = JSON.parse(text); }
       catch(_) { throw new Error('서버 응답 파싱 오류'); }
+      if (!json.ok && json.error && json.error.includes('알 수 없는 action') && attempt < retries) {
+        await new Promise(r => setTimeout(r, 800));
+        continue;
+      }
+      return json;
     } catch(e) {
       if (attempt < retries) { await new Promise(r => setTimeout(r, 800)); continue; }
       throw e;
@@ -1725,9 +1734,11 @@ function renderCards() {
   expandedCardIds.forEach(eid => {
     const el = document.getElementById('card-' + eid);
     if (el) {
-      setTimeout(() => {
-        setupAutoResize(el);
-      }, 50);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setupAutoResize(el);
+        });
+      });
     }
   });
 }
@@ -1892,6 +1903,11 @@ function toggleCard(id) {
       card.classList.add('expanded');
       const btn = card.querySelector('.btn-open');
       if (btn) btn.textContent = 'Close';
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setupAutoResize(card);
+        });
+      });
     }
   }
 }
@@ -2107,13 +2123,13 @@ function openNewCard() {
 }
 
 function autoResizeTextarea(ta) {
-  const minH = parseInt(window.getComputedStyle(ta).minHeight) || 0;
-  ta.style.minHeight = '0';
-  ta.style.height = 'auto';
-  const scrollH = ta.scrollHeight;
-  ta.style.minHeight = '';
-  // Add 2px buffer to prevent subpixel rounding scroll
-  ta.style.height = Math.max(minH, scrollH + 2) + 'px';
+  const cs = window.getComputedStyle(ta);
+  const minH = parseInt(cs.minHeight) || 36;
+  const bt = parseInt(cs.borderTopWidth) || 0;
+  const bb = parseInt(cs.borderBottomWidth) || 0;
+  ta.style.height = '0px';
+  const need = ta.scrollHeight + bt + bb;
+  ta.style.height = Math.max(minH, need) + 'px';
 }
 
 function setupAutoResize(cardEl) {
