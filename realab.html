@@ -1354,17 +1354,18 @@ async function doAddCatItem(srgId, catKey, catId, elemId) {
   const val = document.getElementById('modalCatItemVal').value.trim();
   if (!val) { toast('값을 입력하세요.'); return; }
   closeModal(); showLoading('항목 추가 중...');
+  const isNew = String(srgId).startsWith('NEW_');
   try {
-    const res = await gasPost({ action: 'addCatItem', catKey, value: val, category_id: catId, element_id: elemId });
-    if (res.ok) {
-      const card = DB.srgData.find(d => d.srg_id === srgId);
-      if (card) {
-        const existing = (card[catKey] || '').trim();
-        card[catKey] = existing ? existing + ', ' + val : val;
-      }
-      renderCards();
-      toast('항목 추가 완료!');
-    } else { toast('추가 실패: ' + (res.error || ''), 3000); }
+    if (!isNew) {
+      const res = await gasPost({ action: 'addCatItem', srg_id: srgId, catKey, value: val, category_id: catId, element_id: elemId });
+      if (!res.ok) { toast('추가 실패: ' + (res.error || ''), 3000); hideLoading(); return; }
+    }
+    const card = DB.srgData.find(d => d.srg_id === srgId);
+    if (card) {
+      card[catKey] = val;
+    }
+    renderCards();
+    toast('항목 추가 완료!');
   } catch(e) { toast('오류: ' + e.message, 3000); }
   hideLoading();
 }
