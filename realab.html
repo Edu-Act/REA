@@ -11,11 +11,11 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 
 .layout{display:flex;height:100vh;overflow:hidden}
 
-.sidebar{width:260px;min-width:260px;background:#fafbfc;border-right:1px solid #e2e6ea;overflow-y:auto;padding:8px 0;font-size:13px;user-select:none;display:flex;flex-direction:column}
+.sidebar{width:286px;min-width:286px;background:#fafbfc;border-right:1px solid #e2e6ea;overflow-y:auto;padding:8px 0;font-size:16px;user-select:none;display:flex;flex-direction:column}
 .sidebar-top{flex:1;overflow-y:auto;padding-bottom:8px;scrollbar-width:none;-ms-overflow-style:none}
 .sidebar-top::-webkit-scrollbar{display:none}
 .sidebar-bottom{padding:10px 12px;border-top:1px solid #e2e6ea}
-.sidebar-bottom .btn-logout{width:100%;padding:9px 16px;border:1px solid #ccc;background:#fff;border-radius:6px;cursor:pointer;font-size:13px;color:#555;font-weight:600;transition:all .15s}
+.sidebar-bottom .btn-logout{width:100%;padding:9px 16px;border:1px solid #ccc;background:#fff;border-radius:6px;cursor:pointer;font-size:13.5px;color:#555;font-weight:600;transition:all .15s}
 .sidebar-bottom .btn-logout:hover{background:#f0f0f0;border-color:#aaa}
 
 .tree-node{position:relative;cursor:pointer}
@@ -26,8 +26,8 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .tree-toggle.has-children{cursor:pointer}
 .tree-toggle.has-children::before{content:'▶';display:block;transition:transform .15s}
 .tree-node.open>.tree-row .tree-toggle.has-children::before{transform:rotate(90deg)}
-.tree-icon{width:18px;height:18px;flex-shrink:0;margin-right:5px;display:inline-flex;align-items:center;justify-content:center;font-size:15px}
-.tree-label{flex:1;overflow:hidden;text-overflow:ellipsis;font-size:13px;color:#333}
+.tree-icon{width:18px;height:18px;flex-shrink:0;margin-right:5px;display:inline-flex;align-items:center;justify-content:center;font-size:14.5px}
+.tree-label{flex:1;overflow:hidden;text-overflow:ellipsis;font-size:14px;color:#333}
 .tree-children{display:none;padding-left:12px;position:relative}
 .tree-children::before{content:'';position:absolute;left:17px;top:0;bottom:8px;width:1px;background:#d8dce0}
 .tree-node.open>.tree-children{display:block}
@@ -35,10 +35,10 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .tree-child-row::before{content:'';position:absolute;left:5px;top:12px;width:10px;height:1px;background:#d8dce0}
 .tree-spacer{height:28px}
 .tree-divider{height:16px}
-.tree-menu-item{display:flex;align-items:center;padding:4px 8px 4px 12px;margin:2px 4px;border-radius:5px;cursor:pointer;color:#4a7dff;font-size:12px;font-weight:600;transition:background .12s}
+.tree-menu-item{display:flex;align-items:center;padding:4px 8px 4px 30px;margin:2px 4px;border-radius:5px;cursor:pointer;color:#4a7dff;font-size:14px;font-weight:600;transition:background .12s}
 .tree-menu-item:hover{background:#e4ecf7}
 
-.main{flex:1;overflow-y:scroll;padding:20px 28px;background:#fff}
+.main{flex:1;overflow-y:scroll;padding:20px 28px;background:#fff;scroll-behavior:smooth}
 
 .btn-new-card-wrap{position:sticky;top:-20px;z-index:10;background:#fff;padding-top:20px;padding-bottom:16px;margin:-20px -28px 0;padding-left:28px;padding-right:28px}
 .btn-new-card{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px 18px;background:linear-gradient(135deg,#8e9aaf 0%,#6b7b8d 100%);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:transform .1s,box-shadow .2s;box-shadow:0 2px 8px rgba(107,123,141,.3)}
@@ -52,10 +52,10 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .card.expanded{box-shadow:0 4px 20px rgba(0,0,0,.12);border-color:#6b7b8d;background:#fff}
 .card-header{display:flex;align-items:flex-start;padding:19px 20px 16.5px;gap:14px;cursor:default}
 .card-left{display:flex;align-items:baseline;gap:18px;flex:1;min-width:0}
-.card-id{font-weight:400;font-size:15px;color:#2c3e50;flex-shrink:0;letter-spacing:-.3px}
-.card-breadcrumb{font-size:15px;color:#b0bac5;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.card-id{font-weight:400;font-size:16px;color:#2c3e50;flex-shrink:0;letter-spacing:-.3px}
+.card-breadcrumb{font-size:16px;color:#b0bac5;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
 .card-breadcrumb span{font-weight:700;color:#34495e}
-.card-apa{width:100%;color:#555;font-size:14px;margin-top:5px;line-height:1.6;word-break:break-word;padding-left:2em;text-indent:-2em}
+.card-apa{width:100%;color:#555;font-size:15px;margin-top:5px;line-height:1.6;word-break:break-word;padding-left:2em;text-indent:-2em}
 .btn-open{flex:0 0 auto;align-self:flex-start;padding:8px 24px;border:1px solid #c0c8d0;background:#fff;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;white-space:nowrap;transition:all .15s;color:#4a5568}
 .btn-open:hover{background:#f0f4f8;border-color:#a0aab5;color:#2d3748}
 .btn-cancel-new{flex:0 0 auto;align-self:flex-start;padding:8px 24px;border:1px solid #e53e3e;background:#fff;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;white-space:nowrap;color:#e53e3e;transition:all .15s}
@@ -67,11 +67,11 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 
 .detail-center{flex:1;padding:18px 22px;display:flex;flex-direction:column;gap:14px;overflow-y:auto}
 .field-group label{display:block;font-weight:700;font-size:12px;color:#718096;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
-.field-group input,.field-group textarea{width:100%;border:1px solid #d2d8e0;border-radius:8px;padding:10px 14px;font-size:15px;font-family:inherit;resize:vertical;background:#fff;line-height:1.6;transition:border-color .15s,box-shadow .15s;scrollbar-width:none;-ms-overflow-style:none;text-align:justify;overflow-y:auto;overflow-x:hidden}
+.field-group input,.field-group textarea{width:100%;border:1px solid #d2d8e0;border-radius:8px;padding:10px 14px;font-size:14.5px;font-family:inherit;resize:vertical;background:#fff;line-height:2.0;transition:border-color .15s,box-shadow .15s;scrollbar-width:none;-ms-overflow-style:none;text-align:justify;overflow-y:auto;overflow-x:hidden}
 .field-group textarea::-webkit-scrollbar{display:none}
 .field-group input:focus,.field-group textarea:focus{outline:none;border-color:#4a7dff;box-shadow:0 0 0 3px rgba(74,125,255,.12)}
 .field-group input:read-only,.field-group textarea:read-only{background:#f1f3f5;color:#000;border-color:#e2e6ea}
-.field-group textarea.tall{min-height:268px}
+.field-group textarea.tall{min-height:390px}
 .field-group textarea.apa-short{min-height:52px}
 .field-group textarea.medium{min-height:72px}
 .field-group.comment-group{display:flex;flex-direction:column}
@@ -80,27 +80,27 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .detail-right{width:280px;min-width:280px;padding:16px;overflow-y:auto;background:#f8f9fb;display:flex;flex-direction:column}
 .detail-right h4{font-size:11px;color:#a0aec0;margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px;font-weight:700}
 
-.cat-tree{margin-bottom:14px;overflow-y:auto;border:1px solid #d2d8e0;border-radius:8px;padding:8px;background:#fff;min-height:180px;max-height:392px}
-.cat-tree .ct-cat{font-weight:700;font-size:13px;cursor:pointer;padding:4px 6px;display:flex;align-items:center;gap:4px;border-radius:4px;transition:background .12s}
+.cat-tree{margin-bottom:14px;overflow-y:auto;border:1px solid #d2d8e0;border-radius:8px;padding:8px;background:#fff;min-height:170px;max-height:390px;flex-shrink:1}
+.cat-tree .ct-cat{font-weight:700;font-size:14px;cursor:pointer;padding:4px 6px 4px 6px;display:flex;align-items:center;gap:4px;border-radius:4px;transition:background .12s}
 .cat-tree .ct-cat:hover{background:#f0f4f8}
 .cat-tree .ct-cat .plus-btn{margin-left:auto;width:22px;height:22px;border:1px solid #c0c8d0;border-radius:4px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;line-height:1;color:#555;transition:all .12s}
 .cat-tree .ct-cat .plus-btn:hover{background:#e8eef6;border-color:#4a7dff;color:#4a7dff}
-.cat-tree .ct-elem{padding:3px 6px 3px 22px;font-size:12px;color:#555;cursor:pointer;border-radius:4px;transition:background .12s}
+.cat-tree .ct-elem{padding:3px 6px 3px 22px;font-size:13px;color:#555;cursor:pointer;border-radius:4px;transition:background .12s}
 .cat-tree .ct-elem:hover{background:#e8eef6}
 .cat-tree .ct-elem.selected{background:#d0ddf0;font-weight:600;color:#2d3748}
 .cat-tree.locked{pointer-events:none;opacity:.55;scrollbar-width:none;-ms-overflow-style:none}
 .cat-tree.locked::-webkit-scrollbar{display:none}
 .cat-tree.locked .ct-cat,.cat-tree.locked .ct-elem{cursor:default}
 
-.cat-drop-row{display:flex;align-items:center;gap:6px;margin-bottom:8px}
-.cat-drop-row select{flex:1;min-width:0;padding:6px 10px;border:1px solid #d2d8e0;border-radius:6px;font-size:12px;background:#fff;transition:border-color .15s;overflow:hidden;text-overflow:ellipsis}
+.cat-drop-row{display:flex;align-items:stretch;gap:6px;margin-bottom:8px}
+.cat-drop-row select{flex:1;min-width:0;padding:8px 10px;border:1px solid #d2d8e0;border-radius:6px;font-size:13px;background:#fff;transition:border-color .15s;overflow:hidden;text-overflow:ellipsis}
 .cat-drop-row select:focus{border-color:#4a7dff;outline:none}
 .cat-drop-row select:disabled{background:#f1f3f5;color:#999;cursor:not-allowed}
-.cat-drop-row .plus-btn{width:24px;height:24px;border:1px solid #c0c8d0;border-radius:5px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:#555;flex-shrink:0;transition:all .12s}
+.cat-drop-row .plus-btn{width:32px;border:1px solid #c0c8d0;border-radius:5px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:#333;font-weight:700;flex-shrink:0;transition:all .12s;align-self:stretch}
 .cat-drop-row .plus-btn:hover{background:#e8eef6;border-color:#4a7dff;color:#4a7dff}
 .cat-drop-row .plus-btn.locked{pointer-events:none;opacity:.4}
 
-.detail-right-actions{display:flex;gap:0;margin-top:16px;padding-top:14px;border-top:1px solid #e2e6ea;justify-content:space-between}
+.detail-right-actions{display:flex;gap:0;margin-top:auto;padding-top:14px;border-top:1px solid #e2e6ea;justify-content:space-between}
 .detail-right-actions button{flex:1;padding:9px 0;border:1px solid #c0c8d0;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;background:#fff;text-align:center;transition:all .15s}
 .detail-right-actions button:not(:last-child){margin-right:6px}
 .detail-right-actions button:hover{background:#f0f4f8}
@@ -478,19 +478,24 @@ async function gasFetch(url, options, retries = 2) {
     try {
       const ctrl = new AbortController();
       const timer = setTimeout(() => ctrl.abort(), 30000);
-      const r = await fetch(url, { ...options, signal: ctrl.signal });
+      const r = await fetch(url, { ...options, redirect: 'follow', mode: 'cors', signal: ctrl.signal });
       clearTimeout(timer);
+      if (!r.ok) throw new Error('HTTP ' + r.status + ': ' + r.statusText);
       const text = await r.text();
       let json;
       try { json = JSON.parse(text); }
-      catch(_) { throw new Error('서버 응답 파싱 오류'); }
+      catch(_) {
+        console.error('GAS 응답 (JSON 아님):', text.substring(0, 500));
+        throw new Error('서버 응답 파싱 오류 (HTML 반환됨)');
+      }
       if (!json.ok && json.error && json.error.includes('알 수 없는 action') && attempt < retries) {
         await new Promise(r => setTimeout(r, 800));
         continue;
       }
       return json;
     } catch(e) {
-      if (attempt < retries) { await new Promise(r => setTimeout(r, 800)); continue; }
+      console.error('gasFetch 시도 ' + (attempt+1) + '/' + (retries+1) + ' 실패:', e.message);
+      if (attempt < retries) { await new Promise(r => setTimeout(r, 1000)); continue; }
       throw e;
     }
   }
@@ -540,10 +545,11 @@ async function loadAll() {
       renderCards();
       document.getElementById('appLayout').style.display = 'flex';
     } else {
-      toast('데이터 로드 실패: ' + (res.error || ''), 3000);
+      toast('데이터 로드 실패: ' + (res.error || ''), 5000);
     }
   } catch (e) {
-    toast('서버 오류: ' + e.message, 3000);
+    console.error('loadAll 오류:', e);
+    toast('서버 오류: ' + e.message + ' (재시도하려면 새로고침)', 5000);
   }
   hideLoading();
 }
@@ -1376,9 +1382,9 @@ function buildSidebar() {
   const sb = document.getElementById('sidebar');
   let html = '';
 
-  html += `<div style="padding:16px 14px 2px;font-size:22px;color:#2c3e50;text-align:center;font-weight:800;letter-spacing:-0.5px;cursor:pointer" onclick="location.reload(true)" title="새로고침">REA LAB.</div>`;
+  html += `<div style="padding:16px 14px 2px;font-size:24px;color:#2c3e50;text-align:center;font-weight:800;letter-spacing:-0.5px;cursor:pointer" onclick="location.reload(true)" title="새로고침">REA LAB.</div>`;
   const emailAddr = currentUser ? currentUser.email : '';
-  html += `<div style="font-size:12.5px;color:#999;text-align:center;padding:0 14px 4px;word-break:break-all">${escHtml(emailAddr)}</div>`;
+  html += `<div style="font-size:14px;color:#999;text-align:center;padding:0 14px 4px;word-break:break-all">${escHtml(emailAddr)}</div>`;
   html += `<div style="border-top:1px solid #e2e6ea;margin:4px 12px 4px"></div>`;
 
   const allActive = currentView === 'cards' && !currentFilter ? ' active' : '';
@@ -1386,7 +1392,7 @@ function buildSidebar() {
   html += `<div class="tree-row${allActive}" onclick="filterAll()">`;
   html += `<span class="tree-toggle"></span>`;
   html += `<span class="tree-icon">📋</span>`;
-  html += `<span class="tree-label" style="font-weight:700">All Notes <span style="font-size:11px;color:#888;font-weight:400">(${DB.srgData.length})</span></span>`;
+  html += `<span class="tree-label" style="font-weight:700">All Notes <span style="font-size:13.5px;color:#888;font-weight:400">(${DB.srgData.length})</span></span>`;
   html += `</div></div>`;
 
   DB.categories.forEach(cat => {
@@ -1408,7 +1414,7 @@ function buildSidebar() {
     html += `<span class="tree-toggle${hasChildren ? ' has-children' : ''}" onclick="event.stopPropagation();toggleCatTree(event,'${cat.category_id}')"></span>`;
     html += `<span class="tree-icon">${hasChildren ? (isOpen ? '📂' : '📁') : '📁'}</span>`;
     const catCount = DB.srgData.filter(d => d.category_id === cat.category_id).length;
-    html += `<span class="tree-label" style="font-weight:600">${escHtml(displayName)} <span style="font-size:11px;color:#888;font-weight:400">(${catCount})</span></span>`;
+    html += `<span class="tree-label" style="font-weight:600">${escHtml(displayName)} <span style="font-size:13.5px;color:#888;font-weight:400">(${catCount})</span></span>`;
     html += `</div>`;
 
     if (hasChildren) {
@@ -1421,7 +1427,7 @@ function buildSidebar() {
         html += `<span class="tree-toggle"></span>`;
         html += `<span class="tree-icon">📄</span>`;
         const elemCount = DB.srgData.filter(d => d.element_id === elem.element_id).length;
-        html += `<span class="tree-label">${elemCode}_${escHtml(elem.element_name)} <span style="font-size:11px;color:#888">(${elemCount})</span></span>`;
+        html += `<span class="tree-label">${elemCode}_${escHtml(elem.element_name)} <span style="font-size:13.5px;color:#888">(${elemCount})</span></span>`;
         html += `</div></div>`;
       });
       html += `</div>`;
@@ -1693,7 +1699,7 @@ function renderCards() {
       html += `<div class="card-apa-row" style="display:flex;align-items:flex-start;padding:0 20px 19px 20px">`;
       html += `<div class="card-apa" style="flex:1;margin-top:0">${escHtml(d.apa || '')}</div>`;
       if (d.date) {
-        html += `<span class="card-date-info" style="font-size:14px;color:#999;white-space:nowrap;line-height:1.6;flex-shrink:0;margin-left:14px">${escHtml(d.date)}</span>`;
+        html += `<span class="card-date-info" style="font-size:15px;color:#999;white-space:nowrap;line-height:1.6;flex-shrink:0;margin-left:14px">${escHtml(d.date)}</span>`;
       }
       html += `</div>`;
     }
@@ -1888,28 +1894,55 @@ function setCatElem(srgId, catId, elemId) {
 }
 
 function toggleCard(id) {
+  const card = document.getElementById('card-' + id);
+  if (!card) return;
+  const detail = card.querySelector('.card-detail');
+  if (!detail) return;
+
   if (expandedCardIds.has(id)) {
-    expandedCardIds.delete(id);
-    delete modifyModeCards[id];
-    const card = document.getElementById('card-' + id);
-    if (card) {
+    // 닫기 애니메이션
+    const btn = card.querySelector('.btn-open');
+    if (btn) btn.textContent = 'Open';
+    const h = detail.scrollHeight;
+    detail.style.overflow = 'hidden';
+    detail.style.height = h + 'px';
+    detail.offsetHeight;
+    detail.style.transition = 'height 0.3s ease';
+    detail.style.height = '0px';
+    const onEnd = () => {
+      detail.removeEventListener('transitionend', onEnd);
+      expandedCardIds.delete(id);
+      delete modifyModeCards[id];
       card.classList.remove('expanded');
-      const btn = card.querySelector('.btn-open');
-      if (btn) btn.textContent = 'Open';
-    }
+      detail.style.overflow = '';
+      detail.style.height = '';
+      detail.style.transition = '';
+    };
+    detail.addEventListener('transitionend', onEnd);
   } else {
+    // 열기 애니메이션
     expandedCardIds.add(id);
-    const card = document.getElementById('card-' + id);
-    if (card) {
-      card.classList.add('expanded');
-      const btn = card.querySelector('.btn-open');
-      if (btn) btn.textContent = 'Close';
+    card.classList.add('expanded');
+    const btn = card.querySelector('.btn-open');
+    if (btn) btn.textContent = 'Close';
+    detail.style.overflow = 'hidden';
+    detail.style.height = '0px';
+    detail.offsetHeight;
+    const targetH = detail.scrollHeight;
+    detail.style.transition = 'height 0.3s ease';
+    detail.style.height = targetH + 'px';
+    const onEnd = () => {
+      detail.removeEventListener('transitionend', onEnd);
+      detail.style.overflow = '';
+      detail.style.height = '';
+      detail.style.transition = '';
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           setupAutoResize(card);
         });
       });
-    }
+    };
+    detail.addEventListener('transitionend', onEnd);
   }
 }
 function cancelNewCard(id) {
@@ -2121,6 +2154,32 @@ function openNewCard() {
   btn.disabled = true;
   btn.textContent = '새 노트 작성 중...';
   renderCards();
+  // 새 카드로 스크롤 + APA 포커스
+  setTimeout(() => {
+    const mainEl = document.getElementById('main');
+    if (mainEl) {
+      const start = mainEl.scrollTop;
+      const duration = 400;
+      const startTime = performance.now();
+      function step(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 3);
+        mainEl.scrollTop = start * (1 - ease);
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        } else {
+          mainEl.scrollTop = 0;
+          const newCard = document.getElementById('card-' + tempId);
+          if (newCard) {
+            const apaTa = newCard.querySelector('[data-field="apa"]');
+            if (apaTa) apaTa.focus({ preventScroll: true });
+          }
+        }
+      }
+      requestAnimationFrame(step);
+    }
+  }, 50);
 }
 
 function autoResizeTextarea(ta) {
@@ -2169,7 +2228,11 @@ function scrollCatTreeToSelected(cardEl) {
   if (!catTree) return;
   const selectedCat = catTree.querySelector('.ct-cat-selected');
   if (selectedCat) {
-    selectedCat.scrollIntoView({ block: 'center', behavior: 'instant' });
+    const treeTop = catTree.getBoundingClientRect().top;
+    const selTop = selectedCat.getBoundingClientRect().top;
+    const treeH = catTree.clientHeight;
+    const offset = selTop - treeTop - treeH / 2 + selectedCat.offsetHeight / 2;
+    catTree.scrollTop += offset;
   }
 }
 
