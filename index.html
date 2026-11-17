@@ -232,8 +232,9 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#f0f0f0;color:
           <div class="proc-step" id="ps5"><span class="step-dot"></span><span class="step-label">Category & Element 수신 및 처리</span></div>
           <div class="proc-step" id="ps6"><span class="step-dot"></span><span class="step-label">Serge Card 자료 수신 및 처리</span></div>
           <div class="proc-step" id="ps7"><span class="step-dot"></span><span class="step-label">Bookmark 자료 수신 및 처리</span></div>
-          <div class="proc-step" id="ps8"><span class="step-dot"></span><span class="step-label">Preload Data 세션에 저장</span></div>
-          <div class="proc-step" id="ps9"><span class="step-dot"></span><span class="step-label">3초 후 Main Page로 이동</span></div>
+          <div class="proc-step" id="ps8"><span class="step-dot"></span><span class="step-label">PDF 목록 수신 및 처리</span></div>
+          <div class="proc-step" id="ps9"><span class="step-dot"></span><span class="step-label">Preload Data 세션에 저장</span></div>
+          <div class="proc-step" id="ps10"><span class="step-dot"></span><span class="step-label">3초 후 Main Page로 이동</span></div>
         </div>
       </div>
     </div>
@@ -263,9 +264,10 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#f0f0f0;color:
 
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbwqh02HRq4fG7XsAYQtHNBqsTxHeEkfDSJ0teBgv8Qqhg3gM8qRrO9Wfdvz4btMBQuygQ/exec';
+const GAS_PDF_URL = 'https://script.google.com/macros/s/AKfycbxmUE_pMVqS2qhHcDg7qgmSWRmPwj4sUaCVUmgBbqq7zUdh5VZ00BkCozHWBEXiMNNeEQ/exec';
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
 const mainPage = isMobile ? 'realab_m.html' : 'realab.html';
-const TOTAL_STEPS = 9;
+const TOTAL_STEPS = 10;
 const FETCH_TIMEOUT = 20000;
 
 let isRunning = false;
@@ -495,17 +497,38 @@ async function doLogin() {
     await checkPause();
 
     setProcessStep(8);
-    sessionStorage.setItem('realab_preload', JSON.stringify(data));
+    try {
+      const pdfCtrl = new AbortController();
+      const pdfTimer = setTimeout(() => pdfCtrl.abort(), FETCH_TIMEOUT);
+      const pdfR = await fetch(GAS_PDF_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'getPdfList' }),
+        signal: pdfCtrl.signal
+      });
+      clearTimeout(pdfTimer);
+      const pdfText = await pdfR.text();
+      const pdfRes = JSON.parse(pdfText);
+      const pdfList = pdfRes && (pdfRes.data || pdfRes.result);
+      if (pdfList && Array.isArray(pdfList)) {
+        sessionStorage.setItem('realab_pdfpreload', JSON.stringify(pdfList));
+      }
+    } catch(e) { /* pdf preload failure is non-blocking */ }
     await wait(300);
     await checkPause();
 
     setProcessStep(9);
+    sessionStorage.setItem('realab_preload', JSON.stringify(data));
+    await wait(300);
+    await checkPause();
+
+    setProcessStep(10);
     markAllDone();
-    const stepLabel9 = document.querySelector('#ps9 .step-label');
-    const btnText9 = document.querySelector('#loginBtn .btn-text');
+    const stepLabel10 = document.querySelector('#ps10 .step-label');
+    const btnText10 = document.querySelector('#loginBtn .btn-text');
     for (let sec = 3; sec >= 1; sec--) {
-      if (stepLabel9) stepLabel9.textContent = sec + '초 후 메인 페이지로 이동';
-      if (btnText9) btnText9.textContent = sec + '초 후 메인 페이지로 이동...';
+      if (stepLabel10) stepLabel10.textContent = sec + '초 후 메인 페이지로 이동';
+      if (btnText10) btnText10.textContent = sec + '초 후 메인 페이지로 이동...';
       setBtnProgress(100, null, 'complete');
       await new Promise(r => setTimeout(r, 1000));
     }

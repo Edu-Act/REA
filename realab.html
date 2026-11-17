@@ -11,7 +11,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 
 .layout{display:flex;height:100vh;overflow:hidden}
 
-.sidebar{width:286px;min-width:286px;background:#fafbfc;border-right:1px solid #e2e6ea;overflow-y:auto;padding:8px 0;font-size:16px;user-select:none;display:flex;flex-direction:column}
+.sidebar{width:257px;min-width:257px;background:#fafbfc;border-right:1px solid #e2e6ea;overflow-y:auto;padding:8px 0;font-size:16px;user-select:none;display:flex;flex-direction:column}
 .sidebar-top{flex:1;overflow-y:auto;padding-bottom:8px;scrollbar-width:none;-ms-overflow-style:none}
 .sidebar-top::-webkit-scrollbar{display:none}
 .sidebar-bottom{padding:10px 12px;border-top:1px solid #e2e6ea}
@@ -38,10 +38,96 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .tree-menu-item{display:flex;align-items:center;padding:4px 8px 4px 30px;margin:2px 4px;border-radius:5px;cursor:pointer;color:#4a7dff;font-size:14px;font-weight:600;transition:background .12s}
 .tree-menu-item:hover{background:#e4ecf7}
 
-.main{flex:1;overflow-y:scroll;padding:20px 28px;background:#fff;scroll-behavior:smooth}
+.layout{position:relative}
+.sidebar{transition:width .3s ease,min-width .3s ease,opacity .3s ease}
+.sidebar.collapsed{width:0;min-width:0;overflow:hidden;opacity:0;padding:0;border-right:none}
+.sidebar-toggle{position:absolute;top:30%;transform:translateY(-50%);left:237px;width:20px;height:60px;background:#e8ecf0;border:1px solid #d2d8e0;border-radius:6px 0 0 6px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:100;transition:left .3s ease,border-radius .3s ease,background .15s;font-size:11px;color:#666;padding:0}
+.sidebar-toggle:hover{background:#d0d8e0;color:#333}
+.sidebar-toggle.collapsed{left:0;border-radius:0 6px 6px 0}
+
+.pdf-wrap{position:relative;display:flex;flex-shrink:0;width:0;height:100%;transition:width .3s ease,flex .3s ease;overflow:hidden}
+.pdf-wrap.open{width:55vw;min-width:200px}
+.pdf-wrap.expanded{flex:1;width:auto;min-width:0}
+.pdf-panel{width:100%;height:100%;background:#f4f5f7;display:flex;flex-direction:column}
+.pdf-panel-header{display:flex;flex-direction:column;border-bottom:1px solid #e2e6ea;background:#fff;flex-shrink:0}
+.pdf-header-row{display:flex;align-items:center;gap:8px;padding:5px 12px}
+.pdf-header-row:first-child{padding-top:20px}
+.pdf-header-row+.pdf-header-row{padding-top:0}
+.pdf-header-input{flex:1;min-width:0;padding:4px 8px;border:1px solid transparent;font-size:13px;color:#333;outline:none;background:transparent;line-height:1.5;font-family:inherit;border-radius:4px;box-sizing:border-box}
+.pdf-header-input::placeholder{color:#aaa}
+.pdf-header-input:read-only{cursor:default}
+.pdf-header-input.editing{background:#fff;border-color:#d2d8e0}
+.pdf-header-btn{padding:5px 14px;border:none;border-radius:5px;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .15s;color:#fff;height:30px;box-sizing:border-box}
+.pdf-header-btn.btn-load{background:#f0ad4e;color:#fff}
+.pdf-header-btn.btn-load:hover{background:#ec971f}
+.pdf-header-btn.btn-modify{background:#e8ecf0;color:#555}
+.pdf-header-btn.btn-modify:hover{background:#d0d8e0;color:#333}
+.pdf-header-btn.btn-add{background:#5bc0de;color:#fff}
+.pdf-header-btn.btn-add:hover{background:#46b8da}
+.pdf-header-btn.btn-search{background:#8e7cc3;color:#fff}
+.pdf-header-btn.btn-search:hover{background:#7b68ae}
+.pdf-header-btn:disabled{opacity:.45;cursor:not-allowed}
+.pdf-nav{display:flex;align-items:center;gap:0;margin-left:auto}
+.pdf-nav-btn{padding:5px 10px;border:1px solid #4a7dff;background:#4a7dff;color:#fff;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap;height:30px;box-sizing:border-box;flex:1}
+.pdf-nav-btn:first-child{border-radius:5px 0 0 5px;border-right:1px solid rgba(255,255,255,.3)}
+.pdf-nav-btn:last-child{border-radius:0 5px 5px 0;border-left:1px solid rgba(255,255,255,.3)}
+.pdf-header-btn.btn-htoggle{background:#e8ecf0;color:#555;border:1px solid #d2d8e0}
+.pdf-header-btn.btn-htoggle:hover{background:#d0d8e0;color:#333}
+.pdf-nav-btn:hover{background:#3a65d4}
+.pdf-nav-btn:disabled{opacity:.45;cursor:not-allowed}
+.pdf-nav-no{padding:4px 0;width:48px;flex-shrink:0;border:1px solid #4a7dff;border-left:none;border-right:none;background:#fff;color:#4a7dff;font-size:12.5px;font-weight:700;text-align:center;outline:none;font-family:inherit;border-radius:0;height:30px;box-sizing:border-box}
+.pdf-nav-no:focus{background:#eef2ff}
+#pdfApaInput{font-weight:600;color:#222;font-size:13.5px}
+.pdf-last-access-chip{flex-shrink:0;margin-left:6px;padding:3px 10px;background:#edf2f7;border:1px solid #d2d8e0;border-radius:12px;font-size:12px;color:#666;white-space:nowrap;cursor:default;transition:all .15s;height:24px;box-sizing:border-box;line-height:16px;display:none;align-items:center;gap:6px}
+.pdf-last-access-chip.visible{display:inline-flex}
+.pdf-last-access-chip .chip-x{cursor:pointer;color:#aaa;font-weight:700;font-size:13px;line-height:1}
+.pdf-last-access-chip .chip-x:hover{color:#d9534f}
+.pdf-add-modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);z-index:10000;align-items:center;justify-content:center}
+.pdf-add-modal-overlay.show{display:flex}
+.pdf-add-modal{background:#fff;border-radius:12px;padding:24px;width:420px;max-width:90vw;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.pdf-add-modal-title{font-size:16px;font-weight:700;color:#2d3748;margin-bottom:16px}
+.pdf-add-modal-label{font-size:13px;font-weight:600;color:#555;display:block;margin-bottom:4px}
+.pdf-add-modal-input{width:100%;padding:8px 12px;border:1px solid #d2d8e0;border-radius:6px;font-size:13px;outline:none;box-sizing:border-box;margin-bottom:12px;font-family:inherit}
+.pdf-add-modal-input:focus{border-color:#4a7dff;box-shadow:0 0 0 2px rgba(74,125,255,.15)}
+.pdf-add-modal-btns{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
+.pdf-add-modal-btn{padding:8px 20px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer}
+.pdf-add-modal-btn.btn-cancel{background:#e2e6ea;color:#555}
+.pdf-add-modal-btn.btn-cancel:hover{background:#d0d4d8}
+.pdf-add-modal-btn.btn-confirm{background:#5cb85c;color:#fff}
+.pdf-add-modal-btn.btn-confirm:hover{background:#449d44}
+.pdf-loading-overlay{display:none;position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(244,245,247,.85);z-index:5;align-items:center;justify-content:center;flex-direction:column;gap:12px}
+.pdf-loading-overlay.show{display:flex}
+.pdf-loading-spinner{width:36px;height:36px;border:3px solid #e2e6ea;border-top-color:#4a7dff;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pdf-loading-text{font-size:13px;color:#666;font-weight:500}
+.pdf-panel-header{transition:max-height .3s ease,opacity .3s ease,padding .3s ease;max-height:200px;overflow:hidden;opacity:1}
+.pdf-panel-header.collapsed{max-height:0;opacity:0;border-bottom:none;overflow:hidden}
+.pdf-header-restore{position:absolute;top:0;right:12px;z-index:10;opacity:0;pointer-events:none;transition:opacity .3s ease .1s}
+.pdf-header-restore.show{opacity:1;pointer-events:auto}
+.pdf-header-restore button{padding:5px 14px;border:1px solid #d2d8e0;border-top:none;background:#e8ecf0;cursor:pointer;font-size:12.5px;font-weight:700;color:#555;border-radius:0 0 5px 5px;transition:all .15s;height:30px;box-sizing:border-box}
+.pdf-header-restore button:hover{background:#d0d8e0;color:#333}
+.pdf-panel-body{flex:1;min-height:0;position:relative;overflow:visible}
+.pdf-panel-footer{display:none}
+.pdf-panel-body iframe{position:absolute;top:0;left:0;border:none;transform-origin:0 0}
+.pdf-panel-body .pdf-placeholder{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#a0aec0;font-size:14px;text-align:center;padding:20px;line-height:1.6}
+
+.panel-divider{width:1px;flex-shrink:0;background:#d2d8e0;position:relative;z-index:10;pointer-events:none}
+.panel-divider-buttons{position:absolute;top:30%;transform:translateY(-50%);left:0;display:flex;flex-direction:row;margin-left:-20px;transition:margin-left .3s ease;pointer-events:auto;cursor:grab}
+.panel-divider-buttons.dragging{cursor:grabbing}
+.panel-divider.state-mainFull .panel-divider-buttons{margin-left:0}
+.panel-divider.state-pdfFull .panel-divider-buttons{margin-left:-20px}
+.panel-divider button{width:20px;height:60px;background:#e8ecf0;border:1px solid #d2d8e0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;color:#666;padding:0;transition:background .15s,color .15s}
+.panel-divider button:hover{background:#d0d8e0;color:#333}
+.panel-divider button.active{background:#4a7dff;border-color:#3a6dee;color:#fff}
+.panel-divider button.hidden{display:none}
+#btnExpandMain{border-radius:6px 0 0 6px;border-right:none}
+#btnExpandPdf{border-radius:0 6px 6px 0;border-left:none}
+
+.main{flex:1;overflow-y:scroll;padding:20px 28px;background:#fff;scroll-behavior:smooth;transition:flex .3s ease,width .3s ease,min-width .3s ease,padding .3s ease,overflow .3s ease}
+.main.collapsed{flex:0;width:0;min-width:0;padding:0;overflow:hidden}
 
 .btn-new-card-wrap{position:sticky;top:-20px;z-index:10;background:#fff;padding-top:20px;padding-bottom:16px;margin:-20px -28px 0;padding-left:28px;padding-right:28px}
-.btn-new-card{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px 18px;background:linear-gradient(135deg,#8e9aaf 0%,#6b7b8d 100%);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:transform .1s,box-shadow .2s;box-shadow:0 2px 8px rgba(107,123,141,.3)}
+.btn-new-card{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px 18px;background:linear-gradient(135deg,#8e9aaf 0%,#6b7b8d 100%);color:#fff;border:none;border-radius:10px;font-size:13.5px;font-weight:700;cursor:pointer;transition:transform .1s,box-shadow .2s;box-shadow:0 2px 8px rgba(107,123,141,.3)}
 .btn-new-card:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(107,123,141,.4)}
 .btn-new-card:active{transform:translateY(0)}
 .btn-new-card:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
@@ -51,21 +137,59 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .card:hover{box-shadow:0 3px 12px rgba(0,0,0,.1);border-color:#8090a0}
 .card.expanded{box-shadow:0 4px 20px rgba(0,0,0,.12);border-color:#6b7b8d;background:#fff}
 .card-header{display:flex;align-items:flex-start;padding:19px 20px 16.5px;gap:14px;cursor:default}
-.card-left{display:flex;align-items:baseline;gap:18px;flex:1;min-width:0}
-.card-id{font-weight:400;font-size:16px;color:#2c3e50;flex-shrink:0;letter-spacing:-.3px}
-.card-breadcrumb{font-size:16px;color:#b0bac5;line-height:1.5;min-width:0;word-break:break-word}
+.card-left{display:flex;flex-direction:column;align-items:flex-start;gap:4px;flex:1;min-width:0}
+.card-id{display:inline-block;padding:3px 10px;background:#eef2ff;border:1px solid #c3d4ff;border-radius:12px;font-size:12.5px;font-weight:600;color:#4a7dff;flex-shrink:0;white-space:nowrap}
+.card-breadcrumb{font-size:14px;color:#b0bac5;line-height:1.5;min-width:0;word-break:break-word;display:block;width:100%}
 .card-breadcrumb span{font-weight:700;color:#34495e}
-.card-apa{width:100%;color:#555;font-size:15px;margin-top:5px;line-height:1.6;word-break:break-word;padding-left:2em;text-indent:-2em}
-.btn-open,.btn-toggle{flex:0 0 auto;align-self:flex-start;padding:8px 24px;border:1px solid #c0c8d0;background:#fff;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;white-space:nowrap;transition:all .15s;color:#4a5568}
+.card-breadcrumb.bc-full{display:none}
+.card-breadcrumb.bc-cats{margin-top:2px}
+.card-bc-row{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.main.panel-full .card-bc-row{flex-direction:row;align-items:center;gap:6px}
+.card-cat-chips{display:flex;flex-wrap:wrap;gap:4px}
+.card-cat-chip{display:inline-block;padding:2px 9px;background:#f0f4f8;border:1px solid #d2d8e0;border-radius:10px;font-size:11.5px;color:#666;white-space:nowrap}
+.card-id-print{display:none}
+.main.panel-full .card-breadcrumb.bc-full{display:block}
+.main.panel-full .card-breadcrumb.bc-normal{display:none}
+.card-date-chip{display:inline-block;padding:3px 10px;background:#f0f4f8;border:1px solid #d2d8e0;border-radius:12px;font-size:12px;color:#888;white-space:nowrap;flex-shrink:0}
+.card-elem-chip{display:inline-flex;align-items:center;padding:3px 10px;background:#eef2ff;border:1px solid #c3d4ff;border-radius:12px;font-size:12px;font-weight:600;color:#4a7dff;white-space:nowrap;flex-shrink:0;cursor:pointer;transition:all .15s}
+.card-elem-chip:hover{background:#dde6ff;border-color:#a0b8ff}
+.card-elem-chip.disabled{cursor:default;opacity:.7}
+.card-elem-chip.disabled:hover{background:#eef2ff;border-color:#c3d4ff}
+.card-elem-chip.placeholder{background:#f0f4f8;border-color:#d2d8e0;color:#888;font-weight:500}
+.card-elem-chip.placeholder:hover{background:#e8ecf0;border-color:#bcc5d0}
+.card-header-row2{display:flex;align-items:center;gap:8px;width:100%}
+.card-breadcrumb-chip{display:inline-block;padding:3px 10px;background:#f0f4f8;border:1px solid #d2d8e0;border-radius:12px;font-size:14px;color:#b0bac5;line-height:1.5;white-space:nowrap;transition:all .15s}
+.card-breadcrumb-chip span{font-weight:700;color:#34495e}
+.card-breadcrumb-chip.clickable{cursor:pointer}
+.card-breadcrumb-chip.clickable:hover{background:#eef2ff;border-color:#c3d4ff}
+.card-breadcrumb-chip.placeholder{color:#888;font-weight:500;font-size:12.5px}
+.card-breadcrumb-chip.placeholder:hover{background:#e8ecf0;border-color:#bcc5d0}
+.card-apa-row{padding:0 20px 19px 20px}
+.card-apa{width:100%;color:#555;font-size:13.5px;margin-top:0;line-height:1.6;word-break:break-word;padding-left:2em;text-indent:-2em}
+.btn-open,.btn-toggle{flex:0 0 auto;align-self:flex-start;padding:6px 14px;border:1px solid #c0c8d0;background:#fff;border-radius:8px;cursor:pointer;font-size:12.5px;font-weight:600;white-space:nowrap;transition:all .15s;color:#4a5568;height:30px;box-sizing:border-box}
 .btn-open:hover,.btn-toggle:hover{background:#f0f4f8;border-color:#a0aab5;color:#2d3748}
-.btn-modify-top{flex:0 0 auto;align-self:flex-start;padding:8px 24px;border:1px solid #c0c8d0;background:#fff;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;white-space:nowrap;transition:all .15s;color:#4a5568}
+.btn-print-icon{flex:0 0 auto;align-self:flex-start;padding:0 9px;border:1px solid #c0c8d0;background:#fff;border-radius:8px;cursor:pointer;font-size:16px;line-height:1;transition:all .15s;height:30px;box-sizing:border-box}
+.btn-print-icon:hover{background:#f0f4f8;border-color:#a0aab5}
+.btn-print-icon:disabled{opacity:.3;cursor:not-allowed;pointer-events:none}
+.btn-modify-top{flex:0 0 auto;align-self:flex-start;padding:6px 14px;border:1px solid #c0c8d0;background:#fff;border-radius:8px;cursor:pointer;font-size:12.5px;font-weight:600;white-space:nowrap;transition:all .15s;color:#4a5568;height:30px;box-sizing:border-box}
 .btn-modify-top:hover{background:#f0f4f8;border-color:#a0aab5;color:#2d3748}
 .btn-cancel-new{flex:0 0 auto;align-self:flex-start;padding:8px 24px;border:1px solid #e53e3e;background:#fff;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;white-space:nowrap;color:#e53e3e;transition:all .15s}
 .btn-cancel-new:hover{background:#fff5f5;border-color:#c53030}
 
 .card-detail{display:none;border-top:1px solid #e8ecf0;background:#f8f9fb;padding:0}
 .card.expanded .card-detail{display:block}
-.detail-body{display:flex;flex:1;align-items:flex-start}
+.detail-body{display:flex;flex-direction:column;flex:1}
+.cat-inline{padding:0 22px 14px}
+.cat-inline-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.cat-inline .btn-cat-toggle{padding:7px 16px;border:1px solid #4a7dff;background:#fff;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;color:#4a7dff;white-space:nowrap;transition:all .15s;flex-shrink:0}
+.cat-inline .btn-cat-toggle:hover{background:#eef2ff}
+.cat-inline .btn-cat-toggle.active{background:#4a7dff;color:#fff}
+.cat-elem-badge{display:inline-flex;align-items:center;padding:5px 12px;background:#eef2ff;border:1px solid #c3d4ff;border-radius:8px;font-size:13px;font-weight:600;color:#4a7dff;white-space:nowrap;flex-shrink:0}
+.cat-inline .cat-drops{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.main.panel-full .cat-inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.main.panel-full .cat-inline-row{margin-bottom:0;flex-shrink:0}
+.main.panel-full .cat-inline .cat-drops{display:flex;flex:1;min-width:0;gap:6px;flex-wrap:nowrap}
+.detail-bottom-actions{display:flex;align-items:center;gap:8px;padding:14px 22px;border-top:1px solid #e8ecf0;justify-content:flex-end}
 
 .detail-center{flex:1;padding:18px 22px;display:flex;flex-direction:column;gap:14px;overflow-y:auto}
 .field-group label{display:block;font-weight:700;font-size:12px;color:#718096;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
@@ -94,7 +218,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .cat-tree.locked::-webkit-scrollbar{display:none}
 .cat-tree.locked .ct-cat,.cat-tree.locked .ct-elem{cursor:default}
 
-.cat-drop-row{display:flex;align-items:stretch;gap:6px;margin-bottom:8px}
+.cat-drop-row{display:flex;align-items:stretch;gap:6px;margin-bottom:0;flex:1;min-width:0}
 .cat-drop-row select{flex:1;min-width:0;padding:8px 10px;border:1px solid #d2d8e0;border-radius:6px;font-size:13px;background:#fff;transition:border-color .15s;overflow:hidden;text-overflow:ellipsis}
 .cat-drop-row select:focus{border-color:#4a7dff;outline:none}
 .cat-drop-row select:disabled{background:#f1f3f5;color:#999;cursor:not-allowed}
@@ -135,8 +259,8 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .modal-btns .btn-danger{background:#e53e3e;color:#fff}
 .modal-btns .btn-danger:hover{background:#c53030}
 
-#loadingOverlay{position:fixed;inset:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9998}
-.loading-content{text-align:center}
+#loadingOverlay{position:fixed;inset:0;background:rgba(0,0,0,.15);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9998}
+.loading-content{text-align:center;background:#fff;border-radius:16px;padding:36px 44px;box-shadow:0 12px 48px rgba(0,0,0,.22);min-width:320px}
 .loading-logo{font-size:32px;font-weight:800;color:#4a7dff;margin-bottom:24px;letter-spacing:-1px;transition:font-size .2s}
 .loading-logo.action-msg{font-size:17px;font-weight:700;letter-spacing:0}
 .loading-bar-track{width:280px;height:4px;background:#e2e8f0;border-radius:4px;overflow:hidden;margin-bottom:16px}
@@ -150,8 +274,8 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .loading-step.active .step-icon{animation:pulse .8s ease infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:12px 30px;background:#2d3748;color:#fff;border-radius:10px;font-size:14px;font-weight:500;z-index:9999;opacity:0;transition:opacity .3s;box-shadow:0 4px 14px rgba(0,0,0,.2)}
-.toast.show{opacity:1}
+.toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);padding:12px 30px;background:#2d3748;color:#fff;border-radius:10px;font-size:14px;font-weight:500;z-index:9999;opacity:0;transition:opacity .3s;box-shadow:0 4px 14px rgba(0,0,0,.2);pointer-events:none}
+.toast.show{opacity:1;pointer-events:auto}
 
 .statistics-view{display:flex;gap:0;min-height:calc(100vh - 80px);overflow:hidden}
 .statistics-left{flex:0 0 25%;max-width:25%;min-width:0;padding:24px;overflow-y:auto;border-right:1px solid #e2e6ea}
@@ -184,7 +308,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 
 @page{size:letter;margin:20mm 15mm 15mm 15mm}
 @media print{
-  .sidebar,.btn-open,.btn-toggle,.btn-modify-top,.btn-cancel-new,.detail-right-actions,.btn-new-card-wrap,.btn-new-card,.toast,.card-top-bar,.card-date-wrap,.statistics-view{display:none!important}
+  .sidebar,.btn-open,.btn-toggle,.btn-modify-top,.btn-cancel-new,.btn-print-icon,.detail-right-actions,.detail-bottom-actions,.btn-new-card-wrap,.btn-new-card,.toast,.card-top-bar,.card-date-wrap,.statistics-view,.pdf-panel,.resizer,.pdf-header-restore,.sidebar-toggle,#btnExpandMain,#btnExpandPdf{display:none!important}
   .card-date-info{display:none!important}
   .layout{display:block!important}
   .main{padding:0!important;overflow:visible!important;height:auto!important;max-height:none!important}
@@ -192,16 +316,23 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
   .card:not(.expanded){display:none!important}
   .card.expanded{break-inside:auto!important;border:none!important;border-radius:0!important;box-shadow:none!important;overflow:visible!important;margin:0!important;height:auto!important;max-height:none!important}
   .card{overflow:visible!important}
-  .card-header{padding:0!important;position:relative!important;border:none!important}
+  .card-header{padding:0 0 10px 0!important;position:relative!important;border:none!important;display:block!important}
   .card-left{flex-wrap:wrap!important}
   /* Note ID and breadcrumb above the content area */
-  .card-id{display:block!important;width:100%!important;font-size:11px!important;color:#555!important;padding:0 0 0 0!important;order:-2!important;text-align:right!important}
-  .card-breadcrumb{display:block!important;width:100%!important;font-size:13px!important;color:#000!important;padding:0 0 13px 0!important;margin:0!important;order:-1!important}
-  .card-breadcrumb span{font-weight:600!important}
+  .card-id-row{display:none!important}
+  .card-date-chip,.card-elem-chip,.card-breadcrumb-chip.placeholder{display:none!important}
+  .card-left{display:block!important;width:100%!important}
+  .card-bc-row{display:flex!important;flex-direction:row!important;align-items:center!important;flex-wrap:nowrap!important;gap:0!important;width:100%!important}
+  .card-id-print{display:inline!important;font-size:12px!important;font-weight:600!important;color:#000!important;white-space:nowrap!important;margin-right:2em!important}
+  .card-breadcrumb-chip{display:inline!important;font-size:12px!important;font-weight:600!important;color:#000!important;padding:0!important;margin:0!important;border:none!important;border-radius:0!important;background:none!important;white-space:nowrap!important}
+  .card-breadcrumb-chip span{font-weight:600!important}
+  .card-cat-chips{display:flex!important;flex-wrap:nowrap!important;gap:4px!important;margin:0 0 0 auto!important;flex:0 0 auto!important}
+  .card-cat-chip{display:inline-block!important;padding:3px 10px!important;border:1px solid #999!important;border-radius:10px!important;font-size:12px!important;font-weight:600!important;color:#000!important;background:none!important;white-space:nowrap!important}
   .card-apa-row{padding:0!important}
   .card-apa{color:#000!important;font-size:13px!important;font-weight:normal!important;padding:0 0 12px 2em!important;text-indent:-2em!important}
   .card-detail{display:block!important;border:none!important}
   .detail-right{display:none!important}
+  .cat-inline,.cat-drops,.cat-drop-row{display:none!important}
   .field-group textarea.apa-short{display:none!important}
   .print-hide-apa{display:none!important}
   .detail-center{width:100%!important;max-width:100%!important;padding:8px 0!important;overflow:visible!important}
@@ -242,14 +373,87 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 
 <div class="toast" id="toast"></div>
 
+<!-- PDF Add Modal -->
+<div class="pdf-add-modal-overlay" id="pdfAddModal">
+  <div class="pdf-add-modal" id="pdfAddModalBox">
+    <div style="display:flex;align-items:center;margin-bottom:16px">
+      <div class="pdf-add-modal-title" style="margin-bottom:0">새 분석 연구물 추가</div>
+      <div style="flex:1"></div>
+      <button class="pdf-add-modal-btn" style="background:#4a7dff;color:#fff;font-size:12px;padding:6px 14px" onclick="window.open('https://drive.google.com/drive/folders/1ogejcuSLlJ3UXUyQw97-O4jnydjYkJC7','_blank','width=900,height=700')">연구물 Drive</button>
+    </div>
+    <label class="pdf-add-modal-label">APA</label>
+    <input type="text" class="pdf-add-modal-input" id="pdfAddApa" placeholder="APA를 입력하세요">
+    <label class="pdf-add-modal-label">PDF URL</label>
+    <input type="text" class="pdf-add-modal-input" id="pdfAddUrl" placeholder="PDF URL을 입력하세요">
+    <div class="pdf-add-modal-btns">
+      <button class="pdf-add-modal-btn btn-cancel" onclick="closePdfAddModal()">취소</button>
+      <button class="pdf-add-modal-btn btn-confirm" onclick="confirmPdfAdd()">추가</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete last_access Modal -->
+<div class="pdf-add-modal-overlay" id="pdfDeleteLastAccessModal">
+  <div class="pdf-add-modal">
+    <div class="pdf-add-modal-title">Last Access 삭제</div>
+    <p style="font-size:13px;color:#555;margin:0 0 16px;line-height:1.6">현재 항목의 last_access 값을 삭제하시겠습니까?<br><span id="pdfDeleteLastAccessValue" style="font-weight:600;color:#333"></span></p>
+    <div class="pdf-add-modal-btns">
+      <button class="pdf-add-modal-btn btn-cancel" onclick="closeDeleteLastAccessModal()">취소</button>
+      <button class="pdf-add-modal-btn btn-confirm" style="background:#d9534f" onclick="confirmDeleteLastAccess()">삭제</button>
+    </div>
+  </div>
+</div>
+
 <div id="modalContainer"></div>
 
-<div class="layout" id="appLayout" style="display:none">
+<div class="layout" id="appLayout" style="display:flex">
 
-  <div class="sidebar">
+  <div class="sidebar" id="sidebarPanel">
     <div class="sidebar-top" id="sidebar"></div>
     <div class="sidebar-bottom">
       <button class="btn-logout" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+  <button class="sidebar-toggle" id="sidebarToggle" title="사이드바 접기/펼치기">◀</button>
+
+  <div class="pdf-wrap open" id="pdfWrap">
+    <div class="pdf-panel" id="pdfPanel">
+      <div class="pdf-panel-header">
+        <div class="pdf-header-row">
+          <button class="pdf-header-btn btn-modify" data-label="PDF" onclick="pdfFieldModify('url')">PDF(mod.)</button>
+          <input type="text" class="pdf-header-input" id="pdfUrlInput" placeholder="PDF URL을 입력하세요" readonly onkeydown="if(event.key==='Enter')loadPdfUrl()">
+          <span class="pdf-last-access-chip" id="pdfLastAccess"><span class="chip-text"></span><span class="chip-x" onclick="showDeleteLastAccessModal()">✕</span></span>
+          <button class="pdf-header-btn btn-add" onclick="showPdfAddModal()">Add</button>
+          <button class="pdf-header-btn btn-search" onclick="showPdfSearchModal()">Search</button>
+          <button class="pdf-header-btn btn-load" id="pdfLoadBtn" onclick="loadPdfUrl()">Load</button>
+        </div>
+        <div class="pdf-header-row">
+          <button class="pdf-header-btn btn-modify" data-label="APA" onclick="pdfFieldModify('apa')">APA(mod.)</button>
+          <input type="text" class="pdf-header-input" id="pdfApaInput" placeholder="APA를 입력하세요" readonly>
+          <div class="pdf-nav">
+            <button class="pdf-nav-btn" id="pdfNavPrev" onclick="pdfNavMove(-1)">&lt;</button>
+            <input type="text" class="pdf-nav-no" id="pdfNavNo" value="001" onkeydown="if(event.key==='Enter')pdfNavGoToByNo()" onfocus="this.select()">
+            <button class="pdf-nav-btn" id="pdfNavNext" onclick="pdfNavMove(1)">&gt;</button>
+          </div>
+          <button class="pdf-header-btn btn-htoggle" id="pdfHeaderToggle" onclick="togglePdfHeader()"><span style="display:inline-block;transform:rotate(90deg)">◀</span></button>
+        </div>
+      </div>
+      <div class="pdf-header-restore" id="pdfHeaderRestore"><button onclick="togglePdfHeader()"><span style="display:inline-block;transform:rotate(-90deg)">◀</span></button></div>
+      <div class="pdf-panel-body" id="pdfBody">
+        <div class="pdf-loading-overlay" id="pdfLoadingOverlay">
+          <div class="pdf-loading-spinner"></div>
+          <div class="pdf-loading-text">PDF 로딩 중...</div>
+        </div>
+        <div class="pdf-placeholder">상단의 Load 버튼을 클릭하세요</div>
+      </div>
+      <div class="pdf-panel-footer" id="pdfPanelFooter"></div>
+    </div>
+  </div>
+
+  <div class="panel-divider" id="panelDivider">
+    <div class="panel-divider-buttons">
+      <button id="btnExpandMain" onclick="expandMain()" title="노트 영역 확장">◀</button>
+      <button id="btnExpandPdf" onclick="expandPdf()" title="PDF 영역 확장">▶</button>
     </div>
   </div>
 
@@ -263,6 +467,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbwqh02HRq4fG7XsAYQtHNBqsTxHeEkfDSJ0teBgv8Qqhg3gM8qRrO9Wfdvz4btMBQuygQ/exec';
+const GAS_PDF_URL = 'https://script.google.com/macros/s/AKfycbxmUE_pMVqS2qhHcDg7qgmSWRmPwj4sUaCVUmgBbqq7zUdh5VZ00BkCozHWBEXiMNNeEQ/exec';
 
 let currentUser = null;
 (function() {
@@ -288,6 +493,7 @@ function doLogout() {
       'Element Data 정리',
       'Serge Card Data 정리',
       'Link Data 정리',
+      'PDF Data 정리',
       'Session Storage 초기화',
       '3초 후 Log-in 페이지로 이동'
     ];
@@ -374,9 +580,15 @@ function doLogout() {
       await delay(300);
 
       setLoStep(7);
+      pdfDataList = [];
+      pdfCurrentRow = null;
+      pdfCurrentIdx = -1;
+      await delay(300);
+
+      setLoStep(8);
       try { sessionStorage.clear(); } catch(e) {}
       await delay(350);
-      for (let i = 1; i <= 7; i++) {
+      for (let i = 1; i <= 8; i++) {
         const el = document.getElementById('lo' + i);
         const dot = el ? el.querySelector('.lo-dot') : null;
         if (el) { el.classList.remove('active'); el.classList.add('done'); }
@@ -414,12 +626,19 @@ function doLogout() {
     }
 
     runLogout();
-  });
+  }, 'btn-confirm', true);
 }
 
 function toast(msg, ms = 2000) {
   const t = document.getElementById('toast');
   t.textContent = msg;
+  // PDF 영역 중앙에 위치
+  const pdfPanel = document.querySelector('.pdf-panel');
+  if (pdfPanel) {
+    const r = pdfPanel.getBoundingClientRect();
+    t.style.left = (r.left + r.width / 2) + 'px';
+    t.style.top = (r.top + r.height / 2) + 'px';
+  }
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), ms);
 }
@@ -429,12 +648,12 @@ function showLoading(msg) {
   const logo = ov.querySelector('.loading-logo');
   const steps = ov.querySelector('.loading-steps');
   if (isInitialLoad) {
-    ov.style.background = '#fff';
+    ov.classList.add('initial-load');
     if (logo) { logo.textContent = 'REA Lab'; logo.classList.remove('action-msg'); }
     if (steps) steps.style.display = '';
     setLoadStep(1);
   } else {
-    ov.style.background = 'rgba(255,255,255,.92)';
+    ov.classList.remove('initial-load');
     if (logo) { logo.textContent = msg || '처리 중...'; logo.classList.add('action-msg'); }
     if (steps) steps.style.display = 'none';
   }
@@ -479,7 +698,7 @@ async function gasFetch(url, options, retries = 1) {
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       const ctrl = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), 15000);
+      const timer = setTimeout(() => ctrl.abort(), 30000);
       const r = await fetch(url, { ...options, redirect: 'follow', mode: 'cors', signal: ctrl.signal });
       clearTimeout(timer);
       if (!r.ok) throw new Error('HTTP ' + r.status + ': ' + r.statusText);
@@ -496,7 +715,8 @@ async function gasFetch(url, options, retries = 1) {
       }
       return json;
     } catch(e) {
-      console.error('gasFetch 시도 ' + (attempt+1) + '/' + (retries+1) + ' 실패:', e.message);
+      const errMsg = e.name === 'AbortError' ? '서버 응답 시간 초과' : e.message;
+      console.error('gasFetch 시도 ' + (attempt+1) + '/' + (retries+1) + ' 실패:', errMsg);
       if (attempt < retries) { await new Promise(r => setTimeout(r, 500)); continue; }
       throw e;
     }
@@ -513,8 +733,55 @@ async function gasPost(body) {
     body: JSON.stringify(body)
   });
 }
+async function gasPdfPost(body) {
+  return gasFetch(GAS_PDF_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify(body)
+  });
+}
+
+function applyDbData(res) {
+  DB = res;
+  if (!DB.links) DB.links = [];
+  DB.links = DB.links.map(l => {
+    if (l['no.'] !== undefined && l.no === undefined) { l.no = l['no.']; }
+    return l;
+  });
+  buildSidebar();
+  renderCards();
+  document.getElementById('appLayout').style.display = 'flex';
+}
 
 async function loadAll() {
+  // 1) 캐시된 데이터가 있으면 먼저 화면에 표시
+  let hasCachedView = false;
+  try {
+    const cached = sessionStorage.getItem('realab_dbcache');
+    if (cached) {
+      const cachedData = JSON.parse(cached);
+      if (cachedData.ok) {
+        applyDbData(cachedData);
+        hasCachedView = true;
+      }
+    }
+  } catch(_) {}
+
+  // preload 데이터도 캐시로 활용
+  if (!hasCachedView) {
+    try {
+      const preload = sessionStorage.getItem('realab_preload');
+      if (preload) {
+        const preloadData = JSON.parse(preload);
+        if (preloadData.ok) {
+          applyDbData(preloadData);
+          hasCachedView = true;
+        }
+      }
+    } catch(_) {}
+  }
+
+  // 2) 로딩 모달 표시 (배경에 기존 데이터가 보임)
   showLoading();
   try {
     let res = null;
@@ -536,17 +803,10 @@ async function loadAll() {
 
     setLoadStep(3);
     if (res.ok) {
-      DB = res;
-      if (!DB.links) DB.links = [];
-      // Normalize "no." header to "no" (sheet header has period)
-      DB.links = DB.links.map(l => {
-        if (l['no.'] !== undefined && l.no === undefined) { l.no = l['no.']; }
-        return l;
-      });
+      applyDbData(res);
       setLoadStep(4);
-      buildSidebar();
-      renderCards();
-      document.getElementById('appLayout').style.display = 'flex';
+      // 캐시에 최신 데이터 저장
+      try { sessionStorage.setItem('realab_dbcache', JSON.stringify(res)); } catch(_) {}
     } else {
       toast('데이터 로드 실패: ' + (res.error || ''), 5000);
     }
@@ -555,6 +815,8 @@ async function loadAll() {
     toast('서버 오류: ' + e.message + ' (재시도하려면 새로고침)', 5000);
   }
   hideLoading();
+  // PDF 데이터 목록도 로드
+  loadPdfDataList();
 }
 
 function showCardsView() {
@@ -565,6 +827,15 @@ function showCardsView() {
   document.getElementById('cardList').style.display = '';
   document.getElementById('statisticsView').style.display = 'none';
   document.getElementById('main').style.overflowY = 'scroll';
+  // 패널 토글 버튼 복원
+  document.getElementById('btnExpandMain').style.display = '';
+  document.getElementById('btnExpandPdf').style.display = '';
+  document.getElementById('panelDivider').style.display = '';
+  // 이전 패널 상태 복원
+  if (prevPanelStateBeforeStat !== null) {
+    setPanelState(prevPanelStateBeforeStat);
+    prevPanelStateBeforeStat = null;
+  }
   renderCards();
 }
 
@@ -572,6 +843,7 @@ function openBookmarkWindow() {
   window.open('bookmark.html', '_blank');
 }
 
+let prevPanelStateBeforeStat = null;
 function showStatisticsView() {
   guardedNavigate(() => {
     currentView = 'statistics';
@@ -582,6 +854,13 @@ function showStatisticsView() {
     document.getElementById('cardList').style.display = 'none';
     document.getElementById('statisticsView').style.display = '';
     document.getElementById('main').style.overflowY = 'hidden';
+    // PDF 패널 숨기고 메인 영역 전체 확장
+    prevPanelStateBeforeStat = panelState;
+    setPanelState('mainFull');
+    // 패널 토글 버튼 숨기기
+    document.getElementById('btnExpandMain').style.display = 'none';
+    document.getElementById('btnExpandPdf').style.display = 'none';
+    document.getElementById('panelDivider').style.display = 'none';
     renderStatistics();
     buildSidebar();
   });
@@ -768,7 +1047,7 @@ function generateNextLinkNo() {
   return String(maxNum + 1);
 }
 
-function showModal(html) {
+function showModal(html, screenCenter) {
   document.getElementById('modalContainer').innerHTML = html;
   const overlay = document.querySelector('#modalContainer .modal-overlay');
   if (overlay) {
@@ -780,12 +1059,25 @@ function showModal(html) {
     });
   }
   const box = document.querySelector('#modalContainer .modal-box');
+  if (box && screenCenter) {
+    box.style.position = 'fixed';
+    box.style.left = '50%';
+    box.style.top = '50%';
+    box.style.transform = 'translate(-50%, -50%)';
+  } else {
+    const mainEl = document.getElementById('main');
+    if (box && mainEl) {
+      const mainRect = mainEl.getBoundingClientRect();
+      const centerX = mainRect.left + mainRect.width / 2;
+      box.style.position = 'fixed';
+      box.style.left = centerX + 'px';
+      box.style.top = '50%';
+      box.style.transform = 'translate(-50%, -50%)';
+    }
+  }
   const h3 = box ? box.querySelector('h3') : null;
   if (box && h3) {
     let isDragging = false, startX = 0, startY = 0, origLeft = 0, origTop = 0;
-    box.style.position = 'relative';
-    box.style.left = '0px';
-    box.style.top = '0px';
     h3.addEventListener('mousedown', e => {
       isDragging = true;
       startX = e.clientX;
@@ -806,7 +1098,7 @@ function showModal(html) {
 }
 function closeModal() { document.getElementById('modalContainer').innerHTML = ''; }
 
-function showConfirmModal(title, message, confirmText, onConfirm, btnClass = 'btn-confirm') {
+function showConfirmModal(title, message, confirmText, onConfirm, btnClass = 'btn-confirm', screenCenter = false) {
   const html = `
     <div class="modal-overlay">
       <div class="modal-box">
@@ -818,7 +1110,7 @@ function showConfirmModal(title, message, confirmText, onConfirm, btnClass = 'bt
         </div>
       </div>
     </div>`;
-  showModal(html);
+  showModal(html, screenCenter);
   document.getElementById('modalConfirmBtn').addEventListener('click', () => { closeModal(); onConfirm(); });
 }
 
@@ -1644,6 +1936,25 @@ function makeBreadcrumb(d) {
   if (d['cat-04']) parts.push(d['cat-04']);
   return parts.map(p => `<span>${escHtml(p)}</span>`).join(' &gt;&gt; ');
 }
+function makeBreadcrumbSplit(d) {
+  const catElem = [];
+  if (d.category_id) {
+    const catCode = String(d.category_id).replace('category_', '');
+    catElem.push(`${catCode}_${getCategoryName(d.category_id)}`);
+  }
+  if (d.element_id) {
+    const elemCode = String(d.element_id).replace('element_', '');
+    catElem.push(`${elemCode}_${getElementName(d.element_id)}`);
+  }
+  const cats = [];
+  if (d['cat-01']) cats.push(d['cat-01']);
+  if (d['cat-02']) cats.push(d['cat-02']);
+  if (d['cat-03']) cats.push(d['cat-03']);
+  if (d['cat-04']) cats.push(d['cat-04']);
+  const line1 = catElem.map(p => `<span>${escHtml(p)}</span>`).join(' &gt;&gt; ');
+  const line2 = cats.map(p => `<span>${escHtml(p)}</span>`).join(' &gt;&gt; ');
+  return { line1, line2 };
+}
 
 function escHtml(s) { const d = document.createElement('div'); d.textContent = String(s || ''); return d.innerHTML; }
 
@@ -1682,31 +1993,76 @@ function renderCards() {
     html += `<div class="card${isExpanded ? ' expanded' : ''}" id="card-${escHtml(id)}">`;
 
     html += `<div class="card-header">`;
-    html += `<div class="card-left">`;
-    html += `<span class="card-id">${escHtml(formatNoteId(isNew ? d._displayId || id : id))}</span>`;
-    const bc = makeBreadcrumb(d);
-    if (bc) html += `<span class="card-breadcrumb">${bc}</span>`;
-    html += `</div>`;
+    html += `<div class="card-left" style="flex-direction:column;align-items:flex-start;gap:4px">`;
+    // element chip data
+    const _hasCE = d.category_id && d.element_id;
+    const _catObj = _hasCE ? DB.categories.find(c => c.category_id === d.category_id) : null;
+    const _elemObj = _hasCE ? (DB.elements || []).find(e => e.element_id === d.element_id) : null;
+    const _ceText = _hasCE ? `${_catObj ? _catObj.category_name : d.category_id}-${_elemObj ? _elemObj.element_name : d.element_id}` : '';
 
-    html += `<div class="card-date-wrap" style="display:flex;flex-direction:row;align-items:flex-start;flex-shrink:0;gap:6px">`;
+    html += `<div class="card-id-row" style="display:flex;align-items:center;gap:8px;width:100%">`;
+    html += `<span class="card-id">${escHtml(formatNoteId(isNew ? d._displayId || id : id))}</span>`;
+    if (isNew) {
+      // 새 노트: Note ID 옆에 요소 선택 칩
+      if (_hasCE) {
+        html += `<span class="card-elem-chip" onclick="openCatTreeModal('${escHtml(id)}')">${escHtml(_ceText)}</span>`;
+      } else {
+        html += `<span class="card-elem-chip placeholder" onclick="openCatTreeModal('${escHtml(id)}')">요소 선택</span>`;
+      }
+    }
+    if (d.date) html += `<span class="card-date-chip">${escHtml(d.date)}</span>`;
+    html += `<div style="flex:1"></div>`;
+    // buttons on right of Note ID line
+    const btnLabel = isNew ? 'Save' : (isModifyMode ? 'Save' : 'Modify');
+    const btnAction = isNew
+      ? `confirmSave('${escHtml(id)}')`
+      : (isModifyMode ? `confirmSave('${escHtml(id)}')` : `modifyCard('${escHtml(id)}')`);
     if (isNew) {
       html += `<button class="btn-cancel-new" onclick="cancelNewCard('${escHtml(id)}')">Cancel</button>`;
     } else if (isModifyMode) {
-      html += `<button class="btn-cancel-new" onclick="cancelModify('${escHtml(id)}')">Cancel</button>`;
+      html += `<button class="btn-modify-top" style="background:#48bb78;color:#fff;border-color:#38a169" onclick="cancelModify('${escHtml(id)}')">Cancel</button>`;
+      html += `<button class="btn-toggle" onclick="toggleCard('${escHtml(id)}')">Close</button>`;
+      html += `<button class="btn-print-icon" onclick="confirmPrint('${escHtml(id)}')" title="Print" disabled>🖨</button>`;
     } else {
       if (isExpanded) {
         html += `<button class="btn-modify-top" onclick="modifyCard('${escHtml(id)}')">Modify</button>`;
       }
       html += `<button class="btn-toggle" onclick="toggleCard('${escHtml(id)}')">${isExpanded ? 'Close' : 'Open'}</button>`;
+      html += `<button class="btn-print-icon" onclick="confirmPrint('${escHtml(id)}')" title="Print"${isExpanded ? '' : ' disabled'}>🖨</button>`;
+    }
+    html += `</div>`;
+    const bcs = makeBreadcrumbSplit(d);
+    const bcFull = makeBreadcrumb(d);
+    if (!isNew) {
+      // 인쇄용 Note ID (화면에서는 숨김)
+      html += `<span class="card-id-print">${escHtml(formatNoteId(id))}</span>`;
+      html += `<div class="card-bc-row">`;
+      // 범주>>요소 부분을 칩 형태로 표시 (Modify 모드에서만 클릭 가능)
+      if (bcs.line1) {
+        if (isModifyMode) {
+          html += `<span class="card-breadcrumb-chip clickable" onclick="openCatTreeModal('${escHtml(id)}')">${bcs.line1}</span>`;
+        } else {
+          html += `<span class="card-breadcrumb-chip">${bcs.line1}</span>`;
+        }
+      } else if (isModifyMode) {
+        html += `<span class="card-breadcrumb-chip placeholder clickable" onclick="openCatTreeModal('${escHtml(id)}')">요소 선택</span>`;
+      }
+      // cat-01~04 하나의 칩으로 - 연결
+      const catVals = [];
+      for (let ci = 1; ci <= 4; ci++) {
+        const cv = d['cat-0' + ci];
+        if (cv) catVals.push(cv);
+      }
+      if (catVals.length) {
+        html += `<span class="card-cat-chips"><span class="card-cat-chip">${catVals.map(c => escHtml(c)).join(' - ')}</span></span>`;
+      }
+      html += `</div>`;
     }
     html += `</div>`;
     html += `</div>`;
-    if (d.apa || d.date) {
-      html += `<div class="card-apa-row" style="display:flex;align-items:flex-start;padding:0 20px 19px 20px">`;
-      html += `<div class="card-apa" style="flex:1;margin-top:0">${escHtml(d.apa || '')}</div>`;
-      if (d.date) {
-        html += `<span class="card-date-info" style="font-size:15px;color:#999;white-space:nowrap;line-height:1.6;flex-shrink:0;margin-left:14px">${escHtml(d.date)}</span>`;
-      }
+    if (d.apa) {
+      html += `<div class="card-apa-row">`;
+      html += `<div class="card-apa">${escHtml(d.apa || '')}</div>`;
       html += `</div>`;
     }
 
@@ -1722,22 +2078,25 @@ function renderCards() {
     html += `</div>`;
 
     const locked = !isModifyMode;
-    html += `<div class="detail-right">`;
-    html += buildCatTree(d, locked);
-    html += `<div style="margin-top:12px"></div>`;
-    html += buildCatDropdowns(d, locked);
 
-    const btnLabel = isNew ? 'Save' : (isModifyMode ? 'Save' : 'Modify');
-    const btnAction = isNew
-      ? `confirmSave('${escHtml(id)}')`
-      : (isModifyMode ? `confirmSave('${escHtml(id)}')` : `modifyCard('${escHtml(id)}')`);
-    html += `<div class="detail-right-actions">`;
-    html += `<button class="btn-del" onclick="confirmDelete('${escHtml(id)}')"${isNew ? ' disabled style="opacity:.4;cursor:not-allowed;pointer-events:none"' : ''}>Delete</button>`;
-    html += `<button class="btn-save" id="btnSave-${escHtml(id)}" onclick="${btnAction}">${btnLabel}</button>`;
-    html += `<button onclick="confirmPrint('${escHtml(id)}')">Print</button>`;
+    html += `<div class="cat-inline">`;
+    html += `<div class="cat-drops">`;
+    html += buildCatDropdowns(d, locked);
+    html += `</div>`;
     html += `</div>`;
 
-    html += `</div>`; // detail-right
+    // bottom action buttons
+    if (isNew || isModifyMode) {
+      html += `<div class="detail-bottom-actions">`;
+      if (isNew) {
+        html += `<button class="btn-open" onclick="confirmDelete('${escHtml(id)}')" disabled style="opacity:.4;cursor:not-allowed;pointer-events:none">Delete</button>`;
+      } else {
+        html += `<button class="btn-open" style="color:#e53e3e;border-color:#e53e3e" onclick="confirmDelete('${escHtml(id)}')">Delete</button>`;
+      }
+      html += `<button class="btn-open" style="color:#fff;background:linear-gradient(135deg,#667eea,#5a67d8);border-color:transparent" onclick="${btnAction}">${btnLabel}</button>`;
+      html += `</div>`;
+    }
+
     html += `</div>`; // detail-body
     html += `</div>`; // card-detail
     html += `</div>`; // card
@@ -1912,6 +2271,9 @@ function toggleCard(id) {
     // Modify 버튼 제거
     const modBtn = card.querySelector('.btn-modify-top');
     if (modBtn) modBtn.remove();
+    // Print 비활성화
+    const printBtn = card.querySelector('.btn-print-icon');
+    if (printBtn) printBtn.disabled = true;
     const h = detail.scrollHeight;
     detail.style.overflow = 'hidden';
     detail.style.height = h + 'px';
@@ -1942,6 +2304,9 @@ function toggleCard(id) {
       modBtn.onclick = () => modifyCard(id);
       btn.parentNode.insertBefore(modBtn, btn);
     }
+    // Print 활성화
+    const printBtn = card.querySelector('.btn-print-icon');
+    if (printBtn) printBtn.disabled = false;
     detail.style.overflow = 'hidden';
     detail.style.height = '0px';
     detail.offsetHeight;
@@ -2204,9 +2569,12 @@ function autoResizeTextarea(ta) {
   const minH = parseInt(cs.minHeight) || 36;
   const bt = parseInt(cs.borderTopWidth) || 0;
   const bb = parseInt(cs.borderBottomWidth) || 0;
+  const prevOverflow = ta.style.overflow;
+  ta.style.overflow = 'hidden';
   ta.style.height = '0px';
   const need = ta.scrollHeight + bt + bb;
   ta.style.height = Math.max(minH, need) + 'px';
+  ta.style.overflow = prevOverflow;
 }
 
 function setupAutoResize(cardEl) {
@@ -2270,6 +2638,650 @@ function syncRightPanel(cardEl) {
     actions.style.marginTop = (currentMarginTop + diff) + 'px';
   }
 }
+
+function toggleSidebar() {
+  const panel = document.getElementById('sidebarPanel');
+  const btn = document.getElementById('sidebarToggle');
+  const wrap = document.getElementById('pdfWrap');
+  const isCollapsed = panel.classList.toggle('collapsed');
+  btn.classList.toggle('collapsed', isCollapsed);
+  btn.textContent = isCollapsed ? '▶' : '◀';
+  // sidebar collapse/expand: only PDF viewer should grow/shrink, not note area
+  if (wrap.classList.contains('open') && (panelState === 'normal')) {
+    if (isCollapsed) {
+      // pdf-wrap absorbs freed sidebar space: 55vw + 257px
+      wrap.style.width = 'calc(55vw + 257px)';
+    } else {
+      wrap.style.width = '';
+    }
+  }
+}
+
+function openPdfPanel() {
+  const wrap = document.getElementById('pdfWrap');
+  if (!wrap.classList.contains('open')) {
+    wrap.classList.add('open');
+  }
+  resetPanelExpansion();
+  setTimeout(() => {
+    const input = document.getElementById('pdfUrlInput');
+    if (input) input.focus();
+  }, 350);
+}
+function closePdfPanel() {
+  setPanelState('normal');
+  document.getElementById('pdfBody').innerHTML = '<div class="pdf-placeholder">📄 PDF URL을 입력하고<br>열기 버튼을 클릭하세요</div>';
+  document.getElementById('pdfUrlInput').value = '';
+}
+/* 패널 상태: 'pdfFull' | 'normal' | 'mainFull' */
+let panelState = 'normal';
+function setPanelState(state) {
+  const wrap = document.getElementById('pdfWrap');
+  const main = document.getElementById('main');
+  const btnM = document.getElementById('btnExpandMain');
+  const btnP = document.getElementById('btnExpandPdf');
+  const divider = document.getElementById('panelDivider');
+  const prevState = panelState;
+  panelState = state;
+  // reset button states
+  btnM.classList.remove('active','hidden');
+  btnP.classList.remove('active','hidden');
+  divider.classList.remove('has-visible','state-mainFull','state-pdfFull');
+  // clear any sidebar-toggle overrides
+  wrap.style.width = '';
+  main.style.flex = '';
+  main.style.width = '';
+  if (state === 'normal') {
+    main.classList.remove('collapsed','panel-full');
+    wrap.classList.remove('expanded');
+    wrap.classList.add('open');
+    // re-apply sidebar-toggle width if sidebar is collapsed
+    const sb = document.getElementById('sidebarPanel');
+    if (sb && sb.classList.contains('collapsed')) {
+      wrap.style.width = 'calc(55vw + 257px)';
+    }
+  } else if (state === 'pdfFull') {
+    // disable ALL transitions to prevent expand-then-shrink flash
+    main.style.transition = 'none';
+    wrap.style.transition = 'none';
+    main.classList.remove('panel-full');
+    main.classList.add('collapsed');
+    wrap.classList.add('open','expanded');
+    // force reflow then restore transitions
+    main.offsetHeight;
+    wrap.offsetHeight;
+    main.style.transition = '';
+    wrap.style.transition = '';
+    btnP.classList.add('hidden');
+    divider.classList.add('has-visible','state-pdfFull');
+  } else if (state === 'mainFull') {
+    wrap.classList.remove('open','expanded');
+    main.classList.remove('collapsed');
+    main.classList.add('panel-full');
+    btnM.classList.add('hidden');
+    divider.classList.add('has-visible','state-mainFull');
+  }
+  // re-trigger textarea auto-resize after panel width change
+  requestAnimationFrame(() => {
+    expandedCardIds.forEach(eid => {
+      const el = document.getElementById('card-' + eid);
+      if (el) setupAutoResize(el);
+    });
+    if (typeof alignNavToButtons === 'function') alignNavToButtons();
+  });
+}
+function resetPanelExpansion() { setPanelState('normal'); }
+function openCatTreeModal(srgId) {
+  const d = DB.srgData.find(x => x.srg_id === srgId);
+  if (!d) return;
+  const treeHtml = buildCatTree(d, false);
+  const mainEl = document.getElementById('main');
+  const rect = mainEl.getBoundingClientRect();
+  const modal = document.getElementById('modalContainer');
+  modal.innerHTML = `
+    <div class="modal-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;backdrop-filter:blur(2px)" onclick="if(event.target===this)this.parentElement.innerHTML=''">
+      <div class="modal-box" style="width:320px;max-height:70vh;overflow-y:auto;position:fixed;top:50%;left:${rect.left + rect.width / 2}px;transform:translate(-50%,-50%);padding:18px 20px">
+        <div style="display:flex;align-items:center;margin-bottom:12px">
+          <h3 style="margin:0;flex:1">범주 / 요소 선택</h3>
+          <button onclick="document.getElementById('modalContainer').innerHTML=''" style="padding:4px 14px;border:1px solid #d2d8e0;background:#fff;border-radius:6px;cursor:pointer;font-size:13px;color:#555">닫기</button>
+        </div>
+        <div id="catTreeModalBody">${treeHtml}</div>
+      </div>
+    </div>`;
+  // override setCatElem to also close modal
+  const origSetCatElem = window._origSetCatElem || setCatElem;
+  window._origSetCatElem = origSetCatElem;
+  window.setCatElem = function(sid, catId, elemId) {
+    origSetCatElem(sid, catId, elemId);
+    document.getElementById('modalContainer').innerHTML = '';
+    window.setCatElem = origSetCatElem;
+  };
+}
+/* ◀: pdfFull → normal → mainFull */
+function expandMain() {
+  if (panelState === 'pdfFull') setPanelState('normal');
+  else if (panelState === 'normal') setPanelState('mainFull');
+  else setPanelState('normal');
+}
+/* ▶: mainFull → normal → pdfFull */
+function expandPdf() {
+  if (panelState === 'mainFull') setPanelState('normal');
+  else if (panelState === 'normal') setPanelState('pdfFull');
+  else setPanelState('normal');
+}
+
+function loadPdfUrl() {
+  let url = document.getElementById('pdfUrlInput').value.trim();
+  if (!url) {
+    showPdfAlert('PDF URL이 비어 있습니다.', 'PDF URL을 입력하거나, 데이터에 URL이 등록되어 있는지 확인해주세요.');
+    return;
+  }
+  if (!url.startsWith('http')) url = 'https://' + url;
+  // 기본적인 URL 유효성 검사
+  try {
+    new URL(url);
+  } catch(_) {
+    showPdfAlert('유효하지 않은 URL입니다.', '입력된 URL: ' + url + '\n\n올바른 형식의 URL을 입력해주세요.');
+    return;
+  }
+  const body = document.getElementById('pdfBody');
+  // Google Drive 공유 링크 변환
+  const driveMatch = url.match(/drive\.google\.com\/file\/d\/([^\/]+)/);
+  if (driveMatch) {
+    url = 'https://drive.google.com/file/d/' + driveMatch[1] + '/preview';
+  }
+  // 로딩 오버레이 표시
+  const overlay = document.getElementById('pdfLoadingOverlay');
+  // placeholder 제거 후 overlay + iframe 구성
+  const placeholder = body.querySelector('.pdf-placeholder');
+  if (placeholder) placeholder.remove();
+  overlay.classList.add('show');
+  // 기존 iframe 제거
+  const oldIframe = body.querySelector('iframe');
+  if (oldIframe) oldIframe.remove();
+  const iframe = document.createElement('iframe');
+  iframe.src = url;
+  iframe.allowFullscreen = true;
+  iframe.style.cssText = 'width:100%;height:100%';
+  iframe.onload = function() { overlay.classList.remove('show'); };
+  body.appendChild(iframe);
+  // Load 버튼 비활성화
+  document.getElementById('pdfLoadBtn').disabled = true;
+  // last_access 업데이트
+  if (pdfCurrentRow) {
+    const now = new Date();
+    const ts = now.getFullYear() + '.' + String(now.getMonth()+1).padStart(2,'0') + '.' + String(now.getDate()).padStart(2,'0')
+      + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0');
+    pdfCurrentRow.last_access = ts;
+    savePdfField(pdfCurrentRow.no, 'last_access', ts);
+    const chipEl = document.getElementById('pdfLastAccess');
+    chipEl.querySelector('.chip-text').textContent = ts;
+    chipEl.classList.add('visible');
+  }
+}
+
+function showPdfAlert(title, message) {
+  const modal = document.getElementById('modalContainer');
+  modal.innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this)this.parentElement.innerHTML=''">
+      <div class="modal-box" style="width:400px">
+        <h3 style="cursor:default">⚠️ ${escHtml(title)}</h3>
+        <p style="white-space:pre-wrap">${escHtml(message)}</p>
+        <div class="modal-btns">
+          <button class="btn-confirm" onclick="document.getElementById('modalContainer').innerHTML=''">확인</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* === PDF Data (analysis_data) === */
+let pdfDataList = [];
+let pdfCurrentRow = null; // { no, apa, url, ... }
+let pdfCurrentIdx = -1;
+
+function applyPdfList(list) {
+  pdfDataList = list;
+  if (pdfDataList.length > 0) {
+    let latestIdx = 0;
+    let latestTs = '';
+    pdfDataList.forEach((r, i) => {
+      if (r.last_access && r.last_access > latestTs) {
+        latestTs = r.last_access;
+        latestIdx = i;
+      }
+    });
+    pdfNavGoTo(latestIdx);
+  } else {
+    pdfNavUpdateUI();
+  }
+}
+
+async function loadPdfDataList() {
+  // preload 데이터가 있으면 사용 (로그인에서 미리 로드)
+  try {
+    const preload = sessionStorage.getItem('realab_pdfpreload');
+    if (preload) {
+      sessionStorage.removeItem('realab_pdfpreload');
+      const list = JSON.parse(preload);
+      if (Array.isArray(list)) {
+        applyPdfList(list);
+        return;
+      }
+    }
+  } catch(_) {}
+
+  // preload 없으면 서버에서 직접 로드 (새로고침 등)
+  try {
+    const res = await gasPdfPost({ action: 'getPdfList' });
+    console.log('loadPdfDataList response:', JSON.stringify(res).substring(0, 500));
+    const list = res && (res.data || res.result);
+    if (list && Array.isArray(list)) {
+      applyPdfList(list);
+      toast('PDF 목록 로드 완료 (' + pdfDataList.length + '건)');
+    } else {
+      console.warn('loadPdfDataList: unexpected response format', res);
+      toast('PDF 목록 로드 실패: 응답 형식 오류');
+    }
+  } catch(e) {
+    console.error('loadPdfDataList error', e);
+    toast('PDF 목록 로드 오류: ' + e.message);
+  }
+}
+
+function pdfNavGoTo(idx) {
+  if (idx < 0 || idx >= pdfDataList.length) return;
+  pdfCurrentIdx = idx;
+  setPdfRow(pdfDataList[idx]);
+  pdfNavUpdateUI();
+}
+
+function pdfNavMove(dir) {
+  const newIdx = pdfCurrentIdx + dir;
+  if (newIdx < 0 || newIdx >= pdfDataList.length) return;
+  pdfNavGoTo(newIdx);
+}
+
+function pdfNavUpdateUI() {
+  const noEl = document.getElementById('pdfNavNo');
+  const prevBtn = document.getElementById('pdfNavPrev');
+  const nextBtn = document.getElementById('pdfNavNext');
+  if (pdfCurrentRow) {
+    const num = parseInt(pdfCurrentRow.no, 10) || 1;
+    noEl.value = String(num).padStart(3, '0');
+  } else {
+    noEl.value = '001';
+  }
+  prevBtn.disabled = pdfCurrentIdx <= 0;
+  nextBtn.disabled = pdfCurrentIdx >= pdfDataList.length - 1;
+}
+
+async function pdfNavGoToByNo() {
+  const noEl = document.getElementById('pdfNavNo');
+  const targetNo = parseInt(noEl.value, 10);
+  if (isNaN(targetNo) || targetNo < 1) {
+    toast('유효한 번호를 입력하세요.');
+    pdfNavUpdateUI();
+    return;
+  }
+  // if list not loaded yet, load first
+  if (pdfDataList.length === 0) {
+    toast('PDF 목록 로딩 중...');
+    await loadPdfDataList();
+  }
+  // find row by no (compare as numbers, handle string "001" and number 1)
+  const idx = pdfDataList.findIndex(r => parseInt(r.no, 10) === targetNo);
+  if (idx >= 0) {
+    pdfNavGoTo(idx);
+  } else {
+    toast('No. ' + String(targetNo).padStart(3, '0') + ' 데이터가 없습니다.');
+    pdfNavUpdateUI();
+  }
+}
+
+function setPdfRow(row) {
+  pdfCurrentRow = row;
+  const apaInput = document.getElementById('pdfApaInput');
+  const urlInput = document.getElementById('pdfUrlInput');
+  apaInput.value = row ? (row.apa || '') : '';
+  urlInput.value = row ? (row.url || '') : '';
+  apaInput.readOnly = true;
+  urlInput.readOnly = true;
+  apaInput.classList.remove('editing');
+  urlInput.classList.remove('editing');
+  // reset Modify buttons text/style
+  document.querySelectorAll('.pdf-header-row .btn-modify').forEach(b => {
+    const label = b.getAttribute('data-label');
+    b.textContent = label + '(mod.)';
+    b.style.background = '';
+  });
+  // last_access 표시 (C열)
+  const lastAccEl = document.getElementById('pdfLastAccess');
+  if (row && row.last_access) {
+    lastAccEl.querySelector('.chip-text').textContent = row.last_access;
+    lastAccEl.classList.add('visible');
+  } else {
+    lastAccEl.querySelector('.chip-text').textContent = '';
+    lastAccEl.classList.remove('visible');
+  }
+  // Load 버튼 활성화 (no 변경시)
+  document.getElementById('pdfLoadBtn').disabled = false;
+}
+
+function pdfFieldModify(field) {
+  const input = field === 'apa' ? document.getElementById('pdfApaInput') : document.getElementById('pdfUrlInput');
+  const btn = input.closest('.pdf-header-row').querySelector('.btn-modify');
+  if (input.readOnly) {
+    input.readOnly = false;
+    input.classList.add('editing');
+    input.focus();
+    const label = btn.getAttribute('data-label');
+    btn.textContent = label + '(save)';
+    btn.style.background = '#d9534f';
+  } else {
+    input.readOnly = true;
+    input.classList.remove('editing');
+    const label = btn.getAttribute('data-label');
+    btn.textContent = label + '(mod.)';
+    btn.style.background = '';
+    // save to sheet
+    if (pdfCurrentRow) {
+      const key = field === 'apa' ? 'apa' : 'url';
+      pdfCurrentRow[key] = input.value;
+      savePdfField(pdfCurrentRow.no, key, input.value);
+    }
+  }
+}
+
+async function savePdfField(no, field, value) {
+  try {
+    const res = await gasPdfPost({ action: 'updatePdfField', no: no, field: field, value: value });
+    if (res && res.success) toast(field.toUpperCase() + ' 저장 완료');
+    else toast('저장 실패');
+  } catch(e) { toast('저장 오류: ' + e.message); }
+}
+
+function showPdfSearchModal() {
+  const data = JSON.stringify(pdfDataList.map((r, i) => ({ idx: i, no: String(i+1).padStart(3,'0'), apa: r.apa || '', la: r.last_access || '' })));
+  const html = `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>PDF 검색</title>
+<style>*{box-sizing:border-box;margin:0;padding:0}html,body{overflow:hidden;height:100%}body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#f8f9fa;padding:20px;display:flex;flex-direction:column}
+h2{font-size:18px;color:#2d3748;margin-bottom:16px;display:flex;align-items:baseline;gap:8px}
+h2 .cnt{font-size:14px;color:#888;font-weight:400}
+input{width:100%;padding:10px 14px;border:1px solid #d2d8e0;border-radius:8px;font-size:14px;outline:none;margin-bottom:16px;font-family:inherit}
+input:focus{border-color:#4a7dff;box-shadow:0 0 0 2px rgba(74,125,255,.15)}
+.list{flex:1;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none}
+.list::-webkit-scrollbar{display:none}
+.item{display:flex;align-items:center;padding:9px 14px;border:1px solid #e2e6ea;border-radius:8px;margin-bottom:6px;cursor:pointer;background:#fff;transition:all .12s;gap:10px;overflow:hidden}
+.item:hover{background:#eef2ff;border-color:#c3d4ff}
+.item-no{font-size:12px;color:#4a7dff;font-weight:700;flex:0 0 auto;white-space:nowrap}
+.item-apa{font-size:13px;color:#333;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item-la{font-size:11px;color:#888;flex:0 0 auto;white-space:nowrap}
+.empty{color:#999;font-size:13px;text-align:center;padding:30px}</style></head>
+<body><h2>연구 자료 검색 <span class="cnt" id="cnt"></span></h2>
+<input type="text" id="q" placeholder="키워드로 검색 (No. 또는 APA)" autofocus>
+<div class="list" id="results"></div>
+<script>
+const data = ${data};
+const inp = document.getElementById('q');
+const res = document.getElementById('results');
+const cnt = document.getElementById('cnt');
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function renderList(items){
+  cnt.textContent = '(' + items.length + '건)';
+  if(!items.length){res.innerHTML='<div class="empty">검색 결과가 없습니다</div>';return;}
+  res.innerHTML = items.map(r => '<div class="item" onclick="pick('+r.idx+')">'
+    +'<span class="item-no">#'+r.no+'</span>'
+    +'<span class="item-apa">'+esc(r.apa)+'</span>'
+    +(r.la?'<span class="item-la">'+esc(r.la)+'</span>':'')
+    +'</div>').join('');
+}
+renderList(data);
+inp.addEventListener('input', () => {
+  const q = inp.value.trim().toLowerCase();
+  if (!q) { renderList(data); return; }
+  const m = data.filter(r => r.no.includes(q) || r.apa.toLowerCase().includes(q));
+  renderList(m);
+});
+function pick(idx) {
+  if (window.opener && !window.opener.closed) { window.opener.pdfNavGoTo(idx); }
+  window.close();
+}
+<\/script></body></html>`;
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const w = 900, h = 700;
+  const left = Math.round(window.screenX + (window.outerWidth - w) / 2);
+  const top = Math.round(window.screenY + (window.outerHeight - h) / 2);
+  window.open(url, '_blank', 'width='+w+',height='+h+',left='+left+',top='+top);
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+
+function showPdfAddModal() {
+  document.getElementById('pdfAddApa').value = '';
+  document.getElementById('pdfAddUrl').value = '';
+  const overlay = document.getElementById('pdfAddModal');
+  const modalBox = document.getElementById('pdfAddModalBox');
+  // PDF 영역 중앙에 모달 위치
+  const pdfPanel = document.querySelector('.pdf-panel');
+  if (pdfPanel && modalBox) {
+    const r = pdfPanel.getBoundingClientRect();
+    modalBox.style.position = 'fixed';
+    modalBox.style.left = (r.left + r.width / 2) + 'px';
+    modalBox.style.top = (r.top + r.height / 2) + 'px';
+    modalBox.style.transform = 'translate(-50%, -50%)';
+    overlay.style.alignItems = 'stretch';
+    overlay.style.justifyContent = 'stretch';
+  }
+  overlay.classList.add('show');
+  document.getElementById('pdfAddApa').focus();
+}
+function closePdfAddModal() {
+  document.getElementById('pdfAddModal').classList.remove('show');
+}
+async function confirmPdfAdd() {
+  const apa = document.getElementById('pdfAddApa').value.trim();
+  const url = document.getElementById('pdfAddUrl').value.trim();
+  if (!apa && !url) { toast('APA 또는 PDF URL을 입력하세요.'); return; }
+  closePdfAddModal();
+  try {
+    toast('새 행 추가 중...');
+    const res = await gasPdfPost({ action: 'addPdfRow', apa: apa, url: url });
+    if (res && res.success) {
+      toast('새 행 추가 완료 (No. ' + (res.newNo || '') + ')');
+      await loadPdfDataList();
+      if (res.newNo) {
+        const idx = pdfDataList.findIndex(r => parseInt(r.no, 10) === parseInt(res.newNo, 10));
+        if (idx >= 0) pdfNavGoTo(idx);
+      }
+    } else {
+      toast('행 추가 실패');
+    }
+  } catch(e) { toast('행 추가 오류: ' + e.message); }
+}
+
+function showDeleteLastAccessModal() {
+  if (!pdfCurrentRow || !pdfCurrentRow.last_access) return;
+  document.getElementById('pdfDeleteLastAccessValue').textContent = pdfCurrentRow.last_access;
+  const overlay = document.getElementById('pdfDeleteLastAccessModal');
+  overlay.classList.add('show');
+  // PDF 패널 가로 중앙에 위치
+  const pdfPanel = document.querySelector('.pdf-panel');
+  const modal = overlay.querySelector('.pdf-add-modal');
+  if (pdfPanel && modal) {
+    const r = pdfPanel.getBoundingClientRect();
+    modal.style.position = 'fixed';
+    modal.style.left = (r.left + r.width / 2) + 'px';
+    modal.style.top = '50%';
+    modal.style.transform = 'translate(-50%, -50%)';
+  }
+}
+function closeDeleteLastAccessModal() {
+  document.getElementById('pdfDeleteLastAccessModal').classList.remove('show');
+}
+async function confirmDeleteLastAccess() {
+  closeDeleteLastAccessModal();
+  if (!pdfCurrentRow) return;
+  try {
+    pdfCurrentRow.last_access = '';
+    const chipEl2 = document.getElementById('pdfLastAccess');
+    chipEl2.querySelector('.chip-text').textContent = '';
+    chipEl2.classList.remove('visible');
+    await savePdfField(pdfCurrentRow.no, 'last_access', '');
+    toast('last_access 삭제 완료');
+  } catch(e) { toast('삭제 오류: ' + e.message); }
+}
+
+// sync pdf footer: white area below Logout button's bottom edge
+function syncPdfFooterHeight() {
+  const logoutBtn = document.querySelector('.sidebar-bottom .btn-logout');
+  const footer = document.getElementById('pdfPanelFooter');
+  if (logoutBtn && footer) {
+    const btnRect = logoutBtn.getBoundingClientRect();
+    const gap = window.innerHeight - btnRect.bottom;
+    footer.style.height = Math.max(0, gap) + 'px';
+  }
+}
+window.addEventListener('resize', syncPdfFooterHeight);
+setTimeout(syncPdfFooterHeight, 100);
+
+// 드래그로 세로 위치 변경 (panel-divider-buttons, sidebar-toggle)
+function makeDraggableY(el, parentEl) {
+  let startY, startTop, dragging = false, moved = false;
+  el.addEventListener('mousedown', function(e) {
+    moved = false;
+    startY = e.clientY;
+    const rect = el.getBoundingClientRect();
+    const parentRect = parentEl.getBoundingClientRect();
+    startTop = rect.top - parentRect.top + el.offsetHeight / 2;
+    function onMove(ev) {
+      if (Math.abs(ev.clientY - startY) > 3) {
+        if (!dragging) { dragging = true; el.classList.add('dragging'); }
+        moved = true;
+      }
+      if (!dragging) return;
+      const dy = ev.clientY - startY;
+      const newTop = startTop + dy;
+      const pct = (newTop / parentRect.height) * 100;
+      el.style.top = Math.max(5, Math.min(95, pct)) + '%';
+    }
+    function onUp() {
+      dragging = false;
+      el.classList.remove('dragging');
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  });
+  // 드래그 중이면 버튼 클릭 차단
+  el.addEventListener('click', function(e) {
+    if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; }
+  }, true);
+}
+const dividerBtns = document.querySelector('.panel-divider-buttons');
+const dividerEl = document.getElementById('panelDivider');
+if (dividerBtns && dividerEl) makeDraggableY(dividerBtns, dividerEl);
+
+const sidebarToggleBtn = document.getElementById('sidebarToggle');
+const appLayout = document.getElementById('appLayout');
+if (sidebarToggleBtn && appLayout) {
+  sidebarToggleBtn.style.cursor = 'grab';
+  let stStartY, stStartTop, stDragging = false, stMoved = false;
+  sidebarToggleBtn.addEventListener('mousedown', function(e) {
+    stDragging = true; stMoved = false;
+    stStartY = e.clientY;
+    const rect = sidebarToggleBtn.getBoundingClientRect();
+    const parentRect = appLayout.getBoundingClientRect();
+    stStartTop = rect.top - parentRect.top + rect.height / 2;
+    sidebarToggleBtn.style.cursor = 'grabbing';
+    function onMove(ev) {
+      if (!stDragging) return;
+      if (Math.abs(ev.clientY - stStartY) > 3) stMoved = true;
+      const dy = ev.clientY - stStartY;
+      const newTop = stStartTop + dy;
+      const pct = (newTop / parentRect.height) * 100;
+      sidebarToggleBtn.style.top = Math.max(5, Math.min(95, pct)) + '%';
+    }
+    function onUp() {
+      stDragging = false;
+      sidebarToggleBtn.style.cursor = 'grab';
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+      if (stMoved) { e.preventDefault(); e.stopPropagation(); }
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  });
+  sidebarToggleBtn.addEventListener('click', function(e) {
+    if (stMoved) { e.preventDefault(); e.stopPropagation(); stMoved = false; return; }
+    toggleSidebar();
+  }, true);
+}
+
+function togglePdfHeader() {
+  const header = document.querySelector('.pdf-panel-header');
+  const restore = document.getElementById('pdfHeaderRestore');
+  const toggleBtn = document.getElementById('pdfHeaderToggle');
+  if (!header) return;
+  const isCollapsed = header.classList.contains('collapsed');
+  if (isCollapsed) {
+    header.classList.remove('collapsed');
+    restore.classList.remove('show');
+  } else {
+    // ^ 버튼의 가로 위치를 기준으로 V 버튼 위치 설정
+    if (toggleBtn && restore) {
+      const btnRect = toggleBtn.getBoundingClientRect();
+      const pdfPanel = document.querySelector('.pdf-panel');
+      const panelRect = pdfPanel ? pdfPanel.getBoundingClientRect() : { left: 0 };
+      restore.style.left = 'auto';
+      restore.style.right = (panelRect.right - btnRect.right) + 'px';
+      const restoreBtn = restore.querySelector('button');
+      if (restoreBtn) restoreBtn.style.width = btnRect.width + 'px';
+    }
+    header.classList.add('collapsed');
+    restore.classList.add('show');
+  }
+}
+
+// nav 너비를 chip+Add+Load 버튼 영역에 맞춤
+function alignNavToButtons() {
+  const addBtn = document.querySelector('.pdf-header-btn.btn-add');
+  const loadBtn = document.getElementById('pdfLoadBtn');
+  const searchBtn = document.querySelector('.pdf-header-btn.btn-search');
+  const nav = document.querySelector('.pdf-nav');
+  const prevBtn = document.getElementById('pdfNavPrev');
+  const nextBtn = document.getElementById('pdfNavNext');
+  const toggleBtn = document.getElementById('pdfHeaderToggle');
+  const noInput = document.getElementById('pdfNavNo');
+  if (addBtn && loadBtn && nav && prevBtn && nextBtn) {
+    // nav: < 왼쪽=Add 왼쪽, > 오른쪽=Search 오른쪽
+    const left = addBtn.getBoundingClientRect().left;
+    const right = searchBtn ? searchBtn.getBoundingClientRect().right : loadBtn.getBoundingClientRect().right;
+    const navW = right - left;
+    nav.style.width = navW + 'px';
+    const inputW = noInput ? noInput.offsetWidth : 48;
+    const remaining = navW - inputW;
+    const btnW = Math.max(remaining / 2, 30);
+    prevBtn.style.width = btnW + 'px';
+    prevBtn.style.flex = 'none';
+    nextBtn.style.width = btnW + 'px';
+    nextBtn.style.flex = 'none';
+    // ^ 버튼: Load와 동일 크기, 왼쪽 경계=Load 왼쪽 경계와 일치
+    if (toggleBtn && loadBtn) {
+      const loadW = loadBtn.offsetWidth;
+      toggleBtn.style.width = loadW + 'px';
+      toggleBtn.style.marginLeft = '0px';
+      // 현재 위치 측정 후 Load 왼쪽과 맞춤
+      requestAnimationFrame(() => {
+        const toggleLeft = toggleBtn.getBoundingClientRect().left;
+        const loadLeft = loadBtn.getBoundingClientRect().left;
+        const diff = loadLeft - toggleLeft;
+        toggleBtn.style.marginLeft = diff + 'px';
+      });
+    }
+  }
+}
+window.addEventListener('resize', alignNavToButtons);
+setTimeout(alignNavToButtons, 200);
 
 loadAll();
 </script>
