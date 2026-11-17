@@ -68,6 +68,18 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .pdf-header-btn.btn-search:hover{background:#7b68ae}
 .pdf-header-btn:disabled{opacity:.45;cursor:not-allowed}
 .pdf-nav{display:flex;align-items:center;gap:0;margin-left:auto}
+.pdf-nav-comment{width:40px;height:30px;border:1px solid #d2d8e0;background:#f7f8fa;border-radius:5px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;padding:0;box-sizing:border-box}
+.pdf-nav-comment:hover{background:#e8ecf0;border-color:#b0b8c4}
+.pdf-comment-modal{position:fixed;width:280px;background:#fff;border:1px solid #d2d8e0;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.12);padding:12px;z-index:200;display:none}
+.pdf-comment-modal.show{display:block}
+.pdf-comment-modal textarea{width:100%;min-height:80px;border:1px solid #d2d8e0;border-radius:5px;padding:8px;font-size:13px;font-family:inherit;resize:vertical;box-sizing:border-box;outline:none;line-height:1.5}
+.pdf-comment-modal textarea:focus{border-color:#4a7dff}
+.pdf-comment-modal .modal-btns{display:flex;justify-content:flex-end;gap:6px;margin-top:8px}
+.pdf-comment-modal .modal-btns button{padding:5px 14px;border-radius:5px;font-size:12.5px;font-weight:600;cursor:pointer;height:30px;box-sizing:border-box;border:1px solid #d2d8e0}
+.pdf-comment-modal .btn-cancel{background:#f7f8fa;color:#555}
+.pdf-comment-modal .btn-cancel:hover{background:#e8ecf0}
+.pdf-comment-modal .btn-save{background:#4a7dff;color:#fff;border-color:#4a7dff}
+.pdf-comment-modal .btn-save:hover{background:#3a65d4}
 .pdf-nav-btn{padding:5px 10px;border:1px solid #4a7dff;background:#4a7dff;color:#fff;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap;height:30px;box-sizing:border-box;flex:1}
 .pdf-nav-btn:first-child{border-radius:5px 0 0 5px;border-right:1px solid rgba(255,255,255,.3)}
 .pdf-nav-btn:last-child{border-radius:0 5px 5px 0;border-left:1px solid rgba(255,255,255,.3)}
@@ -430,6 +442,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
         <div class="pdf-header-row">
           <button class="pdf-header-btn btn-modify" data-label="APA" onclick="pdfFieldModify('apa')">APA(mod.)</button>
           <input type="text" class="pdf-header-input" id="pdfApaInput" placeholder="APA를 입력하세요" readonly>
+          <button class="pdf-nav-comment" id="pdfCommentBtn" onclick="openPdfComment()" title="메모" style="margin-left:auto;margin-right:2px;flex-shrink:0">💬</button>
           <div class="pdf-nav">
             <button class="pdf-nav-btn" id="pdfNavPrev" onclick="pdfNavMove(-1)">&lt;</button>
             <input type="text" class="pdf-nav-no" id="pdfNavNo" value="001" onkeydown="if(event.key==='Enter')pdfNavGoToByNo()" onfocus="this.select()">
@@ -463,6 +476,14 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
     <div id="statisticsView" style="display:none;margin:-20px -28px 0;height:calc(100% + 20px)"></div>
   </div>
 
+</div>
+
+<div class="pdf-comment-modal" id="pdfCommentModal">
+  <textarea id="pdfCommentText" placeholder="메모를 입력하세요..."></textarea>
+  <div class="modal-btns">
+    <button class="btn-cancel" onclick="closePdfComment()">Cancel</button>
+    <button class="btn-save" onclick="savePdfComment()">Save</button>
+  </div>
 </div>
 
 <script>
@@ -2895,6 +2916,41 @@ function pdfNavGoTo(idx) {
   pdfNavUpdateUI();
 }
 
+function openPdfComment() {
+  const modal = document.getElementById('pdfCommentModal');
+  const isOpen = modal.classList.contains('show');
+  if (isOpen) {
+    closePdfComment();
+    return;
+  }
+  if (!pdfCurrentRow) { toast('선택된 자료가 없습니다.'); return; }
+  // 버튼 위치 기준으로 모달 배치
+  const btn = document.getElementById('pdfCommentBtn');
+  const rect = btn.getBoundingClientRect();
+  modal.style.top = (rect.bottom + 4) + 'px';
+  modal.style.right = (window.innerWidth - rect.right) + 'px';
+  modal.style.left = 'auto';
+  // 현재 PDF 자료의 note 로드
+  const ta = document.getElementById('pdfCommentText');
+  ta.value = (pdfCurrentRow.note) ? pdfCurrentRow.note : '';
+  modal.classList.add('show');
+  setTimeout(() => ta.focus(), 50);
+}
+function closePdfComment() {
+  document.getElementById('pdfCommentModal').classList.remove('show');
+}
+async function savePdfComment() {
+  const text = document.getElementById('pdfCommentText').value.trim();
+  if (!pdfCurrentRow) { closePdfComment(); return; }
+  pdfCurrentRow.note = text;
+  closePdfComment();
+  try {
+    const res = await gasPdfPost({ action: 'updatePdfField', no: pdfCurrentRow.no, field: 'note', value: text });
+    if (res && res.success) toast('Note 저장 완료');
+    else toast('Note 저장 실패');
+  } catch(e) { toast('Note 저장 오류: ' + e.message); }
+}
+
 function pdfNavMove(dir) {
   const newIdx = pdfCurrentIdx + dir;
   if (newIdx < 0 || newIdx >= pdfDataList.length) return;
@@ -3242,7 +3298,7 @@ function togglePdfHeader() {
   }
 }
 
-// nav 너비를 chip+Add+Load 버튼 영역에 맞춤
+// nav 너비를 Add+Search 영역에 맞춤, 말풍선은 nav 왼쪽에 위치
 function alignNavToButtons() {
   const addBtn = document.querySelector('.pdf-header-btn.btn-add');
   const loadBtn = document.getElementById('pdfLoadBtn');
@@ -3270,7 +3326,6 @@ function alignNavToButtons() {
       const loadW = loadBtn.offsetWidth;
       toggleBtn.style.width = loadW + 'px';
       toggleBtn.style.marginLeft = '0px';
-      // 현재 위치 측정 후 Load 왼쪽과 맞춤
       requestAnimationFrame(() => {
         const toggleLeft = toggleBtn.getBoundingClientRect().left;
         const loadLeft = loadBtn.getBoundingClientRect().left;
