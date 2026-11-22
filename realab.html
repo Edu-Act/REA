@@ -3143,7 +3143,7 @@ function pdfFieldModify(field) {
 async function savePdfField(no, field, value) {
   try {
     const res = await gasPdfPost({ action: 'updatePdfField', no: no, field: field, value: value });
-    if (res && res.success) toast(field.toUpperCase() + ' 저장 완료');
+    if (res && res.success) { if (field !== 'last_access') toast(field.toUpperCase() + ' 저장 완료'); }
     else toast('저장 실패');
   } catch(e) { toast('저장 오류: ' + e.message); }
 }
