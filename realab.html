@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="data:,">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <title>REA Lab</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -57,7 +58,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .pdf-header-input::placeholder{color:#aaa}
 .pdf-header-input:read-only{cursor:default}
 .pdf-header-input.editing{background:#fff;border-color:#d2d8e0}
-.pdf-header-btn{padding:5px 14px;border:none;border-radius:5px;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .15s;color:#fff;height:30px;box-sizing:border-box}
+.pdf-header-btn{padding:5px 14px;border:none;border-radius:5px;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s;color:#fff;height:30px;box-sizing:border-box;flex-shrink:0}
 .pdf-header-btn.btn-load{background:#f0ad4e;color:#fff}
 .pdf-header-btn.btn-load:hover{background:#ec971f}
 .pdf-header-btn.btn-modify{background:#e8ecf0;color:#555}
@@ -67,8 +68,8 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .pdf-header-btn.btn-search{background:#8e7cc3;color:#fff}
 .pdf-header-btn.btn-search:hover{background:#7b68ae}
 .pdf-header-btn:disabled{opacity:.45;cursor:not-allowed}
-.pdf-nav{display:flex;align-items:center;gap:0;margin-left:auto}
-.pdf-nav-comment{width:40px;height:30px;border:1px solid #d2d8e0;background:#f7f8fa;border-radius:5px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;padding:0;box-sizing:border-box}
+.pdf-nav{display:flex;align-items:center;gap:0;flex-shrink:0}
+.pdf-nav-comment{width:40px;height:30px;border:1px solid #d2d8e0;background:#f7f8fa;border-radius:5px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:background .15s;padding:0;box-sizing:border-box}
 .pdf-nav-comment:hover{background:#e8ecf0;border-color:#b0b8c4}
 .pdf-comment-modal{position:fixed;width:280px;background:#fff;border:1px solid #d2d8e0;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.12);padding:12px;z-index:200;display:none}
 .pdf-comment-modal.show{display:block}
@@ -80,7 +81,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .pdf-comment-modal .btn-cancel:hover{background:#e8ecf0}
 .pdf-comment-modal .btn-save{background:#4a7dff;color:#fff;border-color:#4a7dff}
 .pdf-comment-modal .btn-save:hover{background:#3a65d4}
-.pdf-nav-btn{padding:5px 10px;border:1px solid #4a7dff;background:#4a7dff;color:#fff;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap;height:30px;box-sizing:border-box;flex:1}
+.pdf-nav-btn{padding:5px 10px;border:1px solid #4a7dff;background:#4a7dff;color:#fff;font-size:12px;font-weight:700;cursor:pointer;transition:background .15s;white-space:nowrap;height:30px;box-sizing:border-box;flex:1}
 .pdf-nav-btn:first-child{border-radius:5px 0 0 5px;border-right:1px solid rgba(255,255,255,.3)}
 .pdf-nav-btn:last-child{border-radius:0 5px 5px 0;border-left:1px solid rgba(255,255,255,.3)}
 .pdf-header-btn.btn-htoggle{background:#e8ecf0;color:#555;border:1px solid #d2d8e0}
@@ -151,6 +152,8 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .card-header{display:flex;align-items:flex-start;padding:19px 20px 16.5px;gap:14px;cursor:default}
 .card-left{display:flex;flex-direction:column;align-items:flex-start;gap:4px;flex:1;min-width:0}
 .card-id{display:inline-block;padding:3px 10px;background:#eef2ff;border:1px solid #c3d4ff;border-radius:12px;font-size:12.5px;font-weight:600;color:#4a7dff;flex-shrink:0;white-space:nowrap}
+.card.new-card .card-id{display:inline-flex;align-items:center;padding:8px 14px;border-radius:8px;font-size:14px;box-sizing:border-box}
+.card.new-card .card-elem-chip{padding:8px 14px;border-radius:8px;font-size:14px;box-sizing:border-box}
 .card-breadcrumb{font-size:14px;color:#b0bac5;line-height:1.5;min-width:0;word-break:break-word;display:block;width:100%}
 .card-breadcrumb span{font-weight:700;color:#34495e}
 .card-breadcrumb.bc-full{display:none}
@@ -286,7 +289,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
 .loading-step.active .step-icon{animation:pulse .8s ease infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-.toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);padding:12px 30px;background:#2d3748;color:#fff;border-radius:10px;font-size:14px;font-weight:500;z-index:9999;opacity:0;transition:opacity .3s;box-shadow:0 4px 14px rgba(0,0,0,.2);pointer-events:none}
+.toast{position:fixed;top:50%;left:50%;transform:translateX(-50%);padding:12px 30px;background:#2d3748;color:#fff;border-radius:10px;font-size:14px;font-weight:500;z-index:9999;opacity:0;transition:opacity .3s;box-shadow:0 4px 14px rgba(0,0,0,.2);pointer-events:none}
 .toast.show{opacity:1;pointer-events:auto}
 
 .statistics-view{display:flex;gap:0;min-height:calc(100vh - 80px);overflow:hidden}
@@ -432,22 +435,23 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
     <div class="pdf-panel" id="pdfPanel">
       <div class="pdf-panel-header">
         <div class="pdf-header-row">
-          <button class="pdf-header-btn btn-modify" data-label="PDF" onclick="pdfFieldModify('url')">PDF(mod.)</button>
-          <input type="text" class="pdf-header-input" id="pdfUrlInput" placeholder="PDF URL을 입력하세요" readonly onkeydown="if(event.key==='Enter')loadPdfUrl()">
-          <span class="pdf-last-access-chip" id="pdfLastAccess"><span class="chip-text"></span><span class="chip-x" onclick="showDeleteLastAccessModal()">✕</span></span>
-          <button class="pdf-header-btn btn-add" onclick="showPdfAddModal()">Add</button>
-          <button class="pdf-header-btn btn-search" onclick="showPdfSearchModal()">Search</button>
-          <button class="pdf-header-btn btn-load" id="pdfLoadBtn" onclick="loadPdfUrl()">Load</button>
-        </div>
-        <div class="pdf-header-row">
-          <button class="pdf-header-btn btn-modify" data-label="APA" onclick="pdfFieldModify('apa')">APA(mod.)</button>
-          <input type="text" class="pdf-header-input" id="pdfApaInput" placeholder="APA를 입력하세요" readonly>
-          <button class="pdf-nav-comment" id="pdfCommentBtn" onclick="openPdfComment()" title="메모" style="margin-left:auto;margin-right:2px;flex-shrink:0">💬</button>
+          <button class="pdf-header-btn btn-modify" data-label="APA" onclick="pdfFieldModify('apa')">APA &nbsp;<i class="ti ti-click" style="font-size:13px;vertical-align:middle;opacity:0.6"></i></button>
+          <input type="text" class="pdf-header-input" id="pdfApaInput" placeholder="APA를 입력하세요" readonly style="display:none">
+          <div class="pdf-header-input" id="pdfApaDisplay" style="cursor:default;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
+          <button class="pdf-nav-comment" id="pdfCommentBtn" onclick="openPdfComment()" title="메모" style="flex-shrink:0">💬</button>
           <div class="pdf-nav">
             <button class="pdf-nav-btn" id="pdfNavPrev" onclick="pdfNavMove(-1)">&lt;</button>
             <input type="text" class="pdf-nav-no" id="pdfNavNo" value="001" onkeydown="if(event.key==='Enter')pdfNavGoToByNo()" onfocus="this.select()">
             <button class="pdf-nav-btn" id="pdfNavNext" onclick="pdfNavMove(1)">&gt;</button>
           </div>
+          <button class="pdf-header-btn btn-load" id="pdfLoadBtn" onclick="loadPdfUrl()">Load</button>
+        </div>
+        <div class="pdf-header-row">
+          <button class="pdf-header-btn btn-modify" data-label="PDF" onclick="pdfFieldModify('url')">PDF &nbsp;<i class="ti ti-click" style="font-size:13px;vertical-align:middle;opacity:0.6"></i></button>
+          <input type="text" class="pdf-header-input" id="pdfUrlInput" placeholder="PDF URL을 입력하세요" readonly onkeydown="if(event.key==='Enter')loadPdfUrl()">
+          <span class="pdf-last-access-chip" id="pdfLastAccess"><span class="chip-text"></span><span class="chip-x" onclick="showDeleteLastAccessModal()">✕</span></span>
+          <button class="pdf-header-btn btn-add" onclick="showPdfAddModal()">Add</button>
+          <button class="pdf-header-btn btn-search" onclick="showPdfSearchModal()">Search</button>
           <button class="pdf-header-btn btn-htoggle" id="pdfHeaderToggle" onclick="togglePdfHeader()"><span style="display:inline-block;transform:rotate(90deg)">◀</span></button>
         </div>
       </div>
@@ -458,6 +462,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
           <div class="pdf-loading-text">PDF 로딩 중...</div>
         </div>
         <div class="pdf-placeholder">상단의 Load 버튼을 클릭하세요</div>
+
       </div>
       <div class="pdf-panel-footer" id="pdfPanelFooter"></div>
     </div>
@@ -653,12 +658,14 @@ function doLogout() {
 function toast(msg, ms = 2000) {
   const t = document.getElementById('toast');
   t.textContent = msg;
-  // PDF 영역 중앙에 위치
+  // PDF 영역 헤더 바로 아래, 수평 중앙에 위치
   const pdfPanel = document.querySelector('.pdf-panel');
-  if (pdfPanel) {
-    const r = pdfPanel.getBoundingClientRect();
-    t.style.left = (r.left + r.width / 2) + 'px';
-    t.style.top = (r.top + r.height / 2) + 'px';
+  const pdfHeader = document.querySelector('.pdf-panel-header');
+  if (pdfPanel && pdfHeader) {
+    const pr = pdfPanel.getBoundingClientRect();
+    const hr = pdfHeader.getBoundingClientRect();
+    t.style.left = (pr.left + pr.width / 2) + 'px';
+    t.style.top = (hr.bottom + 10) + 'px';
   }
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), ms);
@@ -889,19 +896,7 @@ function showStatisticsView() {
 
 function formatApa(raw) {
   let s = escHtml(raw);
-  s = s.replace(/((?:\(\d{4}[a-z]?\)\.\s|(?:Ed|Eds)\.\)\.\s))([A-Z][^.]+?)(\.|\s\()/g, function(m, pre, title, after) {
-    return pre + '<i>' + title + '</i>' + after;
-  });
-  s = s.replace(/((?:\(\d{4}[a-z]?\)\.\s))([가-힣][^.]+?)(\.)/g, function(m, pre, title, after) {
-    return pre + '<b>' + title + '</b>' + after;
-  });
-  s = s.replace(/(\.\s)([A-Z][A-Za-z\s&:]+),\s(\d+)(\(\d+\))?/g, function(m, dot, journal, vol, issue) {
-    return dot + '<i>' + journal + ', ' + vol + '</i>' + (issue || '');
-  });
-  s = s.replace(/(\.\s)([가-힣][가-힣\s&]+),\s(\d+)(\(\d+\))?/g, function(m, dot, journal, vol, issue) {
-    return dot + '<i>' + journal + ', ' + vol + '</i>' + (issue || '');
-  });
-  return s;
+  return '<b>' + s + '</b>';
 }
 
 function renderStatistics() {
@@ -2011,7 +2006,7 @@ function renderCards() {
     const isNew = String(id).startsWith('NEW_');
     const isModifyMode = isNew || modifyModeCards[id];
 
-    html += `<div class="card${isExpanded ? ' expanded' : ''}" id="card-${escHtml(id)}">`;
+    html += `<div class="card${isExpanded ? ' expanded' : ''}${isNew ? ' new-card' : ''}" id="card-${escHtml(id)}">`;
 
     html += `<div class="card-header">`;
     html += `<div class="card-left" style="flex-direction:column;align-items:flex-start;gap:4px">`;
@@ -2026,12 +2021,20 @@ function renderCards() {
     if (isNew) {
       // 새 노트: Note ID 옆에 요소 선택 칩
       if (_hasCE) {
-        html += `<span class="card-elem-chip" onclick="openCatTreeModal('${escHtml(id)}')">${escHtml(_ceText)}</span>`;
+        html += `<span class="card-elem-chip" onclick="openCatTreeModal('${escHtml(id)}')">${escHtml(_ceText)} <i class="ti ti-click" style="font-size:11px;vertical-align:middle;opacity:0.5"></i></span>`;
       } else {
-        html += `<span class="card-elem-chip placeholder" onclick="openCatTreeModal('${escHtml(id)}')">요소 선택</span>`;
+        html += `<span class="card-elem-chip placeholder" onclick="openCatTreeModal('${escHtml(id)}')">요소 선택 <i class="ti ti-click" style="font-size:11px;vertical-align:middle;opacity:0.5"></i></span>`;
       }
     }
-    if (d.date) html += `<span class="card-date-chip">${escHtml(d.date)}</span>`;
+    if (d.date) {
+      let dateDisplay = d.date;
+      // yy-mm-dd 형식으로 변환
+      const dateMatch = d.date.match(/(\d{4})[.\-/](\d{1,2})[.\-/](\d{1,2})/);
+      if (dateMatch) {
+        dateDisplay = dateMatch[1].slice(2) + '-' + dateMatch[2].padStart(2,'0') + '-' + dateMatch[3].padStart(2,'0');
+      }
+      html += `<span class="card-date-chip">${escHtml(dateDisplay)}</span>`;
+    }
     html += `<div style="flex:1"></div>`;
     // buttons on right of Note ID line
     const btnLabel = isNew ? 'Save' : (isModifyMode ? 'Save' : 'Modify');
@@ -2061,12 +2064,12 @@ function renderCards() {
       // 범주>>요소 부분을 칩 형태로 표시 (Modify 모드에서만 클릭 가능)
       if (bcs.line1) {
         if (isModifyMode) {
-          html += `<span class="card-breadcrumb-chip clickable" onclick="openCatTreeModal('${escHtml(id)}')">${bcs.line1}</span>`;
+          html += `<span class="card-breadcrumb-chip clickable" onclick="openCatTreeModal('${escHtml(id)}')">${bcs.line1} <i class="ti ti-click" style="font-size:11px;vertical-align:middle;opacity:0.5"></i></span>`;
         } else {
           html += `<span class="card-breadcrumb-chip">${bcs.line1}</span>`;
         }
       } else if (isModifyMode) {
-        html += `<span class="card-breadcrumb-chip placeholder clickable" onclick="openCatTreeModal('${escHtml(id)}')">요소 선택</span>`;
+        html += `<span class="card-breadcrumb-chip placeholder clickable" onclick="openCatTreeModal('${escHtml(id)}')">요소 선택 <i class="ti ti-click" style="font-size:11px;vertical-align:middle;opacity:0.5"></i></span>`;
       }
       // cat-01~04 하나의 칩으로 - 연결
       const catVals = [];
@@ -2075,7 +2078,11 @@ function renderCards() {
         if (cv) catVals.push(cv);
       }
       if (catVals.length) {
-        html += `<span class="card-cat-chips"><span class="card-cat-chip">${catVals.map(c => escHtml(c)).join(' - ')}</span></span>`;
+        if (isModifyMode) {
+          html += `<span class="card-cat-chips"><span class="card-cat-chip">${catVals.map(c => escHtml(c)).join(' - ')} <i class="ti ti-click" style="font-size:10px;vertical-align:middle;opacity:0.4"></i></span></span>`;
+        } else {
+          html += `<span class="card-cat-chips"><span class="card-cat-chip">${catVals.map(c => escHtml(c)).join(' - ')}</span></span>`;
+        }
       }
       html += `</div>`;
     }
@@ -2083,7 +2090,7 @@ function renderCards() {
     html += `</div>`;
     if (d.apa) {
       html += `<div class="card-apa-row">`;
-      html += `<div class="card-apa">${escHtml(d.apa || '')}</div>`;
+      html += `<div class="card-apa">${formatApa(d.apa || '')}</div>`;
       html += `</div>`;
     }
 
@@ -2676,6 +2683,7 @@ function toggleSidebar() {
       wrap.style.width = '';
     }
   }
+  setTimeout(alignNavToButtons, 50);
 }
 
 function openPdfPanel() {
@@ -2791,6 +2799,8 @@ function expandPdf() {
   else setPanelState('normal');
 }
 
+
+
 function loadPdfUrl() {
   let url = document.getElementById('pdfUrlInput').value.trim();
   if (!url) {
@@ -2823,8 +2833,11 @@ function loadPdfUrl() {
   const iframe = document.createElement('iframe');
   iframe.src = url;
   iframe.allowFullscreen = true;
+  iframe.setAttribute('allow', 'clipboard-read; clipboard-write');
   iframe.style.cssText = 'width:100%;height:100%';
-  iframe.onload = function() { overlay.classList.remove('show'); };
+  iframe.onload = function() {
+    overlay.classList.remove('show');
+  };
   body.appendChild(iframe);
   // Load 버튼 비활성화
   document.getElementById('pdfLoadBtn').disabled = true;
@@ -2834,7 +2847,10 @@ function loadPdfUrl() {
     const ts = now.getFullYear() + '.' + String(now.getMonth()+1).padStart(2,'0') + '.' + String(now.getDate()).padStart(2,'0')
       + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0');
     pdfCurrentRow.last_access = ts;
-    savePdfField(pdfCurrentRow.no, 'last_access', ts);
+    setPdfViewerButtonsDisabled(true);
+    savePdfField(pdfCurrentRow.no, 'last_access', ts).then(() => {
+      setPdfViewerButtonsDisabled(false);
+    });
     const chipEl = document.getElementById('pdfLastAccess');
     chipEl.querySelector('.chip-text').textContent = ts;
     chipEl.classList.add('visible');
@@ -3004,11 +3020,18 @@ function setPdfRow(row) {
   urlInput.readOnly = true;
   apaInput.classList.remove('editing');
   urlInput.classList.remove('editing');
+  // APA display 업데이트 (이탤릭 포맷)
+  const apaDisplay = document.getElementById('pdfApaDisplay');
+  apaDisplay.innerHTML = row ? formatApa(row.apa || '') : '';
+  apaDisplay.style.display = '';
+  apaInput.style.display = 'none';
   // reset Modify buttons text/style
   document.querySelectorAll('.pdf-header-row .btn-modify').forEach(b => {
     const label = b.getAttribute('data-label');
-    b.textContent = label + '(mod.)';
+    b.innerHTML = label + ' &nbsp;<i class="ti ti-click" style="font-size:13px;vertical-align:middle;opacity:0.6"></i>';
     b.style.background = '';
+    b.style.width = '';
+    delete b._origWidth;
   });
   // last_access 표시 (C열)
   const lastAccEl = document.getElementById('pdfLastAccess');
@@ -3021,29 +3044,68 @@ function setPdfRow(row) {
   }
   // Load 버튼 활성화 (no 변경시)
   document.getElementById('pdfLoadBtn').disabled = false;
+  // PDF viewer 초기화
+  const pdfBody = document.getElementById('pdfBody');
+  const oldIframe = pdfBody.querySelector('iframe');
+  if (oldIframe) oldIframe.remove();
+  const overlay = document.getElementById('pdfLoadingOverlay');
+  if (overlay) overlay.classList.remove('show');
+  if (!pdfBody.querySelector('.pdf-placeholder')) {
+    const ph = document.createElement('div');
+    ph.className = 'pdf-placeholder';
+    ph.innerHTML = '상단의 Load 버튼을 클릭하세요';
+    pdfBody.appendChild(ph);
+  }
+}
+
+function setPdfViewerButtonsDisabled(disabled) {
+  const header = document.querySelector('.pdf-panel-header');
+  if (!header) return;
+  header.querySelectorAll('button, input').forEach(el => {
+    el.disabled = disabled;
+    if (disabled) el.style.pointerEvents = 'none';
+    else el.style.pointerEvents = '';
+  });
 }
 
 function pdfFieldModify(field) {
   const input = field === 'apa' ? document.getElementById('pdfApaInput') : document.getElementById('pdfUrlInput');
   const btn = input.closest('.pdf-header-row').querySelector('.btn-modify');
+  const apaDisplay = document.getElementById('pdfApaDisplay');
   if (input.readOnly) {
+    // 편집 모드 진입 - 버튼 너비 고정
+    if (!btn._origWidth) btn._origWidth = btn.offsetWidth;
+    btn.style.width = btn._origWidth + 'px';
     input.readOnly = false;
     input.classList.add('editing');
+    if (field === 'apa') {
+      apaDisplay.style.display = 'none';
+      input.style.display = '';
+    }
     input.focus();
-    const label = btn.getAttribute('data-label');
-    btn.textContent = label + '(save)';
-    btn.style.background = '#d9534f';
+    btn.innerHTML = 'Save &nbsp;<i class="ti ti-click" style="font-size:13px;vertical-align:middle;opacity:0.6"></i>';
+    btn.style.background = '#4a7dff';
   } else {
     input.readOnly = true;
     input.classList.remove('editing');
+    if (field === 'apa') {
+      apaDisplay.innerHTML = formatApa(input.value || '');
+      apaDisplay.style.display = '';
+      input.style.display = 'none';
+    }
     const label = btn.getAttribute('data-label');
-    btn.textContent = label + '(mod.)';
+    btn.innerHTML = label + ' &nbsp;<i class="ti ti-click" style="font-size:13px;vertical-align:middle;opacity:0.6"></i>';
     btn.style.background = '';
+    btn.style.width = '';
+    delete btn._origWidth;
     // save to sheet
     if (pdfCurrentRow) {
       const key = field === 'apa' ? 'apa' : 'url';
       pdfCurrentRow[key] = input.value;
-      savePdfField(pdfCurrentRow.no, key, input.value);
+      setPdfViewerButtonsDisabled(true);
+      savePdfField(pdfCurrentRow.no, key, input.value).then(() => {
+        setPdfViewerButtonsDisabled(false);
+      });
     }
   }
 }
@@ -3181,9 +3243,11 @@ async function confirmDeleteLastAccess() {
     const chipEl2 = document.getElementById('pdfLastAccess');
     chipEl2.querySelector('.chip-text').textContent = '';
     chipEl2.classList.remove('visible');
+    setPdfViewerButtonsDisabled(true);
     await savePdfField(pdfCurrentRow.no, 'last_access', '');
+    setPdfViewerButtonsDisabled(false);
     toast('last_access 삭제 완료');
-  } catch(e) { toast('삭제 오류: ' + e.message); }
+  } catch(e) { setPdfViewerButtonsDisabled(false); toast('삭제 오류: ' + e.message); }
 }
 
 // sync pdf footer: white area below Logout button's bottom edge
@@ -3301,38 +3365,30 @@ function togglePdfHeader() {
 // nav 너비를 Add+Search 영역에 맞춤, 말풍선은 nav 왼쪽에 위치
 function alignNavToButtons() {
   const addBtn = document.querySelector('.pdf-header-btn.btn-add');
-  const loadBtn = document.getElementById('pdfLoadBtn');
   const searchBtn = document.querySelector('.pdf-header-btn.btn-search');
+  const loadBtn = document.getElementById('pdfLoadBtn');
   const nav = document.querySelector('.pdf-nav');
   const prevBtn = document.getElementById('pdfNavPrev');
   const nextBtn = document.getElementById('pdfNavNext');
   const toggleBtn = document.getElementById('pdfHeaderToggle');
   const noInput = document.getElementById('pdfNavNo');
-  if (addBtn && loadBtn && nav && prevBtn && nextBtn) {
-    // nav: < 왼쪽=Add 왼쪽, > 오른쪽=Search 오른쪽
-    const left = addBtn.getBoundingClientRect().left;
-    const right = searchBtn ? searchBtn.getBoundingClientRect().right : loadBtn.getBoundingClientRect().right;
-    const navW = right - left;
-    nav.style.width = navW + 'px';
-    const inputW = noInput ? noInput.offsetWidth : 48;
-    const remaining = navW - inputW;
-    const btnW = Math.max(remaining / 2, 30);
+  if (addBtn && searchBtn && nav && prevBtn && nextBtn && noInput) {
+    // Add~Search 총 너비 = nav 총 너비
+    const addW = addBtn.offsetWidth;
+    const searchW = searchBtn.offsetWidth;
+    const rowGap = 8; // .pdf-header-row gap
+    const totalW = addW + rowGap + searchW;
+    nav.style.width = totalW + 'px';
+    const inputW = noInput.offsetWidth;
+    const btnW = Math.max((totalW - inputW) / 2, 30);
     prevBtn.style.width = btnW + 'px';
     prevBtn.style.flex = 'none';
     nextBtn.style.width = btnW + 'px';
     nextBtn.style.flex = 'none';
-    // ^ 버튼: Load와 동일 크기, 왼쪽 경계=Load 왼쪽 경계와 일치
-    if (toggleBtn && loadBtn) {
-      const loadW = loadBtn.offsetWidth;
-      toggleBtn.style.width = loadW + 'px';
-      toggleBtn.style.marginLeft = '0px';
-      requestAnimationFrame(() => {
-        const toggleLeft = toggleBtn.getBoundingClientRect().left;
-        const loadLeft = loadBtn.getBoundingClientRect().left;
-        const diff = loadLeft - toggleLeft;
-        toggleBtn.style.marginLeft = diff + 'px';
-      });
-    }
+  }
+  // ▲ 버튼: Load와 동일 너비
+  if (toggleBtn && loadBtn) {
+    toggleBtn.style.width = loadBtn.offsetWidth + 'px';
   }
 }
 window.addEventListener('resize', alignNavToButtons);
