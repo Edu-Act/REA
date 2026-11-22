@@ -436,7 +436,7 @@ body{font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#fff;color:#33
       <div class="pdf-panel-header">
         <div class="pdf-header-row">
           <button class="pdf-header-btn btn-modify" data-label="APA" onclick="pdfFieldModify('apa')">APA &nbsp;<i class="ti ti-click" style="font-size:13px;vertical-align:middle;opacity:0.6"></i></button>
-          <input type="text" class="pdf-header-input" id="pdfApaInput" placeholder="APA를 입력하세요" readonly style="display:none">
+          <input type="text" class="pdf-header-input" id="pdfApaInput" placeholder="APA를 입력하세요" readonly style="display:none" onkeydown="if(event.key==='Enter'){pdfFieldModify('apa')}">
           <div class="pdf-header-input" id="pdfApaDisplay" style="cursor:default;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
           <button class="pdf-nav-comment" id="pdfCommentBtn" onclick="openPdfComment()" title="메모" style="flex-shrink:0">💬</button>
           <div class="pdf-nav">
@@ -2877,7 +2877,16 @@ let pdfCurrentRow = null; // { no, apa, url, ... }
 let pdfCurrentIdx = -1;
 
 function applyPdfList(list) {
-  pdfDataList = list;
+  console.log('applyPdfList raw count:', list.length, 'first item:', JSON.stringify(list[0]), 'last item:', JSON.stringify(list[list.length - 1]));
+  pdfDataList = list.filter(r => {
+    const n = parseInt(r.no, 10);
+    if (!r.no || isNaN(n) || n <= 0) return false;
+    // apa와 url이 모두 비어있으면 실질적 데이터 없음
+    const hasApa = r.apa && String(r.apa).trim() !== '';
+    const hasUrl = r.url && String(r.url).trim() !== '';
+    return hasApa || hasUrl;
+  });
+  console.log('applyPdfList filtered count:', pdfDataList.length);
   if (pdfDataList.length > 0) {
     let latestIdx = 0;
     let latestTs = '';
@@ -2969,8 +2978,29 @@ async function savePdfComment() {
 
 function pdfNavMove(dir) {
   const newIdx = pdfCurrentIdx + dir;
-  if (newIdx < 0 || newIdx >= pdfDataList.length) return;
+  if (newIdx >= pdfDataList.length) {
+    showPdfEndModal();
+    return;
+  }
+  if (newIdx < 0) return;
   pdfNavGoTo(newIdx);
+}
+function showPdfEndModal() {
+  showConfirmModal('알림', '마지막 분석 자료입니다.', '확인', () => {});
+  // 모달 위치를 Delete Last Access 모달과 동일하게 설정
+  const pdfPanel = document.querySelector('.pdf-panel');
+  const modal = document.querySelector('#modalContainer .modal-box');
+  if (pdfPanel && modal) {
+    const r = pdfPanel.getBoundingClientRect();
+    modal.style.position = 'fixed';
+    modal.style.left = (r.left + r.width / 2) + 'px';
+    modal.style.top = '50%';
+    modal.style.transform = 'translate(-50%, -50%)';
+    requestAnimationFrame(() => {
+      const mh = modal.offsetHeight;
+      modal.style.top = `calc(50% - ${mh}px)`;
+    });
+  }
 }
 
 function pdfNavUpdateUI() {
@@ -3178,7 +3208,7 @@ function showPdfAddModal() {
   document.getElementById('pdfAddUrl').value = '';
   const overlay = document.getElementById('pdfAddModal');
   const modalBox = document.getElementById('pdfAddModalBox');
-  // PDF 영역 중앙에 모달 위치
+  // PDF 영역 중앙에 모달 위치, 모달 높이의 반만큼 위로 이동
   const pdfPanel = document.querySelector('.pdf-panel');
   if (pdfPanel && modalBox) {
     const r = pdfPanel.getBoundingClientRect();
@@ -3191,6 +3221,14 @@ function showPdfAddModal() {
   }
   overlay.classList.add('show');
   document.getElementById('pdfAddApa').focus();
+  // 렌더링 후 모달 높이의 반만큼 위로 이동
+  if (pdfPanel && modalBox) {
+    requestAnimationFrame(() => {
+      const r = pdfPanel.getBoundingClientRect();
+      const mh = modalBox.offsetHeight;
+      modalBox.style.top = (r.top + r.height / 2 - mh / 2) + 'px';
+    });
+  }
 }
 function closePdfAddModal() {
   document.getElementById('pdfAddModal').classList.remove('show');
@@ -3221,7 +3259,7 @@ function showDeleteLastAccessModal() {
   document.getElementById('pdfDeleteLastAccessValue').textContent = pdfCurrentRow.last_access;
   const overlay = document.getElementById('pdfDeleteLastAccessModal');
   overlay.classList.add('show');
-  // PDF 패널 가로 중앙에 위치
+  // PDF 패널 가로 중앙에 위치, 모달 높이만큼 위로 이동
   const pdfPanel = document.querySelector('.pdf-panel');
   const modal = overlay.querySelector('.pdf-add-modal');
   if (pdfPanel && modal) {
@@ -3230,6 +3268,11 @@ function showDeleteLastAccessModal() {
     modal.style.left = (r.left + r.width / 2) + 'px';
     modal.style.top = '50%';
     modal.style.transform = 'translate(-50%, -50%)';
+    // 렌더링 후 모달 높이만큼 위로 이동
+    requestAnimationFrame(() => {
+      const mh = modal.offsetHeight;
+      modal.style.top = `calc(50% - ${mh}px)`;
+    });
   }
 }
 function closeDeleteLastAccessModal() {
